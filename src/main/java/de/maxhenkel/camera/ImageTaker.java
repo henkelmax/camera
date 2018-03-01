@@ -53,6 +53,16 @@ public class ImageTaker {
         mc.gameSettings.hideGUI = hide;
         takeScreenshot = false;
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sendScreenshot(image);
+            }
+        }, "ProcessScreenshotThread").start();
+
+    }
+
+    private static void sendScreenshot(BufferedImage image){
         if (image.getWidth() > 1080) {
             float ratio = ((float) image.getHeight()) / ((float) image.getWidth());
             int newHeight = ((int) (((float) 1080) * ratio));
