@@ -1,10 +1,16 @@
 package de.maxhenkel.camera.items;
 
+import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.gui.GuiHandler;
 import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
@@ -19,6 +25,15 @@ public class ItemImage extends Item {
         setUnlocalizedName("image");
         setRegistryName("image");
         setMaxStackSize(1);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        ItemStack stack=playerIn.getHeldItem(handIn);
+
+        playerIn.openGui(Main.MODID, GuiHandler.GUI_IMAGE, worldIn, (int)playerIn.posX, (int)playerIn.posY, (int)playerIn.posZ);
+
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     @Override

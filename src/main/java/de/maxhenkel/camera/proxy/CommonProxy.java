@@ -1,6 +1,7 @@
 package de.maxhenkel.camera.proxy;
 
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.gui.GuiHandler;
 import de.maxhenkel.camera.net.*;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -36,7 +37,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
-
+        NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance(), new GuiHandler());
     }
 
     public void postinit(FMLPostInitializationEvent event) {
