@@ -2,9 +2,10 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.proxy.CommonProxy;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.UUID;
 
@@ -28,7 +29,16 @@ public class MessagePartialImage extends MessageToServer<MessagePartialImage> {
 
     @Override
     public void execute(EntityPlayerMP player, MessagePartialImage message) {
-        CommonProxy.manager.addBytes(player, message.imgUUID, message.offset, message.length, message.bytes);
+
+    }
+
+    @Override
+    public IMessage onMessage(MessagePartialImage message, MessageContext ctx) {
+        if(ctx.side.equals(Side.SERVER)){
+            EntityPlayerMP player=ctx.getServerHandler().player;
+            CommonProxy.manager.addBytes(player, message.imgUUID, message.offset, message.length, message.bytes);
+        }
+        return null;
     }
 
     @Override

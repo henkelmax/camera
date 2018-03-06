@@ -43,15 +43,32 @@ public class PacketManager {
                     throw new IOException("Image incomplete");
                 }
                 imageCache.put(imgUUID, image);
-                ImageTools.saveImage(playerMP, imgUUID, image);
 
-                ItemStack stack=new ItemStack(ModItems.IMAGE);
-                ItemImage.setUUID(stack, imgUUID);
-                ItemImage.setTime(stack, System.currentTimeMillis());
-                ItemImage.setOwner(stack, playerMP.getName());
-                if(!playerMP.addItemStackToInventory(stack)){
-                    InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ImageTools.saveImage(playerMP, imgUUID, image);
+
+                            playerMP.getServer().addScheduledTask(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ItemStack stack=new ItemStack(ModItems.IMAGE);
+                                    ItemImage.setUUID(stack, imgUUID);
+                                    ItemImage.setTime(stack, System.currentTimeMillis());
+                                    ItemImage.setOwner(stack, playerMP.getName());
+
+                                    if(!playerMP.addItemStackToInventory(stack)){
+                                        InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
+                                    }
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, "SaveImageThread").start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
