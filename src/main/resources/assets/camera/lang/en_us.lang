@@ -3,6 +3,7 @@ item.image.name=Image
 tile.image_frame.name=Image Frame
 
 message.no_paper=No Paper
+message.image_cooldown=Camera is on Cooldown
 
 tooltip.image_time=Taken on %s
 tooltip.image_owner=Taken by %s

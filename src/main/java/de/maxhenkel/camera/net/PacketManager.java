@@ -3,6 +3,7 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.items.ModItems;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -19,27 +20,30 @@ public class PacketManager {
 
     private Map<UUID, BufferedImage> imageCache;
 
+    private Map<UUID, Long> times;
+
     public PacketManager() {
-        this.clientDataMap=new HashMap<>();
-        this.imageCache=new HashMap<>();
+        this.clientDataMap = new HashMap<>();
+        this.imageCache = new HashMap<>();
+        this.times = new HashMap<>();
     }
 
     public void addBytes(EntityPlayerMP playerMP, UUID imgUUID, int offset, int length, byte[] bytes) {
         byte[] data;
-        if(!clientDataMap.containsKey(imgUUID)){
-            data=new byte[length];
-        }else{
-            data=clientDataMap.get(imgUUID);
+        if (!clientDataMap.containsKey(imgUUID)) {
+            data = new byte[length];
+        } else {
+            data = clientDataMap.get(imgUUID);
         }
 
         System.arraycopy(bytes, 0, data, offset, bytes.length);
 
         clientDataMap.put(imgUUID, data);
 
-        if(offset+bytes.length>=data.length){
+        if (offset + bytes.length >= data.length) {
             try {
-                BufferedImage image=completeImage(imgUUID);
-                if(image==null){
+                BufferedImage image = completeImage(imgUUID);
+                if (image == null) {
                     throw new IOException("Image incomplete");
                 }
                 imageCache.put(imgUUID, image);
@@ -53,12 +57,12 @@ public class PacketManager {
                             playerMP.getServer().addScheduledTask(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ItemStack stack=new ItemStack(ModItems.IMAGE);
+                                    ItemStack stack = new ItemStack(ModItems.IMAGE);
                                     ItemImage.setUUID(stack, imgUUID);
                                     ItemImage.setTime(stack, System.currentTimeMillis());
                                     ItemImage.setOwner(stack, playerMP.getName());
 
-                                    if(!playerMP.addItemStackToInventory(stack)){
+                                    if (!playerMP.addItemStackToInventory(stack)) {
                                         InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
                                     }
                                 }
@@ -76,27 +80,41 @@ public class PacketManager {
     }
 
     public BufferedImage getExistingImage(EntityPlayerMP playerMP, UUID uuid) throws IOException {
-        if(imageCache.containsKey(uuid)){
+        if (imageCache.containsKey(uuid)) {
             return imageCache.get(uuid);
         }
-        BufferedImage image=ImageTools.loadImage(playerMP, uuid);
+        BufferedImage image = ImageTools.loadImage(playerMP, uuid);
         imageCache.put(uuid, image);
         return image;
     }
 
-    public BufferedImage completeImage(UUID imgUUID){
-        byte[] data=clientDataMap.get(imgUUID);
-        if(data==null){
+    public BufferedImage completeImage(UUID imgUUID) {
+        byte[] data = clientDataMap.get(imgUUID);
+        if (data == null) {
             return null;
         }
 
         try {
-            BufferedImage image= ImageTools.fromBytes(data);
+            BufferedImage image = ImageTools.fromBytes(data);
             clientDataMap.remove(imgUUID);
             return image;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public boolean canTakeImage(UUID player) {
+        if (times.containsKey(player)) {
+            if (System.currentTimeMillis() - times.get(player).longValue() < CommonProxy.imageCooldown) {
+                return false;
+            }else{
+                times.put(player, System.currentTimeMillis());
+                return true;
+            }
+        }else{
+            times.put(player, System.currentTimeMillis());
+            return true;
         }
     }
 

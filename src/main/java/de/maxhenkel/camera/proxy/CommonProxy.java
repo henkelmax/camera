@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 public class CommonProxy {
 
     public static SimpleDateFormat imageDateFormat=new SimpleDateFormat("MM/dd/yyyy HH:mm");
+    public static long imageCooldown=5000;
 
     public static SimpleNetworkWrapper simpleNetworkWrapper;
     public static PacketManager manager;
@@ -50,7 +51,7 @@ public class CommonProxy {
             config.load();
 
             String format=config.getString("image_date_format", "camera", "MM/dd/yyyy HH:mm", "The format the date will be displayed on the image");
-
+            imageCooldown=config.getInt("image_cooldown", "camera", 5000, 100, Integer.MAX_VALUE, "");
             imageDateFormat=new SimpleDateFormat(format);
 
             config.save();

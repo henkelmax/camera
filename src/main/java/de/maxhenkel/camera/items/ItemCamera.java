@@ -35,13 +35,16 @@ public class ItemCamera extends Item {
         UUID uuid = UUID.randomUUID();
 
         if (!worldIn.isRemote && playerIn instanceof EntityPlayerMP) {
-            if(consumePaper(playerIn)){
-                worldIn.playSound(null, playerIn.getPosition(), ModSounds.take_image, SoundCategory.AMBIENT, 1.0F, 1.0F);
-                CommonProxy.simpleNetworkWrapper.sendTo(new MessageTakeImage(uuid), (EntityPlayerMP) playerIn);
+            if(CommonProxy.manager.canTakeImage(playerIn.getUniqueID())){
+                if(consumePaper(playerIn)){
+                    worldIn.playSound(null, playerIn.getPosition(), ModSounds.take_image, SoundCategory.AMBIENT, 1.0F, 1.0F);
+                    CommonProxy.simpleNetworkWrapper.sendTo(new MessageTakeImage(uuid), (EntityPlayerMP) playerIn);
+                }else{
+                    playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
+                }
             }else{
-                playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
+                playerIn.sendStatusMessage(new TextComponentTranslation("message.image_cooldown"), true);
             }
-
         }
 
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
