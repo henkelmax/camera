@@ -51,7 +51,7 @@ public class CommonProxy {
             config.load();
 
             String format=config.getString("image_date_format", "camera", "MM/dd/yyyy HH:mm", "The format the date will be displayed on the image");
-            imageCooldown=config.getInt("image_cooldown", "camera", 5000, 100, Integer.MAX_VALUE, "");
+            imageCooldown=config.getInt("image_cooldown", "camera", 5000, 100, Integer.MAX_VALUE, "The time in milliseconds the camera will be on cooldown after taking an image");
             imageDateFormat=new SimpleDateFormat(format);
 
             config.save();
