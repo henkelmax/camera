@@ -82,7 +82,6 @@ public class Main {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new ImageTaker());
 
         SIMPLE_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(Main.MODID, "default"), () -> "1.0.0", s -> true, s -> true);
         PACKET_MANAGER = new PacketManager();
@@ -101,6 +100,7 @@ public class Main {
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityImage.class, new TileentitySpecialRendererImage());
+        MinecraftForge.EVENT_BUS.register(new ImageTaker());
     }
 
     @SubscribeEvent
