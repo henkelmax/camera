@@ -11,22 +11,52 @@ import java.util.UUID;
 public class ImageTools {
 
     public static BufferedImage fromNativeImage(NativeImage nativeImage) {
-        BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
         for (int x = 0; x < nativeImage.getWidth(); x++) {
             for (int y = 0; y < nativeImage.getHeight(); y++) {
-                bufferedImage.setRGB(x, y, nativeImage.getPixelRGBA(x, y));
+                int rgba = nativeImage.getPixelRGBA(x, y);
+                int alpha = getAlpha(rgba);
+                int red = getRed(rgba);
+                int green = getGreen(rgba);
+                int blue = getBlue(rgba);
+                bufferedImage.setRGB(x, y, getArgb(alpha, blue, green, red));
             }
         }
 
         return bufferedImage;
     }
 
+    private static int getArgb(int a, int red, int green, int blue) {
+        return a << 24 | red << 16 | green << 8 | blue;
+    }
+
+    private static int getAlpha(int argb) {
+        return (argb >> 24) & 0xFF;
+    }
+
+    private static int getRed(int argb) {
+        return (argb >> 16) & 0xFF;
+    }
+
+    private static int getGreen(int argb) {
+        return (argb >> 8) & 0xFF;
+    }
+
+    private static int getBlue(int argb) {
+        return argb & 0xFF;
+    }
+
     public static NativeImage toNativeImage(BufferedImage bufferedImage) {
         NativeImage nativeImage = new NativeImage(bufferedImage.getWidth(), bufferedImage.getHeight(), false);
         for (int x = 0; x < bufferedImage.getWidth(); x++) {
             for (int y = 0; y < bufferedImage.getHeight(); y++) {
-                nativeImage.setPixelRGBA(x, y, bufferedImage.getRGB(x, y));
+                int rgba = bufferedImage.getRGB(x, y);
+                int alpha = getAlpha(rgba);
+                int red = getRed(rgba);
+                int green = getGreen(rgba);
+                int blue = getBlue(rgba);
+                nativeImage.setPixelRGBA(x, y, getArgb(alpha, blue, green, red));
             }
         }
         return nativeImage;
