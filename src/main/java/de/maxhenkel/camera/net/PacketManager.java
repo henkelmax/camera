@@ -1,9 +1,9 @@
 package de.maxhenkel.camera.net;
 
+import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.ImageTools;
+import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.items.ItemImage;
-import de.maxhenkel.camera.items.ModItems;
-import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -54,17 +54,14 @@ public class PacketManager {
                         try {
                             ImageTools.saveImage(playerMP, imgUUID, image);
 
-                            playerMP.getServer().addScheduledTask(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ItemStack stack = new ItemStack(ModItems.IMAGE);
-                                    ItemImage.setUUID(stack, imgUUID);
-                                    ItemImage.setTime(stack, System.currentTimeMillis());
-                                    ItemImage.setOwner(stack, playerMP.getName());
+                            playerMP.getServer().addScheduledTask(() -> {
+                                ItemStack stack = new ItemStack(Main.IMAGE);
+                                ItemImage.setUUID(stack, imgUUID);
+                                ItemImage.setTime(stack, System.currentTimeMillis());
+                                ItemImage.setOwner(stack, playerMP.getName().getUnformattedComponentText());
 
-                                    if (!playerMP.addItemStackToInventory(stack)) {
-                                        InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
-                                    }
+                                if (!playerMP.addItemStackToInventory(stack)) {
+                                    InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
                                 }
                             });
                         } catch (IOException e) {
@@ -106,13 +103,13 @@ public class PacketManager {
 
     public boolean canTakeImage(UUID player) {
         if (times.containsKey(player)) {
-            if (System.currentTimeMillis() - times.get(player).longValue() < CommonProxy.imageCooldown) {
+            if (System.currentTimeMillis() - times.get(player).longValue() < Config.imageCooldown) {
                 return false;
-            }else{
+            } else {
                 times.put(player, System.currentTimeMillis());
                 return true;
             }
-        }else{
+        } else {
             times.put(player, System.currentTimeMillis());
             return true;
         }

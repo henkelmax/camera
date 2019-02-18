@@ -1,12 +1,11 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.net.MessagePartialImage;
-import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ScreenShotHelper;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -19,8 +18,8 @@ public class ImageTaker {
     private static UUID uuid;
     private static boolean hide;
 
-    public static void takeScreenhot(UUID id) throws IOException {
-        Minecraft mc = Minecraft.getMinecraft();
+    public static void takeScreenhot(UUID id) {
+        Minecraft mc = Minecraft.getInstance();
 
         hide = mc.gameSettings.hideGUI;
         mc.gameSettings.hideGUI = true;
@@ -28,12 +27,6 @@ public class ImageTaker {
         takeScreenshot = true;
         uuid = id;
         mc.displayGuiScreen(null);
-
-        // EntityRenderer entityRenderer = mc.entityRenderer;
-        //entityRenderer.renderWorld(mc.getRenderPartialTicks(), 0);
-        //entityRenderer.updateCameraAndRender(mc.getRenderPartialTicks(), System.nanoTime());
-
-
     }
 
     @SubscribeEvent
@@ -46,23 +39,18 @@ public class ImageTaker {
             return;
         }
 
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
 
-        BufferedImage image = ScreenShotHelper.createScreenshot(mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        NativeImage image = ScreenShotHelper.createScreenshot(mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), mc.getFramebuffer());
 
         mc.gameSettings.hideGUI = hide;
         takeScreenshot = false;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sendScreenshot(image);
-            }
-        }, "ProcessScreenshotThread").start();
+        new Thread(() -> sendScreenshot(ImageTools.fromNativeImage(image)), "ProcessScreenshotThread").start();
 
     }
 
-    private static void sendScreenshot(BufferedImage image){
+    private static void sendScreenshot(BufferedImage image) {
         if (image.getWidth() > 1080) {
             float ratio = ((float) image.getHeight()) / ((float) image.getWidth());
             int newHeight = ((int) (((float) 1080) * ratio));
@@ -79,14 +67,14 @@ public class ImageTaker {
 
         int size = data.length;
         if (size < 30_000) {
-            CommonProxy.simpleNetworkWrapper.sendToServer(new MessagePartialImage(uuid, 0, size, data));
+            Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, 0, size, data));
         } else {
 
             int bufferProgress = 0;
             byte[] currentBuffer = new byte[30_000];
             for (int i = 0; i < size; i++) {
                 if (bufferProgress >= currentBuffer.length) {
-                    CommonProxy.simpleNetworkWrapper.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
+                    Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
                     bufferProgress = 0;
                     currentBuffer = new byte[currentBuffer.length];
                 }
@@ -97,7 +85,7 @@ public class ImageTaker {
             if (bufferProgress > 0) {
                 byte[] rest = new byte[bufferProgress];
                 System.arraycopy(currentBuffer, 0, rest, 0, bufferProgress);
-                CommonProxy.simpleNetworkWrapper.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
+                Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
             }
         }
     }

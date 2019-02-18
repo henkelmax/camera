@@ -1,14 +1,13 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.proxy.CommonProxy;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
-
+import de.maxhenkel.camera.Main;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MessageRequestImage extends MessageToServer<MessageRequestImage> {
+public class MessageRequestImage implements Message {
 
     private UUID imgUUID;
 
@@ -21,27 +20,32 @@ public class MessageRequestImage extends MessageToServer<MessageRequestImage> {
     }
 
     @Override
-    public void execute(EntityPlayerMP player, MessageRequestImage message) {
+    public void executeServerSide(NetworkEvent.Context context) {
         try {
-            byte[] data= ImageTools.toBytes(CommonProxy.manager.getExistingImage(player, message.imgUUID));
-            CommonProxy.simpleNetworkWrapper.sendTo(new MessageImage(message.imgUUID, data), player);
+            byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(context.getSender(), imgUUID));
+            Main.SIMPLE_CHANNEL.reply(new MessageImage(imgUUID, data), context);
         } catch (IOException e) {
             e.printStackTrace();
-            CommonProxy.simpleNetworkWrapper.sendTo(new MessageImageUnavailable(message.imgUUID), player);
+            Main.SIMPLE_CHANNEL.reply(new MessageImageUnavailable(imgUUID), context);
         }
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
-        long l1=buf.readLong();
-        long l2=buf.readLong();
-        imgUUID=new UUID(l1, l2);
+    public void executeClientSide(NetworkEvent.Context context) {
+
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public MessageRequestImage fromBytes(PacketBuffer buf) {
+        long l1 = buf.readLong();
+        long l2 = buf.readLong();
+        imgUUID = new UUID(l1, l2);
+        return this;
+    }
+
+    @Override
+    public void toBytes(PacketBuffer buf) {
         buf.writeLong(imgUUID.getMostSignificantBits());
         buf.writeLong(imgUUID.getLeastSignificantBits());
     }
-
 }

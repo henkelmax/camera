@@ -1,15 +1,11 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.proxy.CommonProxy;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import de.maxhenkel.camera.Main;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.UUID;
 
-public class MessagePartialImage extends MessageToServer<MessagePartialImage> {
+public class MessagePartialImage implements Message {
 
     private UUID imgUUID;
     private int offset;
@@ -28,34 +24,31 @@ public class MessagePartialImage extends MessageToServer<MessagePartialImage> {
     }
 
     @Override
-    public void execute(EntityPlayerMP player, MessagePartialImage message) {
+    public void executeServerSide(NetworkEvent.Context context) {
+        Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
+    }
+
+    @Override
+    public void executeClientSide(NetworkEvent.Context context) {
 
     }
 
     @Override
-    public IMessage onMessage(MessagePartialImage message, MessageContext ctx) {
-        if(ctx.side.equals(Side.SERVER)){
-            EntityPlayerMP player=ctx.getServerHandler().player;
-            CommonProxy.manager.addBytes(player, message.imgUUID, message.offset, message.length, message.bytes);
-        }
-        return null;
-    }
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        long l1=buf.readLong();
-        long l2=buf.readLong();
-        imgUUID=new UUID(l1, l2);
-        offset=buf.readInt();
-        length=buf.readInt();
+    public MessagePartialImage fromBytes(PacketBuffer buf) {
+        long l1 = buf.readLong();
+        long l2 = buf.readLong();
+        imgUUID = new UUID(l1, l2);
+        offset = buf.readInt();
+        length = buf.readInt();
 
         int length = buf.readInt();
         bytes = new byte[length];
         buf.readBytes(bytes);
+        return this;
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeLong(imgUUID.getMostSignificantBits());
         buf.writeLong(imgUUID.getLeastSignificantBits());
         buf.writeInt(offset);
@@ -64,5 +57,4 @@ public class MessagePartialImage extends MessageToServer<MessagePartialImage> {
         buf.writeInt(bytes.length);
         buf.writeBytes(bytes);
     }
-
 }

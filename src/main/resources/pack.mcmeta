@@ -1,7 +1,6 @@
 {
     "pack": {
-        "description": "camera resources",
-        "pack_format": 3,
-        "_comment": ""
+        "description": "gravestone resources",
+        "pack_format": 4
     }
 }

@@ -7,11 +7,11 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class GuiImage extends GuiContainer {
@@ -30,7 +30,7 @@ public class GuiImage extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawDefaultBackground();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageUUID == null) {
             return;
@@ -48,7 +48,7 @@ public class GuiImage extends GuiContainer {
             mc.getTextureManager().bindTexture(DEFAULT_IMAGE);
         } else {
             mc.getTextureManager().bindTexture(location);
-            BufferedImage image = TextureCache.instance().getBufferedImage(imageUUID);
+            NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }
@@ -57,10 +57,10 @@ public class GuiImage extends GuiContainer {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float scale=0.8F;
+        float scale = 0.8F;
 
-        float ws = (float) width *scale;
-        float hs = (float) height *scale;
+        float ws = (float) width * scale;
+        float hs = (float) height * scale;
 
         float rs = ws / hs;
         float ri = imageWidth / imageHeight;
@@ -79,8 +79,8 @@ public class GuiImage extends GuiContainer {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        left+=((1F-scale)*ws)/2F;
-        top+=((1F-scale)*hs)/2F;
+        left += ((1F - scale) * ws) / 2F;
+        top += ((1F - scale) * hs) / 2F;
 
         buffer.pos(left, top, zLevel).tex(0D, 0D).endVertex();
         buffer.pos(left, top + hnew, zLevel).tex(0D, 1D).endVertex();

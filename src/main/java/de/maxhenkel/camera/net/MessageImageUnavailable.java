@@ -1,17 +1,12 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.blocks.tileentity.render.TextureCache;
-import de.maxhenkel.camera.proxy.CommonProxy;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
-
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.UUID;
 
-public class MessageImageUnavailable extends MessageToClient<MessageImageUnavailable>{
+public class MessageImageUnavailable implements Message {
 
     private UUID imgUUID;
 
@@ -23,24 +18,27 @@ public class MessageImageUnavailable extends MessageToClient<MessageImageUnavail
         this.imgUUID = imgUUID;
     }
 
-
     @Override
-    public void execute(EntityPlayerSP player, MessageImageUnavailable message) {
-        TextureCache.instance().addImage(message.imgUUID, new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
+    public void executeServerSide(NetworkEvent.Context context) {
+
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
-        long l1=buf.readLong();
-        long l2=buf.readLong();
-        imgUUID=new UUID(l1, l2);
+    public void executeClientSide(NetworkEvent.Context context) {
+        TextureCache.instance().addImage(imgUUID, new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public MessageImageUnavailable fromBytes(PacketBuffer buf) {
+        long l1 = buf.readLong();
+        long l2 = buf.readLong();
+        imgUUID = new UUID(l1, l2);
+        return this;
+    }
+
+    @Override
+    public void toBytes(PacketBuffer buf) {
         buf.writeLong(imgUUID.getMostSignificantBits());
         buf.writeLong(imgUUID.getLeastSignificantBits());
     }
-
-
 }
