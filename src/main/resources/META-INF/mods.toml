@@ -1,51 +1,25 @@
-# This is an example mods.toml file. It contains the data relating to the loading mods.
-# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
-# The overall format is standard TOML format, v0.5.0.
-# Note that there are a couple of TOML lists in this file.
-# Find more information on toml format here:  https://github.com/toml-lang/toml
-# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
-modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[24,)" #mandatory (24 is current forge version)
-# A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://minecraft.curseforge.com/projects/camera-mod/issues" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="http://minecraft.curseforge.com/projects/camera-mod" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-# logoFile="examplemod.png" #optional
-# A text field displayed in the mod UI
-credits="" #optional
-# A text field displayed in the mod UI
-authors="Max Henkel" #optional
-# A list of mods - how many allowed here is determined by the individual mod loader
-[[mods]] #mandatory
-# The modid of the mod
-modId="camera" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.1.1" #mandatory
- # A display name for the mod
-displayName="Camera Mod" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="http://maxhenkel.de/update/camera.json" #optional
-# The description text for the mod (multi line!) (#mandatory)
-description='''This mod adds a working camera'''
-
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.camera]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[24,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+modLoader="javafml"
+loaderVersion="${mod_forge_version}"
+issueTrackerURL="https://minecraft.curseforge.com/projects/camera-mod/issues"
+displayURL="http://minecraft.curseforge.com/projects/camera-mod"
+# logoFile="camera.png"
+# credits=""
+authors="${mod_vendor}"
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+updateJSONURL="https://maxhenkel.de/update/camera.json"
+description='''This mod adds a gravestone that stores the items of the player when he dies'''
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="${mod_forge_version}"
     ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-# Here's another dependency
-[[dependencies.camera]]
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.13.2]"
+    versionRange="[${mod_minecraft_version}]"
     ordering="NONE"
     side="BOTH"
