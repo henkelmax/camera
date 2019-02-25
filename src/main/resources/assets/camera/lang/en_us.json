@@ -1,9 +1,20 @@
 {
-    "item.camera.camera": "Camera",
-    "item.camera.image": "Image",
-    "block.camera.image_frame": "Image Frame",
-    "message.no_paper": "No Paper",
-    "message.image_cooldown": "Camera is on cooldown",
-    "tooltip.image_time": "Taken on %s",
-    "tooltip.image_owner": "Taken by %s"
+  "item.camera.camera": "Camera",
+  "item.camera.image": "Image",
+  "block.camera.image_frame": "Image Frame",
+  "message.no_paper": "No Paper",
+  "message.image_cooldown": "Camera is on cooldown",
+  "tooltip.image_time": "Taken on %s",
+  "tooltip.image_owner": "Taken by %s",
+  "button.prev": "Previous",
+  "button.next": "Next",
+  "gui.camera.choosefilter": "Choose a filter",
+  "shader.none": "None",
+  "shader.black_and_white": "Black and White",
+  "shader.sepia": "Sepia",
+  "shader.desaturated": "Desaturated",
+  "shader.overexposed": "Overexposed",
+  "shader.oversaturated": "Oversaturated",
+  "shader.blurry": "Blurry",
+  "shader.inverted": "Inverted"
 }

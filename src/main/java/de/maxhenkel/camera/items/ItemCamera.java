@@ -3,7 +3,9 @@ package de.maxhenkel.camera.items;
 import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
+import de.maxhenkel.camera.gui.GuiCamera;
 import de.maxhenkel.camera.net.MessageTakeImage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,6 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkDirection;
 import java.util.UUID;
 
@@ -28,6 +32,13 @@ public class ItemCamera extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
+
+        if (playerIn.isSneaking() && !isActive(stack)) {
+            if (worldIn.isRemote) {
+                openClientGui(getShader(stack));
+            }
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
 
         if (worldIn.isRemote || !(playerIn instanceof EntityPlayerMP)) {
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -52,9 +63,14 @@ public class ItemCamera extends Item {
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void openClientGui(String currentShader) {
+        Minecraft.getInstance().displayGuiScreen(new GuiCamera(currentShader));
+    }
+
     @Override
     public boolean onEntitySwing(ItemStack stack, EntityLivingBase entity) {
-        if(!isActive(stack)){
+        if (!isActive(stack)) {
             return false;
         }
 
@@ -111,6 +127,20 @@ public class ItemCamera extends Item {
 
     public void setActive(ItemStack stack, boolean active) {
         stack.getOrCreateTag().setBoolean("active", active);
+    }
+
+    public String getShader(ItemStack stack) {
+        NBTTagCompound compound = stack.getOrCreateTag();
+        if (!compound.hasKey("shader")) {
+            return null;
+        }
+        return compound.getString("shader");
+    }
+
+    public void setShader(ItemStack stack, String shader) {
+        if (shader != null) {
+            stack.getOrCreateTag().setString("shader", shader);
+        }
     }
 
 }

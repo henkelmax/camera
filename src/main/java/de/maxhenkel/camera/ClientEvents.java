@@ -1,14 +1,18 @@
 package de.maxhenkel.camera;
 
+import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,6 +27,7 @@ public class ClientEvents {
 
     private Minecraft mc;
     private boolean inCameraMode;
+    private ResourceLocation currentShader;
 
     public ClientEvents() {
         mc = Minecraft.getInstance();
@@ -37,6 +42,7 @@ public class ClientEvents {
         inCameraMode = isInCameraMode();
 
         if (!inCameraMode) {
+            setShader(null);
             return;
         }
 
@@ -45,6 +51,8 @@ public class ClientEvents {
         if (!event.getType().equals(RenderGameOverlayEvent.ElementType.EXPERIENCE)) {
             return;
         }
+
+        setShader(getShader(mc.player));
 
         GlStateManager.pushMatrix();
 
@@ -84,13 +92,22 @@ public class ClientEvents {
         tessellator.draw();
 
         GlStateManager.popMatrix();
-
     }
 
     @SubscribeEvent
     public void renderHand(RenderHandEvent event) {
-        if(inCameraMode){
+        if (inCameraMode) {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent event) {
+        if (inCameraMode) {
+            if(event.getGui() instanceof GuiIngameMenu){
+                Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
+                event.setCanceled(true);
+            }
         }
     }
 
@@ -102,28 +119,24 @@ public class ClientEvents {
 
         return Main.CAMERA.isActive(stack);
     }
+
+    private ResourceLocation getShader(EntityPlayer player){
+        ItemStack stack = mc.player.getHeldItemMainhand();
+        if (!stack.getItem().equals(Main.CAMERA)) {
+            return null;
+        }
+
+        return Shaders.getShader(Main.CAMERA.getShader(stack));
+    }
+
+    private void setShader(ResourceLocation shader) {
+        if (shader == null) {
+            mc.entityRenderer.stopUseShader();
+        } else if (!shader.equals(currentShader)) {
+            try {
+                mc.entityRenderer.loadShader(shader);
+            } catch (Exception e) {}
+        }
+        currentShader = shader;
+    }
 }
-
-/*
-        //System.out.println("RENDER");
-        GlStateManager.pushMatrix();
-
-        mc.getTextureManager().bindTexture(VIEWFINDER);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        int width=mc.mainWindow.getScaledWidth();
-        int height=mc.mainWindow.getScaledHeight();
-
-
-        //mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 0, mc.mainWindow.getScaledWidth(), mc.mainWindow.getScaledHeight());
-
-        buffer.pos(0D, height, zLevel).tex(0D, 1D).endVertex();
-        buffer.pos(width, height, zLevel).tex(1D, 1D).endVertex();
-        buffer.pos(width, 0D, zLevel).tex(1D, 0D).endVertex();
-        buffer.pos(0D, 0D, zLevel).tex(0D, 0D).endVertex();
-        tessellator.draw();
-
-        GlStateManager.popMatrix();*/

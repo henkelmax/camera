@@ -1,0 +1,2 @@
+- Added viwefinder
+- Added filters

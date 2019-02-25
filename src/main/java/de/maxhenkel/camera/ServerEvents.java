@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -78,6 +79,11 @@ public class ServerEvents {
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public void onItemToss(ItemTossEvent event) {
+        disableCamera(event.getEntityItem().getItem());
     }
 
     private void disableCamera(ItemStack stack) {
