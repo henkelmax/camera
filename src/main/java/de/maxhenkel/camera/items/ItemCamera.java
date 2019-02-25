@@ -4,12 +4,14 @@ import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
 import de.maxhenkel.camera.net.MessageTakeImage;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -27,22 +29,39 @@ public class ItemCamera extends Item {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
 
-        UUID uuid = UUID.randomUUID();
-
-        if (!worldIn.isRemote && playerIn instanceof EntityPlayerMP) {
-            if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
-                if (consumePaper(playerIn)) {
-                    worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
-                    Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((EntityPlayerMP) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-                } else {
-                    playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
-                }
-            } else {
-                playerIn.sendStatusMessage(new TextComponentTranslation("message.image_cooldown"), true);
-            }
+        if (worldIn.isRemote || !(playerIn instanceof EntityPlayerMP)) {
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
 
+        if (!isActive(stack)) {
+            Main.CAMERA.setActive(stack, true);
+        } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
+            if (consumePaper(playerIn)) {
+                Main.CAMERA.setActive(stack, false);
+                worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
+                UUID uuid = UUID.randomUUID();
+                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((EntityPlayerMP) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+            } else {
+                playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
+            }
+        } else {
+            playerIn.sendStatusMessage(new TextComponentTranslation("message.image_cooldown"), true);
+        }
+
+
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
+    @Override
+    public boolean onEntitySwing(ItemStack stack, EntityLivingBase entity) {
+        if(!isActive(stack)){
+            return false;
+        }
+
+        if (entity instanceof EntityPlayer) {
+            onItemRightClick(entity.world, (EntityPlayer) entity, EnumHand.MAIN_HAND);
+        }
+        return true;
     }
 
     private boolean consumePaper(EntityPlayer player) {
@@ -82,5 +101,16 @@ public class ItemCamera extends Item {
         return stack.getItem().equals(Items.PAPER);
     }
 
+    public boolean isActive(ItemStack stack) {
+        NBTTagCompound compound = stack.getOrCreateTag();
+        if (!compound.hasKey("active")) {
+            compound.setBoolean("active", false);
+        }
+        return compound.getBoolean("active");
+    }
+
+    public void setActive(ItemStack stack, boolean active) {
+        stack.getOrCreateTag().setBoolean("active", active);
+    }
 
 }
