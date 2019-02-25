@@ -4,6 +4,8 @@ import de.maxhenkel.camera.net.MessagePartialImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ScreenShotHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -11,7 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = Main.MODID)
+@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
 public class ImageTaker {
 
     private static boolean takeScreenshot;
