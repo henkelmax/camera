@@ -16,5 +16,10 @@
   "shader.overexposed": "Overexposed",
   "shader.oversaturated": "Oversaturated",
   "shader.blurry": "Blurry",
-  "shader.inverted": "Inverted"
+  "shader.inverted": "Inverted",
+  "gui.frame.resize": "Resize Frame",
+  "button.left": "Left",
+  "button.right": "Right",
+  "button.up": "Up",
+  "button.down": "Down"
 }

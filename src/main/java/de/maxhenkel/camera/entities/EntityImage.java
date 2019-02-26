@@ -1,7 +1,10 @@
 package de.maxhenkel.camera.entities;
 
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.gui.GuiResizeFrame;
 import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.net.MessageResizeFrame;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +38,8 @@ public class EntityImage extends Entity {
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(EntityImage.class, DataSerializers.ITEM_STACK);
 
     private static final double THICKNESS = 1D / 16D;
+    private static final int MAX_WIDTH = 16;
+    private static final int MAX_HEIGHT = 16;
 
     private AxisAlignedBB boundingBox;
 
@@ -47,27 +52,70 @@ public class EntityImage extends Entity {
 
     public EntityImage(World worldIn, BlockPos pos, EnumFacing facing) {
         this(worldIn);
-        setPositionAndUpdate(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
 
-        dataManager.set(POSITION, pos);
-        dataManager.set(FACING, facing);
-        dataManager.set(WIDTH, 3);
-        dataManager.set(HEIGHT, 3);
+        setImagePosition(pos);
+        setFacing(facing);
+        setWidth(1);
+        setHeight(1);
         fixBoundingBox();
+    }
+
+    public void resize(MessageResizeFrame.Direction direction, boolean larger) {
+        int amount = larger ? 1 : -1;
+        switch (direction) {
+            case UP:
+                setHeight(getHeight() + amount);
+                break;
+            case DOWN:
+                if (setHeight(getHeight() + amount)) {
+                    setImagePosition(getImagePosition().offset(EnumFacing.DOWN, amount));
+                }
+                break;
+            case RIGHT:
+                setWidth(getWidth() + amount);
+                break;
+            case LEFT:
+                if (setWidth(getWidth() + amount)) {
+                    setImagePosition(getImagePosition().offset(getResizeOffset(), amount));
+                }
+                break;
+        }
+    }
+
+    private EnumFacing getResizeOffset() {
+        switch (getFacing()) {
+            case EAST:
+            default:
+                return EnumFacing.SOUTH;
+            case WEST:
+                return EnumFacing.NORTH;
+            case NORTH:
+                return EnumFacing.EAST;
+            case SOUTH:
+                return EnumFacing.WEST;
+        }
     }
 
     @Override
     public void tick() {
         fixBoundingBox();
         super.tick();
+        checkValid();
     }
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+        if (player.isSneaking()) {
+            if (world.isRemote) {
+                openClientGui();
+            }
+            return true;
+        }
+
         ItemStack stack = player.getHeldItem(hand);
 
         if (hasImage()) {
-            if (stack.equals(ItemStack.EMPTY)) {
+            if (stack.isEmpty()) {
                 ItemStack containedItem = removeImage();
                 if (!world.isRemote) {
                     player.setHeldItem(hand, containedItem);
@@ -100,11 +148,16 @@ public class EntityImage extends Entity {
         return true;
     }
 
+    @OnlyIn(Dist.CLIENT)
+    private void openClientGui() {
+        Minecraft.getInstance().displayGuiScreen(new GuiResizeFrame(getUniqueID()));
+    }
+
     private void fixBoundingBox() {
-        BlockPos pos = dataManager.get(POSITION);
-        EnumFacing facing = dataManager.get(FACING);
-        int width = dataManager.get(WIDTH);
-        int height = dataManager.get(HEIGHT);
+        BlockPos pos = getPosition();
+        EnumFacing facing = getFacing();
+        int width = getWidth();
+        int height = getHeight();
 
         if (facing.getAxis().isHorizontal()) {
             rotationPitch = 0.0F;
@@ -147,38 +200,44 @@ public class EntityImage extends Entity {
     }
 
     public void writeAdditional(NBTTagCompound compound) {
-        BlockPos pos = dataManager.get(POSITION);
+        BlockPos pos = getPosition();
         compound.setInt("posX", pos.getX());
         compound.setInt("posY", pos.getY());
         compound.setInt("posZ", pos.getZ());
-        if (dataManager.get(ID).isPresent()) {
-            UUID uuid = dataManager.get(ID).get();
+        if (getImageUUID() != null) {
+            UUID uuid = getImageUUID();
             compound.setLong("id_most", uuid.getMostSignificantBits());
             compound.setLong("id_least", uuid.getLeastSignificantBits());
         }
-        compound.setInt("facing", dataManager.get(FACING).getIndex());
-        compound.setInt("width", dataManager.get(WIDTH));
-        compound.setInt("height", dataManager.get(HEIGHT));
-        compound.setTag("item", dataManager.get(ITEM).write(new NBTTagCompound()));
+        compound.setInt("facing", getFacing().getIndex());
+        compound.setInt("width", getWidth());
+        compound.setInt("height", getHeight());
+        compound.setTag("item", getItem().write(new NBTTagCompound()));
     }
 
     public void readAdditional(NBTTagCompound compound) {
         int x = compound.getInt("posX");
         int y = compound.getInt("posY");
         int z = compound.getInt("posZ");
-        dataManager.set(POSITION, new BlockPos(x, y, z));
+        setImagePosition(new BlockPos(x, y, z));
         if (compound.hasKey("id_most") && compound.hasKey("id_least")) {
-            dataManager.set(ID, Optional.of(new UUID(compound.getLong("id_most"), compound.getLong("id_least"))));
+            setUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
         }
-        dataManager.set(FACING, EnumFacing.byIndex(compound.getInt("facing")));
-        dataManager.set(WIDTH, compound.getInt("width"));
-        dataManager.set(HEIGHT, compound.getInt("height"));
-        dataManager.set(ITEM, ItemStack.read(compound.getCompound("item")));
+        setFacing(EnumFacing.byIndex(compound.getInt("facing")));
+        setWidth(compound.getInt("width"));
+        setHeight(compound.getInt("height"));
+        setItem(ItemStack.read(compound.getCompound("item")));
         fixBoundingBox();
     }
 
-    public boolean onValidSurface() {
-        return true;
+    public boolean isValid() {
+        return !world.checkBlockCollision(getBoundingBox());
+    }
+
+    public void checkValid(){
+        if(!isValid()){
+            removeFrame();
+        }
     }
 
     public void onBroken(Entity entity) {
@@ -194,6 +253,9 @@ public class EntityImage extends Entity {
         }
 
         entityDropItem(Main.FRAME_ITEM);
+        if(hasImage()){
+            entityDropItem(removeImage());
+        }
     }
 
     public void playPlaceSound() {
@@ -212,14 +274,22 @@ public class EntityImage extends Entity {
         } else if (isInvulnerableTo(source)) {
             return false;
         } else {
-            if (!removed && !world.isRemote) {
-                onBroken(source.getTrueSource());
-                //remove();
-                world.removeEntityDangerously(this);
-                //markVelocityChanged(); //TODO needed?
-            }
+            removeFrame(source.getTrueSource());
             return true;
         }
+    }
+
+    public void removeFrame(Entity source) {
+        if (!removed && !world.isRemote) {
+            onBroken(source);
+            //remove();
+            world.removeEntityDangerously(this);
+            //markVelocityChanged(); //TODO needed?
+        }
+    }
+
+    public void removeFrame() {
+        removeFrame(null);
     }
 
     @Override
@@ -259,10 +329,6 @@ public class EntityImage extends Entity {
         return !removed;
     }
 
-    public EnumFacing getFacing() {
-        return dataManager.get(FACING);
-    }
-
     public UUID getImageUUID() {
         Optional<UUID> uuid = dataManager.get(ID);
         if (uuid.isPresent()) {
@@ -288,12 +354,26 @@ public class EntityImage extends Entity {
         return dataManager.get(HEIGHT);
     }
 
-    public void setWidth(int width) {
+    public boolean setWidth(int width) {
+        if (width <= 0) {
+            width = 1;
+        } else if (width > MAX_WIDTH) {
+            width = MAX_WIDTH;
+        }
+        int oldWidth = getWidth();
         dataManager.set(WIDTH, width);
+        return oldWidth != width;
     }
 
-    public void setHeight(int height) {
+    public boolean setHeight(int height) {
+        if (height <= 0) {
+            height = 1;
+        } else if (height > MAX_HEIGHT) {
+            height = MAX_HEIGHT;
+        }
+        int oldHeight = getHeight();
         dataManager.set(HEIGHT, height);
+        return oldHeight != height;
     }
 
     public ItemStack getItem() {
@@ -304,8 +384,26 @@ public class EntityImage extends Entity {
         dataManager.set(ITEM, stack);
     }
 
+    public BlockPos getImagePosition() {
+        return dataManager.get(POSITION);
+    }
+
+    public void setImagePosition(BlockPos position) {
+        setPositionAndUpdate(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D);
+        dataManager.set(POSITION, position);
+        fixBoundingBox();
+    }
+
+    public void setFacing(EnumFacing facing) {
+        dataManager.set(FACING, facing);
+    }
+
+    public EnumFacing getFacing() {
+        return dataManager.get(FACING);
+    }
+
     private boolean hasImage() {
-        return !ItemStack.EMPTY.equals(getItem());
+        return !getItem().isEmpty();
     }
 
     private ItemStack removeImage() {

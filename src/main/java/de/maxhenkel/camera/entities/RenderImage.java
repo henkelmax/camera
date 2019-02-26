@@ -30,7 +30,7 @@ public class RenderImage extends Render<EntityImage> {
 
     @Override
     public void doRender(EntityImage entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        float ratio = 1.5F;
+        float imageRatio = 1.5F;
         ResourceLocation resourceLocation = EMPTY_IMAGE;
         UUID imageUUID = entity.getImageUUID();
         if (imageUUID != null) {
@@ -38,7 +38,7 @@ public class RenderImage extends Render<EntityImage> {
             if (rl != null) {
                 resourceLocation = rl;
                 NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
-                ratio = (float) image.getWidth() / (float) image.getHeight();
+                imageRatio = (float) image.getWidth() / (float) image.getHeight();
             } else {
                 resourceLocation = DEFAULT_IMAGE;
             }
@@ -61,6 +61,10 @@ public class RenderImage extends Render<EntityImage> {
         BufferBuilder buffer = tessellator.getBuffer();
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+        float frameRatio= (float) (width / height);
+
+        float ratio=imageRatio/frameRatio;
 
         float ratioX;
         float ratioY;

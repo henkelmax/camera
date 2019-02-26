@@ -30,7 +30,7 @@ public class ItemImageFrame extends Item {
 
         if (!world.isRemote) {
             EntityImage image = new EntityImage(world, offset, facing);
-            //if (image.onValidSurface()) {
+            //if (image.isValid()) {
                 image.playPlaceSound();
                 world.spawnEntity(image);
             //}
