@@ -1,17 +1,18 @@
-package de.maxhenkel.camera.blocks.tileentity.render;
+package de.maxhenkel.camera;
 
-import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.net.MessageRequestImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@OnlyIn(Dist.CLIENT)
 public class TextureCache {
 
     private Map<UUID, CameraTextureObject> clientImageCache;

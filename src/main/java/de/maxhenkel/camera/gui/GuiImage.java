@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.blocks.tileentity.render.TextureCache;
+import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.items.ItemImage;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;

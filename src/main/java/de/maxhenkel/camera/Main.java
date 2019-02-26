@@ -1,15 +1,14 @@
 package de.maxhenkel.camera;
 
-import de.maxhenkel.camera.blocks.BlockImageFrame;
-import de.maxhenkel.camera.blocks.tileentity.TileEntityImage;
-import de.maxhenkel.camera.blocks.tileentity.render.TileentitySpecialRendererImage;
+import de.maxhenkel.camera.entities.EntityImage;
+import de.maxhenkel.camera.entities.RenderImage;
 import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ItemImageFrame;
 import de.maxhenkel.camera.net.*;
-import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.RecipeSerializers;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,7 +18,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -42,13 +41,7 @@ public class Main {
     public static final RecipeSerializers.SimpleSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING = RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>("crafting_special_imagecloning", RecipeImageCloning::new));
 
     @ObjectHolder(MODID + ":image_frame")
-    public static BlockImageFrame FRAME;
-
-    @ObjectHolder(MODID + ":image_frame")
-    public static Item FRAME_ITEM;
-
-    @ObjectHolder(MODID + ":image_frame")
-    public static TileEntityType<TileEntityImage> IMAGE_TILE_ENTITY_TYPE;
+    public static ItemImageFrame FRAME_ITEM;
 
     @ObjectHolder(MODID + ":camera")
     public static ItemCamera CAMERA;
@@ -56,11 +49,11 @@ public class Main {
     @ObjectHolder(MODID + ":image")
     public static ItemImage IMAGE;
 
+    public static final EntityType<EntityImage> IMAGE_ENTITY_TYPE = EntityType.register(MODID + ":image", EntityType.Builder.create(EntityImage.class, EntityImage::new).tracker(256, 20, false));
+
     public Main() {
         instance = this;
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(TileEntityType.class, this::registerTileEntities);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
@@ -90,10 +83,9 @@ public class Main {
         SIMPLE_CHANNEL.registerMessage(1, MessageTakeImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageTakeImage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
         SIMPLE_CHANNEL.registerMessage(2, MessageRequestImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageRequestImage().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
         SIMPLE_CHANNEL.registerMessage(3, MessageImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageImage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
-        SIMPLE_CHANNEL.registerMessage(4, MessageUpdateImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageUpdateImage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
-        SIMPLE_CHANNEL.registerMessage(5, MessageImageUnavailable.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageImageUnavailable().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
-        SIMPLE_CHANNEL.registerMessage(6, MessageSetShader.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageSetShader().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
-        SIMPLE_CHANNEL.registerMessage(7, MessageDisableCameraMode.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageDisableCameraMode().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(4, MessageImageUnavailable.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageImageUnavailable().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(5, MessageSetShader.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageSetShader().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(6, MessageDisableCameraMode.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageDisableCameraMode().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
         /*CustomRecipeBuilder.customRecipe(CRAFTING_SPECIAL_IMAGE_CLONING).build((recipe) -> {
 
         }, "book_cloning");*/
@@ -102,32 +94,18 @@ public class Main {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityImage.class, new TileentitySpecialRendererImage());
+        RenderingRegistry.registerEntityRenderingHandler(EntityImage.class, manager -> new RenderImage(manager));
         MinecraftForge.EVENT_BUS.register(new ImageTaker());
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
     }
 
     @SubscribeEvent
-    public void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
-                FRAME = new BlockImageFrame()
-        );
-    }
-
-    @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
-                FRAME_ITEM = FRAME.toItem(),
+                FRAME_ITEM = new ItemImageFrame(),
                 CAMERA = new ItemCamera(),
                 IMAGE = new ItemImage()
         );
-
-        Item.BLOCK_TO_ITEM.put(FRAME, FRAME_ITEM);
-    }
-
-    @SubscribeEvent
-    public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
-        IMAGE_TILE_ENTITY_TYPE = TileEntityType.register(FRAME.getRegistryName().toString(), TileEntityType.Builder.create(TileEntityImage::new));
     }
 
     @SubscribeEvent

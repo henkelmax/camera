@@ -1,7 +1,7 @@
 {
   "item.camera.camera": "Camera",
   "item.camera.image": "Image",
-  "block.camera.image_frame": "Image Frame",
+  "item.camera.image_frame": "Image Frame",
   "message.no_paper": "No Paper",
   "message.image_cooldown": "Camera is on cooldown",
   "tooltip.image_time": "Taken on %s",

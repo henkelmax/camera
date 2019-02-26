@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.blocks.tileentity.render.TextureCache;
+import de.maxhenkel.camera.TextureCache;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import java.awt.image.BufferedImage;
