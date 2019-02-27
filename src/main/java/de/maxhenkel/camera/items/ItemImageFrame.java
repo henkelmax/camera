@@ -26,19 +26,20 @@ public class ItemImageFrame extends Item {
         if (player != null && !canPlace(player, facing, context.getItem(), offset)) {
             return EnumActionResult.FAIL;
         }
-        World world = context.getWorld();
 
-        if (!world.isRemote) {
-            EntityImage image = new EntityImage(world, offset, facing);
-            //if (image.isValid()) {
+        World world = context.getWorld();
+        EntityImage image = Main.IMAGE_ENTITY_TYPE.create(world);
+        image.setFacing(facing);
+        image.setImagePosition(offset);
+        if (image.isValid()) {
+            if (!world.isRemote) {
                 image.playPlaceSound();
                 world.spawnEntity(image);
-            //}
+            }
+            context.getItem().shrink(1);
+            return EnumActionResult.SUCCESS;
         }
-
-        context.getItem().shrink(1);
-
-        return EnumActionResult.SUCCESS;
+        return EnumActionResult.FAIL;
     }
 
     protected boolean canPlace(EntityPlayer player, EnumFacing facing, ItemStack stack, BlockPos pos) {

@@ -8,7 +8,7 @@
   "tooltip.image_owner": "Taken by %s",
   "button.prev": "Previous",
   "button.next": "Next",
-  "gui.camera.choosefilter": "Choose a filter",
+  "gui.camera.choosefilter": "Choose a Filter",
   "shader.none": "None",
   "shader.black_and_white": "Black and White",
   "shader.sepia": "Sepia",

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
 import javax.annotation.Nullable;
 import java.util.UUID;
 
@@ -30,7 +31,8 @@ public class RenderImage extends Render<EntityImage> {
 
     @Override
     public void doRender(EntityImage entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        float imageRatio = 1.5F;
+        float imageRatio = 1F;
+        boolean stretch = true;
         ResourceLocation resourceLocation = EMPTY_IMAGE;
         UUID imageUUID = entity.getImageUUID();
         if (imageUUID != null) {
@@ -39,8 +41,11 @@ public class RenderImage extends Render<EntityImage> {
                 resourceLocation = rl;
                 NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
                 imageRatio = (float) image.getWidth() / (float) image.getHeight();
+                stretch = false;
             } else {
                 resourceLocation = DEFAULT_IMAGE;
+                imageRatio = 1.5F;
+                stretch = false;
             }
         }
 
@@ -62,24 +67,28 @@ public class RenderImage extends Render<EntityImage> {
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float frameRatio= (float) (width / height);
+        float frameRatio = (float) (width / height);
 
-        float ratio=imageRatio/frameRatio;
+        float ratio = imageRatio / frameRatio;
 
         float ratioX;
         float ratioY;
 
-        if (ratio >= 1F) {
-            ratioY = (1F - 1F / ratio) / 2F;
+        if (stretch) {
             ratioX = 0F;
-        } else {
-            ratioX = (1F - ratio) / 2F;
             ratioY = 0F;
+        } else {
+            if (ratio >= 1F) {
+                ratioY = (1F - 1F / ratio) / 2F;
+                ratioX = 0F;
+            } else {
+                ratioX = (1F - ratio) / 2F;
+                ratioY = 0F;
+            }
+
+            ratioX *= width;
+            ratioY *= height;
         }
-
-
-        ratioX *= width;
-        ratioY *= height;
 
         buffer.pos(0D + ratioX, ratioY, THICKNESS).tex(0D, 1D).endVertex();
         buffer.pos(width - ratioX, ratioY, THICKNESS).tex(1D, 1D).endVertex();
@@ -92,10 +101,10 @@ public class RenderImage extends Render<EntityImage> {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         //Left
-        buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(0D, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(THICKNESS, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(THICKNESS, 1D - ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D, 1D - ratioY).endVertex();
+        buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(1D, 0D + ratioY).endVertex();
+        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(1D-THICKNESS, 0D + ratioY).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(1D-THICKNESS, 1D - ratioY).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(1D, 1D - ratioY).endVertex();
 
         //Right
         buffer.pos(width - ratioX, 0D + ratioY, 0D).tex(0D, 0D + ratioY).endVertex();
@@ -104,10 +113,10 @@ public class RenderImage extends Render<EntityImage> {
         buffer.pos(width - ratioX, 0D + ratioY, THICKNESS).tex(THICKNESS, 0D + ratioY).endVertex();
 
         //Top
-        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D + ratioX, 0D).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D + ratioX, THICKNESS).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D - ratioX, THICKNESS).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, 0D).tex(1D - ratioX, 0D).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D + ratioX, 1D).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D + ratioX, 1D-THICKNESS).endVertex();
+        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D - ratioX, 1D-THICKNESS).endVertex();
+        buffer.pos(width - ratioX, height - ratioY, 0D).tex(1D - ratioX, 1D).endVertex();
 
         //Bottom
         buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(0D + ratioX, 0D).endVertex();

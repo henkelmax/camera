@@ -1,6 +1,7 @@
 package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.entities.EntityImage;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -14,11 +15,6 @@ public class GuiResizeFrame extends GuiContainer {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
-
-    private GuiButton buttonUp;
-    private GuiButton buttonDown;
-    private GuiButton buttonLeft;
-    private GuiButton buttonRight;
 
     private UUID uuid;
 
@@ -38,7 +34,7 @@ public class GuiResizeFrame extends GuiContainer {
         int padding = 10;
         int buttonWidth = 50;
         int buttonHeight = 20;
-        buttonLeft = addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()) {
+        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -46,7 +42,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        buttonRight = addButton(new GuiButton(0, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()) {
+        addButton(new GuiButton(0, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -54,7 +50,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        buttonUp = addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()) {
+        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -62,7 +58,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        buttonDown = addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()) {
+        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -92,5 +88,23 @@ public class GuiResizeFrame extends GuiContainer {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(CAMERA_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+    }
+
+    private long lastCheck;
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (System.currentTimeMillis() - lastCheck > 500L) {
+            if (!isImagePresent()) {
+                mc.player.closeScreen();
+            }
+            lastCheck = System.currentTimeMillis();
+        }
+    }
+
+    public boolean isImagePresent() {
+        return mc.player.world.getEntities(EntityImage.class, image -> image.getUniqueID().equals(uuid)).size() > 0;
     }
 }

@@ -49,7 +49,7 @@ public class Main {
     @ObjectHolder(MODID + ":image")
     public static ItemImage IMAGE;
 
-    public static final EntityType<EntityImage> IMAGE_ENTITY_TYPE = EntityType.register(MODID + ":image", EntityType.Builder.create(EntityImage.class, EntityImage::new).tracker(256, 20, false));
+    public static final EntityType<EntityImage> IMAGE_ENTITY_TYPE = EntityType.register(MODID + ":image_frame", EntityType.Builder.create(EntityImage.class, EntityImage::new).tracker(256, 20, false));
 
     public Main() {
         instance = this;

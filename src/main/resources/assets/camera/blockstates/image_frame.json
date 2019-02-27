@@ -1,9 +1,0 @@
-{
-    "variants": {
-        "facing=north": { "model": "camera:block/image_frame" },
-        "facing=south": { "model": "camera:block/image_frame" },
-        "facing=west":  { "model": "camera:block/image_frame" },
-        "facing=east":  { "model": "camera:block/image_frame" },
-        "inventory": { "model": "camera:block/image_frame" }
-    }
-}

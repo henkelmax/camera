@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "camera:blocks/image_frame"
+        "layer0": "camera:items/image_frame"
     }
 }

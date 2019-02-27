@@ -16,7 +16,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -80,12 +82,12 @@ public class ItemImage extends Item {
         String name = getOwner(stack);
 
         if (!name.isEmpty()) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_owner", name));
+            tooltip.add(new TextComponentTranslation("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)));
         }
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_time", Config.imageDateFormat.format(new Date(time))));
+            tooltip.add(new TextComponentTranslation("tooltip.image_time", TextFormatting.DARK_GRAY + Config.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
