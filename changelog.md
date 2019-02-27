@@ -1,2 +1,3 @@
 - Added viwefinder
 - Added filters
+- Added resizable image frames

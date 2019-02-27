@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
@@ -237,8 +238,12 @@ public class EntityImage extends Entity {
 
 
     public BlockPos getCenterPosition() {
-        Vec3d center = getBoundingBox().getCenter();
+        Vec3d center = getCenter(getBoundingBox());
         return new BlockPos(center.x, center.y, center.z);
+    }
+
+    public Vec3d getCenter(AxisAlignedBB aabb) {
+        return new Vec3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
     }
 
     @Nullable
