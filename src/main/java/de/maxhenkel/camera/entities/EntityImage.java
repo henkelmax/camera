@@ -26,7 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,8 +41,8 @@ public class EntityImage extends Entity {
     private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
 
     private static final double THICKNESS = 1D / 16D;
-    private static final int MAX_WIDTH = 16;
-    private static final int MAX_HEIGHT = 16;
+    private static final int MAX_WIDTH = 12;
+    private static final int MAX_HEIGHT = 12;
 
     private AxisAlignedBB boundingBox;
 
