@@ -129,7 +129,7 @@ public class EntityImage extends Entity {
     }
 
     public boolean isValid() {
-        return world.isCollisionBoxesEmpty(this, getBoundingBox());
+        return world.isCollisionBoxesEmpty(this, getBoundingBox()) && world.getEntitiesWithinAABB(EntityImage.class, getBoundingBox().shrink(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
     }
 
     public void checkValid() {
