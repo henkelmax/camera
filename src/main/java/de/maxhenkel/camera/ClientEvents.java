@@ -52,6 +52,7 @@ public class ClientEvents {
             return;
         }
 
+        mc.gameSettings.thirdPersonView = 0;
         setShader(getShader(mc.player));
 
         GlStateManager.pushMatrix();
@@ -104,7 +105,7 @@ public class ClientEvents {
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (inCameraMode) {
-            if(event.getGui() instanceof GuiIngameMenu){
+            if (event.getGui() instanceof GuiIngameMenu) {
                 Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
@@ -120,7 +121,7 @@ public class ClientEvents {
         return Main.CAMERA.isActive(stack);
     }
 
-    private ResourceLocation getShader(EntityPlayer player){
+    private ResourceLocation getShader(EntityPlayer player) {
         ItemStack stack = mc.player.getHeldItemMainhand();
         if (!stack.getItem().equals(Main.CAMERA)) {
             return null;
@@ -135,7 +136,8 @@ public class ClientEvents {
         } else if (!shader.equals(currentShader)) {
             try {
                 mc.entityRenderer.loadShader(shader);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
         currentShader = shader;
     }
