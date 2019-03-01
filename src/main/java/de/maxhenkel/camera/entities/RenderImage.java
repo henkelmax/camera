@@ -2,17 +2,16 @@ package de.maxhenkel.camera.entities;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
-
 import javax.annotation.Nullable;
 import java.util.UUID;
 
@@ -25,8 +24,11 @@ public class RenderImage extends Render<EntityImage> {
 
     private static final double THICKNESS = 1D / 16D;
 
+    private Minecraft mc;
+
     public RenderImage(RenderManager renderManager) {
         super(renderManager);
+        mc = Minecraft.getInstance();
     }
 
     @Override
@@ -102,8 +104,8 @@ public class RenderImage extends Render<EntityImage> {
 
         //Left
         buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(1D, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(1D-THICKNESS, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(1D-THICKNESS, 1D - ratioY).endVertex();
+        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(1D - THICKNESS, 0D + ratioY).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(1D - THICKNESS, 1D - ratioY).endVertex();
         buffer.pos(0D + ratioX, height - ratioY, 0D).tex(1D, 1D - ratioY).endVertex();
 
         //Right
@@ -114,8 +116,8 @@ public class RenderImage extends Render<EntityImage> {
 
         //Top
         buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D + ratioX, 1D).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D + ratioX, 1D-THICKNESS).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D - ratioX, 1D-THICKNESS).endVertex();
+        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D + ratioX, 1D - THICKNESS).endVertex();
+        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D - ratioX, 1D - THICKNESS).endVertex();
         buffer.pos(width - ratioX, height - ratioY, 0D).tex(1D - ratioX, 1D).endVertex();
 
         //Bottom
@@ -138,9 +140,39 @@ public class RenderImage extends Render<EntityImage> {
         tessellator.draw();
 
         GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
         GlStateManager.popMatrix();
 
+        renderBoundingBox(entity, x, y, z);
+
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    }
+
+    private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
+        if (mc.objectMouseOver.entity != entity) {
+            return;
+        }
+
+        GlStateManager.depthMask(false);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.disableCull();
+        GlStateManager.disableBlend();
+        AxisAlignedBB axisalignedbb = entity.getBoundingBox();
+        WorldRenderer.drawBoundingBox(
+                axisalignedbb.minX - entity.posX + x,
+                axisalignedbb.minY - entity.posY + y,
+                axisalignedbb.minZ - entity.posZ + z,
+                axisalignedbb.maxX - entity.posX + x,
+                axisalignedbb.maxY - entity.posY + y,
+                axisalignedbb.maxZ - entity.posZ + z,
+                0.25F, 0.25F, 0.25F, 1F
+        );
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
+        GlStateManager.enableCull();
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
     }
 
     public static void rotate(EnumFacing facing) {
