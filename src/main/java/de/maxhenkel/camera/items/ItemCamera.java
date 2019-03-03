@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -78,6 +79,16 @@ public class ItemCamera extends Item {
             onItemRightClick(entity.world, (EntityPlayer) entity, EnumHand.MAIN_HAND);
         }
         return true;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 50000;
+    }
+
+    @Override
+    public EnumAction getUseAction(ItemStack stack) {
+        return EnumAction.BOW;
     }
 
     private boolean consumePaper(EntityPlayer player) {

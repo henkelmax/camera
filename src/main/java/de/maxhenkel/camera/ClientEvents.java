@@ -1,5 +1,6 @@
 package de.maxhenkel.camera;
 
+import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
@@ -9,12 +10,14 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
@@ -140,5 +143,34 @@ public class ClientEvents {
             }
         }
         currentShader = shader;
+    }
+
+    @SubscribeEvent
+    public void renderPlayer(RenderPlayerEvent.Pre event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (player == mc.player) {
+            return;
+        }
+        for (EnumHand hand : EnumHand.values()) {
+            ItemStack stack = player.getHeldItem(hand);
+            if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
+                player.setActiveHand(hand);
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public void renderPlayer(RenderPlayerEvent.Post event) {
+        EntityPlayer player = event.getEntityPlayer();
+        if (player == mc.player) {
+            return;
+        }
+        for (EnumHand hand : EnumHand.values()) {
+            ItemStack stack = player.getHeldItem(hand);
+            if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
+                event.getEntityPlayer().resetActiveHand();
+            }
+        }
     }
 }
