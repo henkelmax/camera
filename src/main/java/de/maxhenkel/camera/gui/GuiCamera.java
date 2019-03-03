@@ -14,9 +14,6 @@ public class GuiCamera extends GuiContainer {
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
 
-    private GuiButton buttonPrev;
-    private GuiButton buttonNext;
-
     private int index = 0;
 
     public GuiCamera(String currentShader) {
@@ -26,8 +23,8 @@ public class GuiCamera extends GuiContainer {
 
         for (int i = 0; i < Shaders.SHADER_LIST.size(); i++) {
             String s = Shaders.SHADER_LIST.get(i);
-            if (s == null) {
-                if (currentShader == null) {
+            if (currentShader == null) {
+                if (s.equals("none")) {
                     index = i;
                     break;
                 }
@@ -47,7 +44,7 @@ public class GuiCamera extends GuiContainer {
         int padding = 10;
         int buttonWidth = 75;
         int buttonHeight = 20;
-        buttonPrev = addButton(new GuiButton(0, left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.prev").getFormattedText()) {
+        addButton(new GuiButton(0, left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.prev").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -58,7 +55,7 @@ public class GuiCamera extends GuiContainer {
                 sendShader();
             }
         });
-        buttonNext = addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.next").getFormattedText()) {
+        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.next").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
