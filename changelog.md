@@ -1,3 +1,4 @@
-- Added viwefinder
+- Added viewfinder
 - Added filters
 - Added resizable image frames
+- Added player pose when taking an image
