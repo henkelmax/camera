@@ -1,4 +1,1 @@
-- Added viewfinder
-- Added filters
-- Added resizable image frames
-- Added player pose when taking an image
+- Fixed crash with newest forge version

@@ -24,7 +24,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.FMLPlayHandler;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ObjectHolder;
@@ -60,13 +59,6 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
-
-        // Hotfix to prevent entities from not appearing on the client when connected to a server
-        try {
-            Class.forName(FMLPlayHandler.class.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
