@@ -1,15 +1,11 @@
 package de.maxhenkel.camera.proxy;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.ModItems;
 import de.maxhenkel.camera.Registry;
 import de.maxhenkel.camera.ServerEvents;
 import de.maxhenkel.camera.entities.EntityImage;
 import de.maxhenkel.camera.gui.GuiHandler;
 import de.maxhenkel.camera.net.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -20,7 +16,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.text.SimpleDateFormat;
@@ -32,13 +27,13 @@ public class CommonProxy {
     public static PacketManager packetManager;
 
     public static SimpleDateFormat imageDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-    public static long imageCooldown = 5000;
+    public static int imageCooldown = 5000;
 
     public void preinit(FMLPreInitializationEvent event) {
         try {
             Configuration config = new Configuration(event.getSuggestedConfigurationFile());
             imageDateFormat = new SimpleDateFormat(config.getString("image_date_format", "camera", "MM/dd/yyyy HH:mm", "The format the date will be displayed on the image"));
-            imageCooldown = config.get("image_cooldown", "camera", 5000L, "The time in milliseconds the camera will be on cooldown after taking an image", 0L, Integer.MAX_VALUE).getLong();
+            imageCooldown = config.get("image_cooldown", "camera", 5000, "The time in milliseconds the camera will be on cooldown after taking an image").getInt();
             config.save();
         } catch (Exception e) {
             e.printStackTrace();

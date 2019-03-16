@@ -1,6 +1,7 @@
 package de.maxhenkel.camera;
 
 import net.minecraft.util.ResourceLocation;
+
 import java.util.*;
 
 public class Shaders {

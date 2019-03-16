@@ -9,6 +9,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -58,6 +59,11 @@ public class Registry {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
 
+    }
+
+    @SubscribeEvent
+    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+        event.getRegistry().register(ModSounds.TAKE_IMAGE);
     }
 
     @SubscribeEvent

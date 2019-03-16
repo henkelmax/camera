@@ -27,28 +27,28 @@ public class TextureCache {
 
     public TextureCache() {
         clientImageCache = new HashMap<>();
-        clientResourceCache=new HashMap<>();
-        awaitingImages=new HashMap<>();
+        clientResourceCache = new HashMap<>();
+        awaitingImages = new HashMap<>();
     }
 
     public void addImage(UUID uuid, BufferedImage image) {
-        if(awaitingImages.containsKey(uuid)){
+        if (awaitingImages.containsKey(uuid)) {
             awaitingImages.remove(uuid);
         }
 
-        ResourceLocation resourceLocation=new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
-        CameraTextureObject cameraTextureObject=new CameraTextureObject(resourceLocation, image);
+        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
+        CameraTextureObject cameraTextureObject = new CameraTextureObject(resourceLocation, image);
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
         Minecraft.getMinecraft().renderEngine.loadTexture(resourceLocation, cameraTextureObject);
     }
 
     public ResourceLocation getImage(UUID uuid) {
-        CameraTextureObject cameraTextureObject=clientImageCache.get(uuid);
+        CameraTextureObject cameraTextureObject = clientImageCache.get(uuid);
 
-        if(cameraTextureObject==null){
-            if(awaitingImages.containsKey(uuid)){
-                if(awaitingImages.get(uuid).longValue()+10_000>System.currentTimeMillis()){
+        if (cameraTextureObject == null) {
+            if (awaitingImages.containsKey(uuid)) {
+                if (awaitingImages.get(uuid).longValue() + 10_000 > System.currentTimeMillis()) {
                     return null;
                 }
             }
@@ -61,11 +61,11 @@ public class TextureCache {
     }
 
     public BufferedImage getBufferedImage(UUID uuid) {
-        CameraTextureObject cameraTextureObject=clientImageCache.get(uuid);
+        CameraTextureObject cameraTextureObject = clientImageCache.get(uuid);
 
-        if(cameraTextureObject==null){
-            if(awaitingImages.containsKey(uuid)){
-                if(awaitingImages.get(uuid).longValue()+10_000>System.currentTimeMillis()){
+        if (cameraTextureObject == null) {
+            if (awaitingImages.containsKey(uuid)) {
+                if (awaitingImages.get(uuid).longValue() + 10_000 > System.currentTimeMillis()) {
                     return null;
                 }
             }

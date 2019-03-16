@@ -49,12 +49,12 @@ public class RecipeCopyImage implements IRecipe {
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> items=NonNullList.create();
+        NonNullList<ItemStack> items = NonNullList.create();
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem().equals(ModItems.IMAGE)) {
                 items.add(stack.copy());
-            }else{
+            } else {
                 items.add(ItemStack.EMPTY);
             }
         }

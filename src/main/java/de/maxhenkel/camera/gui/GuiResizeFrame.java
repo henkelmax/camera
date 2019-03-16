@@ -88,7 +88,6 @@ public class GuiResizeFrame extends GuiContainer {
     private long lastCheck;
 
 
-
     @Override
     public void updateScreen() {
         super.updateScreen();
