@@ -5,7 +5,7 @@
   "description": "This mod adds a working camera",
   "version": "${mod_version}",
   "mcversion": "${mod_minecraft_version}",
-  "url": "https://minecraft.curseforge.com/projects/camera",
+  "url": "https://minecraft.curseforge.com/projects/camera-mod",
   "updateUrl": "https://maxhenkel.de/update/camera.json",
   "authorList": ["${mod_vendor}"],
   "credits": "",
