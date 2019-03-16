@@ -2,8 +2,10 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -12,18 +14,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-@OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Main.MODID, value = Side.CLIENT)
 public class ClientEvents {
 
     private static final ResourceLocation VIEWFINDER = new ResourceLocation(Main.MODID, "textures/gui/viewfinder_overlay.png");
@@ -33,7 +35,7 @@ public class ClientEvents {
     private ResourceLocation currentShader;
 
     public ClientEvents() {
-        mc = Minecraft.getInstance();
+        mc = Minecraft.getMinecraft();
     }
 
     @SubscribeEvent
@@ -68,8 +70,9 @@ public class ClientEvents {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float ws = (float) mc.mainWindow.getScaledWidth();
-        float hs = (float) mc.mainWindow.getScaledHeight();
+        ScaledResolution scaledresolution = new ScaledResolution(mc);
+        float ws = (float) scaledresolution.getScaledWidth();
+        float hs = (float) scaledresolution.getScaledHeight();
 
         float rs = ws / hs;
         float ri = imageWidth / imageHeight;
@@ -109,7 +112,7 @@ public class ClientEvents {
     public void onGuiOpen(GuiOpenEvent event) {
         if (inCameraMode) {
             if (event.getGui() instanceof GuiIngameMenu) {
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
+                CommonProxy.simpleNetworkWrapper.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }
@@ -117,20 +120,20 @@ public class ClientEvents {
 
     private boolean isInCameraMode() {
         ItemStack stack = mc.player.getHeldItemMainhand();
-        if (!stack.getItem().equals(Main.CAMERA)) {
+        if (!stack.getItem().equals(ModItems.CAMERA)) {
             return false;
         }
 
-        return Main.CAMERA.isActive(stack);
+        return ModItems.CAMERA.isActive(stack);
     }
 
     private ResourceLocation getShader(EntityPlayer player) {
         ItemStack stack = mc.player.getHeldItemMainhand();
-        if (!stack.getItem().equals(Main.CAMERA)) {
+        if (!stack.getItem().equals(ModItems.CAMERA)) {
             return null;
         }
 
-        return Shaders.getShader(Main.CAMERA.getShader(stack));
+        return Shaders.getShader(ModItems.CAMERA.getShader(stack));
     }
 
     private void setShader(ResourceLocation shader) {
@@ -153,7 +156,7 @@ public class ClientEvents {
         }
         for (EnumHand hand : EnumHand.values()) {
             ItemStack stack = player.getHeldItem(hand);
-            if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem() instanceof ItemCamera && ModItems.CAMERA.isActive(stack)) {
                 player.setActiveHand(hand);
             }
         }
@@ -168,7 +171,7 @@ public class ClientEvents {
         }
         for (EnumHand hand : EnumHand.values()) {
             ItemStack stack = player.getHeldItem(hand);
-            if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem() instanceof ItemCamera && ModItems.CAMERA.isActive(stack)) {
                 event.getEntityPlayer().resetActiveHand();
             }
         }

@@ -3,11 +3,14 @@ package de.maxhenkel.camera.gui;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageSetShader;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+
+import java.io.IOException;
 
 public class GuiCamera extends GuiContainer {
 
@@ -36,40 +39,40 @@ public class GuiCamera extends GuiContainer {
     }
 
     @Override
-    protected void initGui() {
+    public void initGui() {
         super.initGui();
 
-        buttons.clear();
+        buttonList.clear();
         int left = (width - xSize) / 2;
         int padding = 10;
         int buttonWidth = 75;
         int buttonHeight = 20;
-        addButton(new GuiButton(0, left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.prev").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                index--;
-                if (index < 0) {
-                    index = Shaders.SHADER_LIST.size() - 1;
-                }
-                sendShader();
-            }
-        });
-        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.next").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                index++;
-                if (index >= Shaders.SHADER_LIST.size()) {
-                    index = 0;
-                }
-                sendShader();
-            }
-        });
+        addButton(new GuiButton(0, left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.prev").getFormattedText()));
+        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.next").getFormattedText()));
     }
 
     private void sendShader() {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+        CommonProxy.simpleNetworkWrapper.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+
+        if (button.id == 0) {
+            index--;
+            if (index < 0) {
+                index = Shaders.SHADER_LIST.size() - 1;
+            }
+            sendShader();
+        } else if (button.id == 1) {
+            index++;
+            if (index >= Shaders.SHADER_LIST.size()) {
+                index = 0;
+            }
+            sendShader();
+        }
+
+        super.actionPerformed(button);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class GuiCamera extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawDefaultBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(CAMERA_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }

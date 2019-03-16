@@ -1,10 +1,11 @@
 package de.maxhenkel.camera.entities;
 
+import com.google.common.base.Optional;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.GuiResizeFrame;
+import de.maxhenkel.camera.ModItems;
+import de.maxhenkel.camera.gui.GuiHandler;
 import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.net.MessageResizeFrame;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
@@ -24,10 +25,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.UUID;
 
 public class EntityImage extends Entity {
@@ -47,25 +48,23 @@ public class EntityImage extends Entity {
     private AxisAlignedBB boundingBox;
 
     public EntityImage(World world) {
-        super(Main.IMAGE_ENTITY_TYPE, world);
+        super(world);
         width = 1;
         height = 1;
         boundingBox = NULL_AABB;
     }
 
     @Override
-    public void tick() {
+    public void onUpdate() {
         updateBoundingBox();
-        super.tick();
+        super.onUpdate();
         checkValid();
     }
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         if (player.isSneaking()) {
-            if (world.isRemote) {
-                openClientGui();
-            }
+            player.openGui(Main.MODID, GuiHandler.GUI_RESIZE_FRAME, player.world, (int) posX, (int) posY, (int) posZ);
             return true;
         }
 
@@ -89,12 +88,12 @@ public class EntityImage extends Entity {
             }
         }
 
-        if (stack.getItem().equals(Main.IMAGE)) {
+        if (stack.getItem().equals(ModItems.IMAGE)) {
             UUID uuid = ItemImage.getUUID(stack);
             if (uuid == null) {
                 return true;
             }
-            ItemStack frameStack = stack.split(1);
+            ItemStack frameStack = stack.splitStack(1);
             setItem(frameStack);
             setUUID(uuid);
             player.setHeldItem(hand, stack);
@@ -103,11 +102,6 @@ public class EntityImage extends Entity {
         }
 
         return true;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void openClientGui() {
-        Minecraft.getInstance().displayGuiScreen(new GuiResizeFrame(getUniqueID()));
     }
 
     @Override
@@ -119,8 +113,6 @@ public class EntityImage extends Entity {
                 dropItem(image);
             }
             return true;
-        } else if (isInvulnerableTo(source)) {
-            return false;
         } else {
             removeFrame(source.getTrueSource());
             return true;
@@ -128,7 +120,7 @@ public class EntityImage extends Entity {
     }
 
     public boolean isValid() {
-        return world.isCollisionBoxesEmpty(this, getBoundingBox()) && world.getEntitiesWithinAABB(EntityImage.class, getBoundingBox().shrink(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
+        return !world.collidesWithAnyBlock(getEntityBoundingBox()) && world.getEntitiesWithinAABB(EntityImage.class, getEntityBoundingBox().grow(getFacing().getFrontOffsetX() == 0 ? -2D / 16D : 0D, getFacing().getFrontOffsetY() == 0 ? -2D / 16D : 0D, getFacing().getFrontOffsetZ() == 0 ? -2D / 16D : 0D), image -> image != this).isEmpty();
     }
 
     public void checkValid() {
@@ -144,12 +136,12 @@ public class EntityImage extends Entity {
         playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F);
         if (entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            if (player.abilities.isCreativeMode) {
+            if (player.capabilities.isCreativeMode) {
                 return;
             }
         }
 
-        dropItem(new ItemStack(Main.FRAME_ITEM));
+        dropItem(new ItemStack(ModItems.IMAGE_FRAME));
         if (hasImage()) {
             dropItem(removeImage());
         }
@@ -196,7 +188,7 @@ public class EntityImage extends Entity {
         if (hasImage()) {
             return getItem().copy();
         }
-        return new ItemStack(Main.FRAME_ITEM);
+        return new ItemStack(ModItems.IMAGE_FRAME);
     }
 
     private void updateBoundingBox() {
@@ -237,7 +229,7 @@ public class EntityImage extends Entity {
 
 
     public BlockPos getCenterPosition() {
-        Vec3d center = getCenter(getBoundingBox());
+        Vec3d center = getCenter(getEntityBoundingBox());
         return new BlockPos(center.x, center.y, center.z);
     }
 
@@ -259,9 +251,9 @@ public class EntityImage extends Entity {
     }
 
     public void removeFrame(Entity source) {
-        if (!removed && !world.isRemote) {
+        if (!isDead && !world.isRemote) {
             onBroken(source);
-            remove();
+            setDead();
         }
     }
 
@@ -279,7 +271,7 @@ public class EntityImage extends Entity {
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox() {
+    public AxisAlignedBB getEntityBoundingBox() {
         return boundingBox;
     }
 
@@ -295,15 +287,15 @@ public class EntityImage extends Entity {
         return null;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return getBoundingBox();
+        return getEntityBoundingBox();
     }
 
     @Override
     public boolean canBeCollidedWith() {
-        return !removed;
+        return !isDead;
     }
 
     public void playPlaceSound() {
@@ -311,11 +303,11 @@ public class EntityImage extends Entity {
     }
 
     public void playAddSound() {
-        world.playSound(null, getCenterPosition(), SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        world.playSound(null, getCenterPosition(), SoundEvents.ENTITY_ITEMFRAME_ADD_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
     public void playRemoveSound() {
-        world.playSound(null, getCenterPosition(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        world.playSound(null, getCenterPosition(), SoundEvents.ENTITY_ITEMFRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
     public UUID getImageUUID() {
@@ -329,7 +321,7 @@ public class EntityImage extends Entity {
 
     public void setUUID(UUID uuid) {
         if (uuid == null) {
-            dataManager.set(ID, Optional.empty());
+            dataManager.set(ID, Optional.absent());
         } else {
             dataManager.set(ID, Optional.of(uuid));
         }
@@ -398,35 +390,38 @@ public class EntityImage extends Entity {
         return item;
     }
 
+
     @Override
-    protected void registerData() {
-        dataManager.register(ID, Optional.empty());
+    protected void entityInit() {
+        dataManager.register(ID, Optional.absent());
         dataManager.register(FACING, EnumFacing.NORTH);
         dataManager.register(WIDTH, 1);
         dataManager.register(HEIGHT, 1);
         dataManager.register(ITEM, ItemStack.EMPTY);
     }
 
-    public void writeAdditional(NBTTagCompound compound) {
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey("id_most") && compound.hasKey("id_least")) {
+            setUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
+        }
+        setFacing(EnumFacing.getFront(compound.getInteger("facing")));
+        setWidth(compound.getInteger("width"));
+        setHeight(compound.getInteger("height"));
+        setItem(new ItemStack(compound.getCompoundTag("item")));
+        updateBoundingBox();
+    }
+
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound compound) {
         if (getImageUUID() != null) {
             UUID uuid = getImageUUID();
             compound.setLong("id_most", uuid.getMostSignificantBits());
             compound.setLong("id_least", uuid.getLeastSignificantBits());
         }
-        compound.setInt("facing", getFacing().getIndex());
-        compound.setInt("width", getWidth());
-        compound.setInt("height", getHeight());
-        compound.setTag("item", getItem().write(new NBTTagCompound()));
-    }
-
-    public void readAdditional(NBTTagCompound compound) {
-        if (compound.hasKey("id_most") && compound.hasKey("id_least")) {
-            setUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
-        }
-        setFacing(EnumFacing.byIndex(compound.getInt("facing")));
-        setWidth(compound.getInt("width"));
-        setHeight(compound.getInt("height"));
-        setItem(ItemStack.read(compound.getCompound("item")));
-        updateBoundingBox();
+        compound.setInteger("facing", getFacing().getIndex());
+        compound.setInteger("width", getWidth());
+        compound.setInteger("height", getHeight());
+        compound.setTag("item", getItem().writeToNBT(new NBTTagCompound()));
     }
 }

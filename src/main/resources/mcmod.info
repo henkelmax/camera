@@ -1,0 +1,16 @@
+[
+{
+  "modid": "${mod_id}",
+  "name": "${mod_name}",
+  "description": "This mod brings a corpse into the game. It will spawn upon your death containing all items that you had in your inventory.",
+  "version": "${mod_version}",
+  "mcversion": "${mod_minecraft_version}",
+  "url": "https://minecraft.curseforge.com/projects/camera",
+  "updateUrl": "https://maxhenkel.de/update/camera.json",
+  "authorList": ["${mod_vendor}"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

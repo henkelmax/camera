@@ -7,11 +7,12 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class GuiImage extends GuiContainer {
@@ -30,7 +31,7 @@ public class GuiImage extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawDefaultBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageUUID == null) {
             return;
@@ -48,7 +49,7 @@ public class GuiImage extends GuiContainer {
             mc.getTextureManager().bindTexture(DEFAULT_IMAGE);
         } else {
             mc.getTextureManager().bindTexture(location);
-            NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
+            BufferedImage image = TextureCache.instance().getBufferedImage(imageUUID);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }

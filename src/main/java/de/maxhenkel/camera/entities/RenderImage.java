@@ -6,13 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
+
 import javax.annotation.Nullable;
+import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class RenderImage extends Render<EntityImage> {
@@ -28,7 +29,7 @@ public class RenderImage extends Render<EntityImage> {
 
     public RenderImage(RenderManager renderManager) {
         super(renderManager);
-        mc = Minecraft.getInstance();
+        mc = Minecraft.getMinecraft();
     }
 
     @Override
@@ -41,7 +42,7 @@ public class RenderImage extends Render<EntityImage> {
             ResourceLocation rl = TextureCache.instance().getImage(imageUUID);
             if (rl != null) {
                 resourceLocation = rl;
-                NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
+                BufferedImage image = TextureCache.instance().getBufferedImage(imageUUID);
                 imageRatio = (float) image.getWidth() / (float) image.getHeight();
                 stretch = false;
             } else {
@@ -52,7 +53,7 @@ public class RenderImage extends Render<EntityImage> {
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translated(x - 0.5D, y, z - 0.5D);
+        GlStateManager.translate(x - 0.5D, y, z - 0.5D);
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
 
@@ -149,7 +150,7 @@ public class RenderImage extends Render<EntityImage> {
     }
 
     private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
-        if (mc.objectMouseOver.entity != entity) {
+        if (mc.objectMouseOver.entityHit != entity) {
             return;
         }
 
@@ -158,8 +159,8 @@ public class RenderImage extends Render<EntityImage> {
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.disableBlend();
-        AxisAlignedBB axisalignedbb = entity.getBoundingBox();
-        WorldRenderer.drawBoundingBox(
+        AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox();
+        RenderGlobal.drawBoundingBox(
                 axisalignedbb.minX - entity.posX + x,
                 axisalignedbb.minY - entity.posY + y,
                 axisalignedbb.minZ - entity.posZ + z,
@@ -168,6 +169,7 @@ public class RenderImage extends Render<EntityImage> {
                 axisalignedbb.maxZ - entity.posZ + z,
                 0.25F, 0.25F, 0.25F, 1F
         );
+
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
         GlStateManager.enableCull();
@@ -178,18 +180,18 @@ public class RenderImage extends Render<EntityImage> {
     public static void rotate(EnumFacing facing) {
         switch (facing) {
             case NORTH:
-                GlStateManager.translated(1D, 0D, 1D);
-                GlStateManager.rotatef(180F, 0F, 1F, 0F);
+                GlStateManager.translate(1D, 0D, 1D);
+                GlStateManager.rotate(180F, 0F, 1F, 0F);
                 break;
             case SOUTH:
                 break;
             case EAST:
-                GlStateManager.translated(0D, 0D, 1D);
-                GlStateManager.rotatef(90F, 0F, 1F, 0F);
+                GlStateManager.translate(0D, 0D, 1D);
+                GlStateManager.rotate(90F, 0F, 1F, 0F);
                 break;
             case WEST:
-                GlStateManager.translated(1D, 0D, 0D);
-                GlStateManager.rotatef(270F, 0F, 1F, 0F);
+                GlStateManager.translate(1D, 0D, 0D);
+                GlStateManager.rotate(270F, 0F, 1F, 0F);
                 break;
         }
     }

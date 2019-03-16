@@ -1,11 +1,12 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.ModItems;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
-public class MessageSetShader implements Message {
+public class MessageSetShader extends MessageToServer<MessageSetShader> {
 
     private String shader;
 
@@ -13,31 +14,25 @@ public class MessageSetShader implements Message {
 
     }
 
+    @Override
+    public void execute(EntityPlayerMP player, MessageSetShader message) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (stack.getItem().equals(ModItems.CAMERA)) {
+            ModItems.CAMERA.setShader(stack, message.shader);
+        }
+    }
+
     public MessageSetShader(String shader) {
         this.shader = shader;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        ItemStack stack=context.getSender().getHeldItemMainhand();
-        if(stack.getItem().equals(Main.CAMERA)){
-            Main.CAMERA.setShader(stack, shader);
-        }
+    public void fromBytes(ByteBuf buf) {
+        shader = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
-    }
-
-    @Override
-    public MessageSetShader fromBytes(PacketBuffer buf) {
-        shader = buf.readString(128);
-        return this;
-    }
-
-    @Override
-    public void toBytes(PacketBuffer buf) {
-        buf.writeString(shader);
+    public void toBytes(ByteBuf buf) {
+        ByteBufUtils.writeUTF8String(buf, shader);
     }
 }

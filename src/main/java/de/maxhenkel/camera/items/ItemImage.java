@@ -1,28 +1,22 @@
 package de.maxhenkel.camera.items;
 
-import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.ContainerImage;
-import de.maxhenkel.camera.gui.GuiImage;
-import net.minecraft.client.Minecraft;
+import de.maxhenkel.camera.gui.GuiHandler;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -31,79 +25,46 @@ import java.util.UUID;
 public class ItemImage extends Item {
 
     public ItemImage() {
-        super(new Item.Properties().maxStackSize(1));
-        setRegistryName("image");
+        setRegistryName(new ResourceLocation(Main.MODID, "image"));
+        setUnlocalizedName("image");
+        setMaxDamage(1);
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
-        if (playerIn.world.isRemote) {
-            playerIn.displayGui(new IInteractionObject() {
-                @Override
-                public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-                    return new ContainerImage();
-                }
-
-                @Override
-                public String getGuiID() {
-                    return Main.MODID + ":image";
-                }
-
-                @Override
-                public ITextComponent getName() {
-                    return new TextComponentTranslation(ItemImage.this.getTranslationKey());
-                }
-
-                @Override
-                public boolean hasCustomName() {
-                    return false;
-                }
-
-                @Nullable
-                @Override
-                public ITextComponent getCustomName() {
-                    return null;
-                }
-            });
-            openClientGui(stack);
-        }
+        playerIn.openGui(Main.MODID, GuiHandler.GUI_IMAGE, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private void openClientGui(ItemStack stack) {
-        Minecraft.getInstance().displayGuiScreen(new GuiImage(stack));
-    }
-
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         String name = getOwner(stack);
 
         if (!name.isEmpty()) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TextComponentTranslation("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)).getFormattedText());
         }
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_time", TextFormatting.DARK_GRAY + Config.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TextComponentTranslation("tooltip.image_time", TextFormatting.DARK_GRAY + CommonProxy.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)).getFormattedText());
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
     private static NBTTagCompound getImageTag(ItemStack stack) {
-        if (!stack.hasTag()) {
-            stack.setTag(new NBTTagCompound());
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
         }
 
-        NBTTagCompound compound = stack.getTag();
+        NBTTagCompound compound = stack.getTagCompound();
 
         if (!compound.hasKey("image")) {
             compound.setTag("image", new NBTTagCompound());
         }
 
-        return compound.getCompound("image");
+        return compound.getCompoundTag("image");
     }
 
     public static void setUUID(ItemStack stack, UUID uuid) {

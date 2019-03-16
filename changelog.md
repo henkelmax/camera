@@ -1,1 +1,1 @@
-- Fixed crash with newest forge version
+- Port to 1.12.2

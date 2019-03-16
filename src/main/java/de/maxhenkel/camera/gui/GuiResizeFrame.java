@@ -3,12 +3,15 @@ package de.maxhenkel.camera.gui;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.EntityImage;
 import de.maxhenkel.camera.net.MessageResizeFrame;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+
+import java.io.IOException;
 import java.util.UUID;
 
 public class GuiResizeFrame extends GuiContainer {
@@ -26,50 +29,42 @@ public class GuiResizeFrame extends GuiContainer {
     }
 
     @Override
-    protected void initGui() {
+    public void initGui() {
         super.initGui();
 
-        buttons.clear();
+        buttonList.clear();
         int left = (width - xSize) / 2;
         int padding = 10;
         int buttonWidth = 50;
         int buttonHeight = 20;
-        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                sendMoveImage(MessageResizeFrame.Direction.LEFT);
-            }
-        });
+        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()));
 
-        addButton(new GuiButton(0, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                sendMoveImage(MessageResizeFrame.Direction.RIGHT);
-            }
-        });
+        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()));
 
-        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                sendMoveImage(MessageResizeFrame.Direction.UP);
-            }
-        });
+        addButton(new GuiButton(2, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()));
 
-        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                sendMoveImage(MessageResizeFrame.Direction.DOWN);
-            }
-        });
+        addButton(new GuiButton(3, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()));
 
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageResizeFrame(uuid, direction, !GuiScreen.isShiftKeyDown()));
+        CommonProxy.simpleNetworkWrapper.sendToServer(new MessageResizeFrame(uuid, direction, !GuiScreen.isShiftKeyDown()));
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+
+        if (button.id == 0) {
+            sendMoveImage(MessageResizeFrame.Direction.LEFT);
+        } else if (button.id == 1) {
+            sendMoveImage(MessageResizeFrame.Direction.RIGHT);
+        } else if (button.id == 2) {
+            sendMoveImage(MessageResizeFrame.Direction.UP);
+        } else if (button.id == 3) {
+            sendMoveImage(MessageResizeFrame.Direction.DOWN);
+        }
+
+        super.actionPerformed(button);
     }
 
     @Override
@@ -85,16 +80,18 @@ public class GuiResizeFrame extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawDefaultBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(CAMERA_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
     private long lastCheck;
 
+
+
     @Override
-    public void tick() {
-        super.tick();
+    public void updateScreen() {
+        super.updateScreen();
 
         if (System.currentTimeMillis() - lastCheck > 500L) {
             if (!isImagePresent()) {

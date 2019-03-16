@@ -1,11 +1,12 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import de.maxhenkel.camera.proxy.CommonProxy;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import java.util.UUID;
 
-public class MessagePartialImage implements Message {
+public class MessagePartialImage extends MessageToServer<MessagePartialImage> {
 
     private UUID imgUUID;
     private int offset;
@@ -24,17 +25,12 @@ public class MessagePartialImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
+    public void execute(EntityPlayerMP player, MessagePartialImage message) {
+        CommonProxy.packetManager.addBytes(player, message.imgUUID, message.offset, message.length, message.bytes);
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
-    }
-
-    @Override
-    public MessagePartialImage fromBytes(PacketBuffer buf) {
+    public void fromBytes(ByteBuf buf) {
         long l1 = buf.readLong();
         long l2 = buf.readLong();
         imgUUID = new UUID(l1, l2);
@@ -44,11 +40,10 @@ public class MessagePartialImage implements Message {
         int length = buf.readInt();
         bytes = new byte[length];
         buf.readBytes(bytes);
-        return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(ByteBuf buf) {
         buf.writeLong(imgUUID.getMostSignificantBits());
         buf.writeLong(imgUUID.getLeastSignificantBits());
         buf.writeInt(offset);

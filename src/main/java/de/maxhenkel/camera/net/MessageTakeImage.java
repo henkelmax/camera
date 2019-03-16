@@ -1,11 +1,14 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTaker;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import java.util.UUID;
 
-public class MessageTakeImage implements Message {
+public class MessageTakeImage implements IMessage, IMessageHandler<MessageTakeImage, IMessage> {
 
     private UUID uuid;
 
@@ -18,26 +21,23 @@ public class MessageTakeImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-
+    public IMessage onMessage(MessageTakeImage message, MessageContext ctx) {
+        ImageTaker.takeScreenhot(message.uuid);
+        return null;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-        ImageTaker.takeScreenhot(uuid);
-    }
-
-    @Override
-    public MessageTakeImage fromBytes(PacketBuffer buf) {
+    public void fromBytes(ByteBuf buf) {
         long l1 = buf.readLong();
         long l2 = buf.readLong();
         uuid = new UUID(l1, l2);
-        return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(ByteBuf buf) {
         buf.writeLong(uuid.getMostSignificantBits());
         buf.writeLong(uuid.getLeastSignificantBits());
     }
+
+
 }

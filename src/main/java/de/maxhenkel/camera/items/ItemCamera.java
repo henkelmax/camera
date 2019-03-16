@@ -2,32 +2,33 @@ package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.ModItems;
 import de.maxhenkel.camera.ModSounds;
-import de.maxhenkel.camera.gui.GuiCamera;
+import de.maxhenkel.camera.gui.GuiHandler;
 import de.maxhenkel.camera.net.MessageTakeImage;
-import net.minecraft.client.Minecraft;
+import de.maxhenkel.camera.proxy.CommonProxy;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkDirection;
+
 import java.util.UUID;
 
 public class ItemCamera extends Item {
 
     public ItemCamera() {
-        super(new Item.Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
-        setRegistryName("camera");
+        setRegistryName(new ResourceLocation(Main.MODID, "camera"));
+        setUnlocalizedName("camera");
+        setMaxStackSize(1);
+        setCreativeTab(CreativeTabs.DECORATIONS);
     }
 
     @Override
@@ -35,9 +36,7 @@ public class ItemCamera extends Item {
         ItemStack stack = playerIn.getHeldItem(handIn);
 
         if (playerIn.isSneaking() && !isActive(stack)) {
-            if (worldIn.isRemote) {
-                openClientGui(getShader(stack));
-            }
+            playerIn.openGui(Main.MODID, GuiHandler.GUI_CAMERA, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
 
@@ -46,13 +45,13 @@ public class ItemCamera extends Item {
         }
 
         if (!isActive(stack)) {
-            Main.CAMERA.setActive(stack, true);
-        } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
+            ModItems.CAMERA.setActive(stack, true);
+        } else if (CommonProxy.packetManager.canTakeImage(playerIn.getUniqueID())) {
             if (consumePaper(playerIn)) {
-                Main.CAMERA.setActive(stack, false);
+                ModItems.CAMERA.setActive(stack, false);
                 worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
                 UUID uuid = UUID.randomUUID();
-                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((EntityPlayerMP) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+                CommonProxy.simpleNetworkWrapper.sendTo(new MessageTakeImage(uuid), (EntityPlayerMP) playerIn);
             } else {
                 playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
             }
@@ -64,13 +63,8 @@ public class ItemCamera extends Item {
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private void openClientGui(String currentShader) {
-        Minecraft.getInstance().displayGuiScreen(new GuiCamera(currentShader));
-    }
-
     @Override
-    public boolean onEntitySwing(ItemStack stack, EntityLivingBase entity) {
+    public boolean onEntitySwing(EntityLivingBase entity, ItemStack stack) {
         if (!isActive(stack)) {
             return false;
         }
@@ -82,17 +76,17 @@ public class ItemCamera extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getMaxItemUseDuration(ItemStack stack) {
         return 50000;
     }
 
     @Override
-    public EnumAction getUseAction(ItemStack stack) {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
 
     private boolean consumePaper(EntityPlayer player) {
-        if (player.abilities.isCreativeMode) {
+        if (player.capabilities.isCreativeMode) {
             return true;
         }
 
@@ -129,7 +123,11 @@ public class ItemCamera extends Item {
     }
 
     public boolean isActive(ItemStack stack) {
-        NBTTagCompound compound = stack.getOrCreateTag();
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            stack.setTagCompound(new NBTTagCompound());
+            compound = stack.getTagCompound();
+        }
         if (!compound.hasKey("active")) {
             compound.setBoolean("active", false);
         }
@@ -137,11 +135,20 @@ public class ItemCamera extends Item {
     }
 
     public void setActive(ItemStack stack, boolean active) {
-        stack.getOrCreateTag().setBoolean("active", active);
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            stack.setTagCompound(new NBTTagCompound());
+            compound = stack.getTagCompound();
+        }
+        compound.setBoolean("active", active);
     }
 
     public String getShader(ItemStack stack) {
-        NBTTagCompound compound = stack.getOrCreateTag();
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            stack.setTagCompound(new NBTTagCompound());
+            compound = stack.getTagCompound();
+        }
         if (!compound.hasKey("shader")) {
             return null;
         }
@@ -150,7 +157,12 @@ public class ItemCamera extends Item {
 
     public void setShader(ItemStack stack, String shader) {
         if (shader != null) {
-            stack.getOrCreateTag().setString("shader", shader);
+            NBTTagCompound compound = stack.getTagCompound();
+            if (compound == null) {
+                stack.setTagCompound(new NBTTagCompound());
+                compound = stack.getTagCompound();
+            }
+            compound.setString("shader", shader);
         }
     }
 

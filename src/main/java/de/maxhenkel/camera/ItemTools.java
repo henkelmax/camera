@@ -7,6 +7,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
@@ -63,9 +64,9 @@ public class ItemTools {
 
         if (stack1.getItem() == stack2.getItem()) {
 
-            return stack1.getDamage() == -1//OreDictionary.WILDCARD_VALUE // TODO fix
-                    || stack2.getDamage() == -1//OreDictionary.WILDCARD_VALUE // TODO fix
-                    || stack1.getDamage() == stack2.getDamage();
+            return stack1.getMetadata() == OreDictionary.WILDCARD_VALUE
+                    || stack2.getMetadata() == OreDictionary.WILDCARD_VALUE
+                    || stack1.getMetadata() == stack2.getMetadata();
         }
 
         return false;
@@ -94,7 +95,7 @@ public class ItemTools {
             return ItemStack.EMPTY;
         }
 
-        if (player != null && player.abilities.isCreativeMode) {
+        if (player != null && player.capabilities.isCreativeMode) {
             return stack;
         }
 
@@ -134,9 +135,9 @@ public class ItemTools {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             if (!isStackEmpty(inv.getStackInSlot(i))) {
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setInt("Slot", i);
-                inv.getStackInSlot(i).write(nbttagcompound);
-                nbttaglist.add(nbttagcompound);
+                nbttagcompound.setInteger("Slot", i);
+                inv.getStackInSlot(i).writeToNBT(nbttagcompound);
+                nbttaglist.appendTag(nbttagcompound);
             }
         }
 
@@ -148,18 +149,18 @@ public class ItemTools {
             return;
         }
 
-        NBTTagList nbttaglist = compound.getList(name, 10);
+        NBTTagList nbttaglist = compound.getTagList(name, 10);
 
         if (nbttaglist == null) {
             return;
         }
 
-        for (int i = 0; i < nbttaglist.size(); i++) {
-            NBTTagCompound nbttagcompound = nbttaglist.getCompound(i);
-            int j = nbttagcompound.getInt("Slot");
+        for (int i = 0; i < nbttaglist.tagCount(); i++) {
+            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+            int j = nbttagcompound.getInteger("Slot");
 
             if (j >= 0 && j < inv.getSizeInventory()) {
-                inv.setInventorySlotContents(j, ItemStack.read(nbttagcompound));
+                inv.setInventorySlotContents(j, new ItemStack(nbttagcompound));
             }
         }
     }

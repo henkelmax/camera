@@ -1,18 +1,22 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.net.MessageRequestImage;
+import de.maxhenkel.camera.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@OnlyIn(Dist.CLIENT)
+@SideOnly(Side.CLIENT)
 public class TextureCache {
 
     private Map<UUID, CameraTextureObject> clientImageCache;
@@ -23,59 +27,68 @@ public class TextureCache {
 
     public TextureCache() {
         clientImageCache = new HashMap<>();
-        clientResourceCache = new HashMap<>();
-        awaitingImages = new HashMap<>();
+        clientResourceCache=new HashMap<>();
+        awaitingImages=new HashMap<>();
     }
 
     public void addImage(UUID uuid, BufferedImage image) {
-        if (awaitingImages.containsKey(uuid)) {
+        if(awaitingImages.containsKey(uuid)){
             awaitingImages.remove(uuid);
         }
 
-        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
-        CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
+        ResourceLocation resourceLocation=new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
+        CameraTextureObject cameraTextureObject=new CameraTextureObject(resourceLocation, image);
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
-        Minecraft.getInstance().getRenderManager().textureManager.loadTexture(resourceLocation, cameraTextureObject);
+        Minecraft.getMinecraft().renderEngine.loadTexture(resourceLocation, cameraTextureObject);
     }
 
     public ResourceLocation getImage(UUID uuid) {
-        CameraTextureObject cameraTextureObject = clientImageCache.get(uuid);
+        CameraTextureObject cameraTextureObject=clientImageCache.get(uuid);
 
-        if (checkImage(uuid, cameraTextureObject)) {
+        if(cameraTextureObject==null){
+            if(awaitingImages.containsKey(uuid)){
+                if(awaitingImages.get(uuid).longValue()+10_000>System.currentTimeMillis()){
+                    return null;
+                }
+            }
+            awaitingImages.put(uuid, System.currentTimeMillis());
+            CommonProxy.simpleNetworkWrapper.sendToServer(new MessageRequestImage(uuid));
+
             return null;
         }
         return clientResourceCache.get(uuid);
     }
 
-    private boolean checkImage(UUID uuid, CameraTextureObject cameraTextureObject) {
-        if (cameraTextureObject == null) {
-            if (awaitingImages.containsKey(uuid)) {
-                if (awaitingImages.get(uuid).longValue() + 10_000 > System.currentTimeMillis()) {
-                    return true;
+    public BufferedImage getBufferedImage(UUID uuid) {
+        CameraTextureObject cameraTextureObject=clientImageCache.get(uuid);
+
+        if(cameraTextureObject==null){
+            if(awaitingImages.containsKey(uuid)){
+                if(awaitingImages.get(uuid).longValue()+10_000>System.currentTimeMillis()){
+                    return null;
                 }
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
-            Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestImage(uuid));
+            CommonProxy.simpleNetworkWrapper.sendToServer(new MessageRequestImage(uuid));
 
-            return true;
-        }
-        return false;
-    }
-
-    public NativeImage getNativeImage(UUID uuid) {
-        CameraTextureObject cameraTextureObject = clientImageCache.get(uuid);
-
-        if (checkImage(uuid, cameraTextureObject)) {
             return null;
         }
-        return cameraTextureObject.getTextureData();
+        return cameraTextureObject.image;
     }
 
-    public class CameraTextureObject extends DynamicTexture {
+    public class CameraTextureObject extends SimpleTexture {
 
-        public CameraTextureObject(NativeImage image) {
-            super(image);
+        private BufferedImage image;
+
+        public CameraTextureObject(ResourceLocation textureResourceLocation, BufferedImage image) {
+            super(textureResourceLocation);
+            this.image = image;
+        }
+
+        @Override
+        public void loadTexture(IResourceManager resourceManager) throws IOException {
+            TextureUtil.uploadTextureImage(super.getGlTextureId(), image);
         }
     }
 
@@ -85,5 +98,6 @@ public class TextureCache {
         }
         return instance;
     }
+
 
 }

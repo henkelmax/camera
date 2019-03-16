@@ -1,13 +1,14 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import de.maxhenkel.camera.proxy.CommonProxy;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import java.io.IOException;
 import java.util.UUID;
 
-public class MessageRequestImage implements Message {
+public class MessageRequestImage extends MessageToServer<MessageRequestImage> {
 
     private UUID imgUUID;
 
@@ -20,31 +21,25 @@ public class MessageRequestImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void execute(EntityPlayerMP player, MessageRequestImage message) {
         try {
-            byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(context.getSender(), imgUUID));
-            Main.SIMPLE_CHANNEL.reply(new MessageImage(imgUUID, data), context);
+            byte[] data = ImageTools.toBytes(CommonProxy.packetManager.getExistingImage(player, message.imgUUID));
+            CommonProxy.simpleNetworkWrapper.sendTo(new MessageImage(message.imgUUID, data), player);
         } catch (IOException e) {
             e.printStackTrace();
-            Main.SIMPLE_CHANNEL.reply(new MessageImageUnavailable(imgUUID), context);
+            CommonProxy.simpleNetworkWrapper.sendTo(new MessageImageUnavailable(message.imgUUID), player);
         }
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
-    }
-
-    @Override
-    public MessageRequestImage fromBytes(PacketBuffer buf) {
+    public void fromBytes(ByteBuf buf) {
         long l1 = buf.readLong();
         long l2 = buf.readLong();
         imgUUID = new UUID(l1, l2);
-        return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(ByteBuf buf) {
         buf.writeLong(imgUUID.getMostSignificantBits());
         buf.writeLong(imgUUID.getLeastSignificantBits());
     }

@@ -1,12 +1,13 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.entities.EntityImage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.UUID;
 
-public class MessageResizeFrame implements Message {
+public class MessageResizeFrame extends MessageToServer<MessageResizeFrame> {
 
     private UUID uuid;
     private Direction direction;
@@ -19,34 +20,28 @@ public class MessageResizeFrame implements Message {
     public MessageResizeFrame(UUID uuid, Direction direction, boolean larger) {
         this.uuid = uuid;
         this.direction = direction;
-        this.larger=larger;
+        this.larger = larger;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
+    public void execute(EntityPlayerMP player, MessageResizeFrame message) {
+        player.world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(message.uuid)).forEach(image -> image.resize(message.direction, message.larger));
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
-    }
-
-    @Override
-    public MessageResizeFrame fromBytes(PacketBuffer buf) {
+    public void fromBytes(ByteBuf buf) {
         long most = buf.readLong();
         long least = buf.readLong();
         uuid = new UUID(most, least);
-        direction = Direction.valueOf(buf.readString(16));
-        larger=buf.readBoolean();
-        return this;
+        direction = Direction.valueOf(ByteBufUtils.readUTF8String(buf));
+        larger = buf.readBoolean();
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(ByteBuf buf) {
         buf.writeLong(uuid.getMostSignificantBits());
         buf.writeLong(uuid.getLeastSignificantBits());
-        buf.writeString(direction.name());
+        ByteBufUtils.writeUTF8String(buf, direction.name());
         buf.writeBoolean(larger);
     }
 

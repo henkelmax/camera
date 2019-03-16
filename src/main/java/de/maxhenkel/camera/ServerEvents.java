@@ -7,9 +7,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod.EventBusSubscriber(modid = Main.MODID)
@@ -17,7 +17,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getHeldItemMainhand().getItem().equals(Main.CAMERA)) {
+        if (event.player.getHeldItemMainhand().getItem().equals(ModItems.CAMERA)) {
             return;
         }
 
@@ -36,7 +36,7 @@ public class ServerEvents {
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         EntityPlayer player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+        if (stack.getItem().equals(ModItems.CAMERA) && ModItems.CAMERA.isActive(stack)) {
             event.setUseBlock(Event.Result.DENY);
             event.setCanceled(true);
         }
@@ -59,7 +59,7 @@ public class ServerEvents {
 
     public void handleLeftClick(PlayerInteractEvent event) {
         ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+        if (stack.getItem().equals(ModItems.CAMERA) && ModItems.CAMERA.isActive(stack)) {
             if (event.isCancelable()) {
                 event.setCanceled(true);
             }
@@ -76,7 +76,7 @@ public class ServerEvents {
         EntityPlayer player = (EntityPlayer) source;
 
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+        if (stack.getItem().equals(ModItems.CAMERA) && ModItems.CAMERA.isActive(stack)) {
             event.setCanceled(true);
         }
     }
@@ -87,8 +87,8 @@ public class ServerEvents {
     }
 
     private void disableCamera(ItemStack stack) {
-        if (stack.getItem().equals(Main.CAMERA)) {
-            Main.CAMERA.setActive(stack, false);
+        if (stack.getItem().equals(ModItems.CAMERA)) {
+            ModItems.CAMERA.setActive(stack, false);
         }
     }
 
