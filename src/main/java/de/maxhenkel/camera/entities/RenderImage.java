@@ -154,6 +154,10 @@ public class RenderImage extends Render<EntityImage> {
             return;
         }
 
+        if (mc.gameSettings.hideGUI) {
+            return;
+        }
+
         GlStateManager.depthMask(false);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
