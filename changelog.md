@@ -1,1 +1,2 @@
-- Fixed crash with newest forge version
+- Resolve translation conflicts
+- Fix image frame outline showing in hide GUI mode

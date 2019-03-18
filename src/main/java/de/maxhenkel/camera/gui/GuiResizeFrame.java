@@ -9,6 +9,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+
 import java.util.UUID;
 
 public class GuiResizeFrame extends GuiContainer {
@@ -34,7 +35,7 @@ public class GuiResizeFrame extends GuiContainer {
         int padding = 10;
         int buttonWidth = 50;
         int buttonHeight = 20;
-        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()) {
+        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.left").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -42,7 +43,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        addButton(new GuiButton(0, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()) {
+        addButton(new GuiButton(0, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.right").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -50,7 +51,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()) {
+        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.up").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);
@@ -58,7 +59,7 @@ public class GuiResizeFrame extends GuiContainer {
             }
         });
 
-        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()) {
+        addButton(new GuiButton(0, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.down").getFormattedText()) {
             @Override
             public void onClick(double x, double y) {
                 super.onClick(x, y);

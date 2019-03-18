@@ -18,8 +18,8 @@
   "shader.blurry": "Blurry",
   "shader.inverted": "Inverted",
   "gui.frame.resize": "Resize Frame",
-  "button.left": "Left",
-  "button.right": "Right",
-  "button.up": "Up",
-  "button.down": "Down"
+  "button.frame.left": "Left",
+  "button.frame.right": "Right",
+  "button.frame.up": "Up",
+  "button.frame.down": "Down"
 }
