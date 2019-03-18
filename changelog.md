@@ -1,1 +1,1 @@
-- Added the album
+- Added key controls to album

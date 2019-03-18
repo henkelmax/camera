@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.gui;
 
+import de.maxhenkel.camera.proxy.ClientProxy;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
@@ -36,15 +37,34 @@ public class GuiAlbum extends GuiContainer {
         super.handleMouseInput();
         int amount = Mouse.getEventDWheel();
         if (amount < 0) {
-            index++;
-            if (index >= images.size()) {
-                index = 0;
-            }
+            next();
         } else if (amount > 0) {
-            index--;
-            if (index < 0) {
-                index = images.size() - 1;
-            }
+            previous();
+        }
+    }
+
+    private void next() {
+        index++;
+        if (index >= images.size()) {
+            index = 0;
+        }
+    }
+
+    private void previous() {
+        index--;
+        if (index < 0) {
+            index = images.size() - 1;
+        }
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+
+        if (keyCode == ClientProxy.KEY_NEXT.getKeyCode()) {
+            next();
+        } else if (keyCode == ClientProxy.KEY_PREVIOUS.getKeyCode()) {
+            previous();
         }
     }
 }

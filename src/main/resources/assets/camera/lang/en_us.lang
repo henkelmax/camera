@@ -23,3 +23,5 @@ button.frame.left=Left
 button.frame.right=Right
 button.frame.up=Up
 button.frame.down=Down
+key.next_image=Next Image
+key.previous_image=Previous Image
