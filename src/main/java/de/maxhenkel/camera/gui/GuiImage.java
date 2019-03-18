@@ -3,6 +3,7 @@ package de.maxhenkel.camera.gui;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.items.ItemImage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,9 +38,14 @@ public class GuiImage extends GuiContainer {
             return;
         }
 
+        drawImage(mc, width, height, zLevel, imageUUID);
+
+    }
+
+    public static void drawImage(Minecraft mc, int width, int height, float zLevel, UUID uuid) {
         GlStateManager.pushMatrix();
 
-        ResourceLocation location = TextureCache.instance().getImage(imageUUID);
+        ResourceLocation location = TextureCache.instance().getImage(uuid);
 
         float imageWidth = 12F;
         float imageHeight = 8F;
@@ -49,7 +55,7 @@ public class GuiImage extends GuiContainer {
             mc.getTextureManager().bindTexture(DEFAULT_IMAGE);
         } else {
             mc.getTextureManager().bindTexture(location);
-            BufferedImage image = TextureCache.instance().getBufferedImage(imageUUID);
+            BufferedImage image = TextureCache.instance().getBufferedImage(uuid);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }

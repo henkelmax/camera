@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -53,6 +54,14 @@ public class Registry {
         GameRegistry.addShapedRecipe(new ResourceLocation(Main.MODID, "image_frame"), null, new ItemStack(ModItems.IMAGE_FRAME, 1), "WSW", "WLW", "WWW",
                 'W', new ItemStack(Items.STICK), 'S', new ItemStack(Items.STRING), 'L', new ItemStack(Items.LEATHER));
 
+        GameRegistry.addShapelessRecipe(new ResourceLocation(Main.MODID, "album"), null,
+                new ItemStack(ModItems.ALBUM),
+                Ingredient.fromItem(Items.LEATHER),
+                Ingredient.fromItem(Items.STRING),
+                Ingredient.fromItem(Items.PAPER),
+                Ingredient.fromItem(Items.PAPER),
+                Ingredient.fromItem(Items.PAPER));
+
         regiserRecipe(event.getRegistry(), new RecipeCopyImage().setRegistryName(new ResourceLocation(Main.MODID, "copy_image")));
     }
 
@@ -71,6 +80,7 @@ public class Registry {
         registerItem(event.getRegistry(), ModItems.CAMERA);
         registerItem(event.getRegistry(), ModItems.IMAGE);
         registerItem(event.getRegistry(), ModItems.IMAGE_FRAME);
+        registerItem(event.getRegistry(), ModItems.ALBUM);
     }
 
     @SubscribeEvent
@@ -78,6 +88,7 @@ public class Registry {
         addRenderItem(ModItems.CAMERA);
         addRenderItem(ModItems.IMAGE);
         addRenderItem(ModItems.IMAGE_FRAME);
+        addRenderItem(ModItems.ALBUM);
     }
 
 }
