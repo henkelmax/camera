@@ -8,6 +8,7 @@ import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.items.ItemImageFrame;
 import de.maxhenkel.camera.net.*;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.RecipeSerializers;
@@ -20,6 +21,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ObjectHolder;
+import org.lwjgl.glfw.GLFW;
 
 @Mod(Main.MODID)
 public class Main {
@@ -53,6 +56,12 @@ public class Main {
 
     @ObjectHolder(MODID + ":album")
     public static ItemAlbum ALBUM;
+
+    @OnlyIn(Dist.CLIENT)
+    public static KeyBinding KEY_NEXT;
+
+    @OnlyIn(Dist.CLIENT)
+    public static KeyBinding KEY_PREVIOUS;
 
     public static final EntityType<EntityImage> IMAGE_ENTITY_TYPE = EntityType.register(MODID + ":image_frame", EntityType.Builder.create(EntityImage.class, EntityImage::new).tracker(256, 20, false));
 
@@ -104,6 +113,12 @@ public class Main {
         GUIManager.clientSetup();
         MinecraftForge.EVENT_BUS.register(new ImageTaker());
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
+
+        KEY_NEXT = new KeyBinding("key.next_image", GLFW.GLFW_KEY_DOWN, "key.categories.misc");
+        ClientRegistry.registerKeyBinding(KEY_NEXT);
+
+        KEY_PREVIOUS = new KeyBinding("key.previous_image",  GLFW.GLFW_KEY_UP, "key.categories.misc");
+        ClientRegistry.registerKeyBinding(KEY_PREVIOUS);
     }
 
     @SubscribeEvent

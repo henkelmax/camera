@@ -1,7 +1,9 @@
 package de.maxhenkel.camera.gui;
 
+import de.maxhenkel.camera.Main;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.util.InputMappings;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,16 +33,40 @@ public class GuiAlbum extends GuiContainer {
     @Override
     public boolean mouseScrolled(double amount) {
         if (amount < 0D) {
-            index++;
-            if (index >= images.size()) {
-                index = 0;
-            }
+            next();
         } else {
-            index--;
-            if (index < 0) {
-                index = images.size() - 1;
-            }
+            previous();
         }
         return true;
+    }
+
+    private void next() {
+        index++;
+        if (index >= images.size()) {
+            index = 0;
+        }
+    }
+
+    private void previous() {
+        index--;
+        if (index < 0) {
+            index = images.size() - 1;
+        }
+    }
+
+    private boolean wasNextDown;
+    private boolean wasPreviousDown;
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        boolean isNextDown = InputMappings.isKeyDown(Main.KEY_NEXT.getKey().getKeyCode());
+        boolean isPreviousDown = InputMappings.isKeyDown(Main.KEY_PREVIOUS.getKey().getKeyCode());
+        if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
+            next();
+        } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {
+            previous();
+        }
     }
 }

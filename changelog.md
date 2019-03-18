@@ -1,1 +1,1 @@
-- Fixed grey screen when opening an empty album
+- Added key controls to album
