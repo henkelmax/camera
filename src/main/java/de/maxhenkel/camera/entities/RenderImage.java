@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
+
 import javax.annotation.Nullable;
 import java.util.UUID;
 
@@ -150,6 +151,10 @@ public class RenderImage extends Render<EntityImage> {
 
     private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
         if (mc.objectMouseOver.entity != entity) {
+            return;
+        }
+
+        if (mc.gameSettings.hideGUI) {
             return;
         }
 
