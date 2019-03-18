@@ -1,1 +1,1 @@
-- Added the album
+- Fixed grey screen when opening an empty album

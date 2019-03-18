@@ -1,9 +1,7 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.Main;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,10 +11,9 @@ public class GuiAlbum extends GuiContainer {
     private int index;
     private List<UUID> images;
 
-    public GuiAlbum(ItemStack image) {
+    public GuiAlbum(List<UUID> images) {
         super(new ContainerImage());
-
-        images = Main.ALBUM.getImages(image);
+        this.images = images;
     }
 
     @Override

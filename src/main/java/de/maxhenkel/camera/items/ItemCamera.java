@@ -21,13 +21,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkDirection;
+
 import java.util.UUID;
 
 public class ItemCamera extends Item {
 
     public ItemCamera() {
         super(new Item.Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
-        setRegistryName("camera");
+        setRegistryName(new ResourceLocation(Main.MODID, "camera"));
     }
 
     @Override

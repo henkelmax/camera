@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -23,6 +24,7 @@ import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +34,7 @@ public class ItemImage extends Item {
 
     public ItemImage() {
         super(new Item.Properties().maxStackSize(1));
-        setRegistryName("image");
+        setRegistryName(new ResourceLocation(Main.MODID, "image"));
     }
 
     @Override

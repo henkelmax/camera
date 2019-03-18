@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IInteractionObject;
@@ -34,7 +35,7 @@ public class ItemAlbum extends Item {
 
     public ItemAlbum() {
         super(new Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
-        setRegistryName("album");
+        setRegistryName(new ResourceLocation(Main.MODID, "album"));
     }
 
     @Override
@@ -72,42 +73,45 @@ public class ItemAlbum extends Item {
             }
         } else {
             if (playerIn.world.isRemote) {
-                playerIn.displayGui(new IInteractionObject() {
-                    @Override
-                    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-                        return new ContainerAlbum();
-                    }
+                List<UUID> images = Main.ALBUM.getImages(stack);
+                if (!images.isEmpty()) {
+                    playerIn.displayGui(new IInteractionObject() {
+                        @Override
+                        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+                            return new ContainerAlbum();
+                        }
 
-                    @Override
-                    public String getGuiID() {
-                        return Main.MODID + ":album";
-                    }
+                        @Override
+                        public String getGuiID() {
+                            return Main.MODID + ":album";
+                        }
 
-                    @Override
-                    public ITextComponent getName() {
-                        return new TextComponentTranslation(ItemAlbum.this.getTranslationKey());
-                    }
+                        @Override
+                        public ITextComponent getName() {
+                            return new TextComponentTranslation(ItemAlbum.this.getTranslationKey());
+                        }
 
-                    @Override
-                    public boolean hasCustomName() {
-                        return false;
-                    }
+                        @Override
+                        public boolean hasCustomName() {
+                            return false;
+                        }
 
-                    @Nullable
-                    @Override
-                    public ITextComponent getCustomName() {
-                        return null;
-                    }
-                });
-                openClientGui(stack);
+                        @Nullable
+                        @Override
+                        public ITextComponent getCustomName() {
+                            return null;
+                        }
+                    });
+                    openClientGui(images);
+                }
             }
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void openClientGui(ItemStack stack) {
-        Minecraft.getInstance().displayGuiScreen(new GuiAlbum(stack));
+    private void openClientGui(List<UUID> images) {
+        Minecraft.getInstance().displayGuiScreen(new GuiAlbum(images));
     }
 
     public List<UUID> getImages(ItemStack stack) {
