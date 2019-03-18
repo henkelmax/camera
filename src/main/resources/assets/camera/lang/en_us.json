@@ -2,6 +2,7 @@
   "item.camera.camera": "Camera",
   "item.camera.image": "Image",
   "item.camera.image_frame": "Image Frame",
+  "item.camera.album": "Album",
   "message.no_paper": "No Paper",
   "message.image_cooldown": "Camera is on cooldown",
   "tooltip.image_time": "Taken on %s",

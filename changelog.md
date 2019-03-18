@@ -1,2 +1,1 @@
-- Resolve translation conflicts
-- Fix image frame outline showing in hide GUI mode
+- Added the album

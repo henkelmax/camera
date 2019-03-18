@@ -61,6 +61,13 @@ You can either look at the image by right-clicking the image item or by putting 
 ![camera](https://i.imgur.com/BOKmRDb.png)
 
 
+## The Album
+
+The album can hold up to 54 images.
+You can add images by sneak + right-clicking the album.
+You can view the contained images by right-clicking the album.
+By scrolling up and down you can switch the currently viewed image.
+
 ## The Image Frame
 
 The image frame allows you to place your image in the world.

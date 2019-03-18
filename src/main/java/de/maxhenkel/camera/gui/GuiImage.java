@@ -3,6 +3,8 @@ package de.maxhenkel.camera.gui;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.items.ItemImage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
 import java.util.UUID;
 
 public class GuiImage extends GuiContainer {
@@ -36,19 +39,24 @@ public class GuiImage extends GuiContainer {
             return;
         }
 
+        drawImage(mc, width, height, zLevel, imageUUID);
+
+    }
+
+    public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
         GlStateManager.pushMatrix();
 
-        ResourceLocation location = TextureCache.instance().getImage(imageUUID);
+        ResourceLocation location = TextureCache.instance().getImage(uuid);
 
         float imageWidth = 12F;
         float imageHeight = 8F;
 
 
         if (location == null) {
-            mc.getTextureManager().bindTexture(DEFAULT_IMAGE);
+            minecraft.getTextureManager().bindTexture(DEFAULT_IMAGE);
         } else {
-            mc.getTextureManager().bindTexture(location);
-            NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
+            minecraft.getTextureManager().bindTexture(location);
+            NativeImage image = TextureCache.instance().getNativeImage(uuid);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }

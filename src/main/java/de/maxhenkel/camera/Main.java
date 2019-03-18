@@ -2,6 +2,8 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.entities.EntityImage;
 import de.maxhenkel.camera.entities.RenderImage;
+import de.maxhenkel.camera.gui.GUIManager;
+import de.maxhenkel.camera.items.ItemAlbum;
 import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.items.ItemImageFrame;
@@ -48,6 +50,9 @@ public class Main {
 
     @ObjectHolder(MODID + ":image")
     public static ItemImage IMAGE;
+
+    @ObjectHolder(MODID + ":album")
+    public static ItemAlbum ALBUM;
 
     public static final EntityType<EntityImage> IMAGE_ENTITY_TYPE = EntityType.register(MODID + ":image_frame", EntityType.Builder.create(EntityImage.class, EntityImage::new).tracker(256, 20, false));
 
@@ -96,6 +101,7 @@ public class Main {
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(EntityImage.class, manager -> new RenderImage(manager));
+        GUIManager.clientSetup();
         MinecraftForge.EVENT_BUS.register(new ImageTaker());
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
     }
@@ -105,7 +111,8 @@ public class Main {
         event.getRegistry().registerAll(
                 FRAME_ITEM = new ItemImageFrame(),
                 CAMERA = new ItemCamera(),
-                IMAGE = new ItemImage()
+                IMAGE = new ItemImage(),
+                ALBUM = new ItemAlbum()
         );
     }
 
