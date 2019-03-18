@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = Main.MODID, version = "1.0.3", acceptedMinecraftVersions = "[1.12.2]", updateJSON = "https://maxhenkel.de/update/camera.json", dependencies = "")
+@Mod(modid = Main.MODID, version = "1.0.4", acceptedMinecraftVersions = "[1.12.2]", updateJSON = "https://maxhenkel.de/update/camera.json", dependencies = "")
 public class Main {
 
     public static final String MODID = "camera";

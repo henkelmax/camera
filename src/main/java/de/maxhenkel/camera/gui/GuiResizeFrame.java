@@ -37,13 +37,13 @@ public class GuiResizeFrame extends GuiContainer {
         int padding = 10;
         int buttonWidth = 50;
         int buttonHeight = 20;
-        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.left").getFormattedText()));
+        addButton(new GuiButton(0, left + padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.left").getFormattedText()));
 
-        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.right").getFormattedText()));
+        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.right").getFormattedText()));
 
-        addButton(new GuiButton(2, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.up").getFormattedText()));
+        addButton(new GuiButton(2, width / 2 - buttonWidth / 2, guiTop + padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.up").getFormattedText()));
 
-        addButton(new GuiButton(3, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.down").getFormattedText()));
+        addButton(new GuiButton(3, width / 2 - buttonWidth / 2, guiTop + ySize - padding - buttonHeight, buttonWidth, buttonHeight, new TextComponentTranslation("button.frame.down").getFormattedText()));
 
     }
 
