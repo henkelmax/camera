@@ -9,6 +9,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class ImageTaker {
     private static UUID uuid;
     private static boolean hide;
 
-    public static void takeScreenhot(UUID id) {
+    public static void takeScreenshot(UUID id) {
         Minecraft mc = Minecraft.getInstance();
 
         hide = mc.gameSettings.hideGUI;

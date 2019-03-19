@@ -50,10 +50,10 @@ public class ItemCamera extends Item {
             Main.CAMERA.setActive(stack, true);
         } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
             if (consumePaper(playerIn)) {
-                Main.CAMERA.setActive(stack, false);
                 worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
                 UUID uuid = UUID.randomUUID();
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((EntityPlayerMP) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+                Main.CAMERA.setActive(stack, false);
             } else {
                 playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
             }

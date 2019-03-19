@@ -24,7 +24,7 @@ public class MessageTakeImage implements Message {
 
     @Override
     public void executeClientSide(NetworkEvent.Context context) {
-        ImageTaker.takeScreenhot(uuid);
+        ImageTaker.takeScreenshot(uuid);
     }
 
     @Override
