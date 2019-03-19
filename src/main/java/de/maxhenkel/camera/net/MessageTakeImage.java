@@ -22,7 +22,7 @@ public class MessageTakeImage implements IMessage, IMessageHandler<MessageTakeIm
 
     @Override
     public IMessage onMessage(MessageTakeImage message, MessageContext ctx) {
-        ImageTaker.takeScreenhot(message.uuid);
+        ImageTaker.takeScreenshot(message.uuid);
         return null;
     }
 

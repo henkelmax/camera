@@ -53,6 +53,15 @@ By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
 
 ![camera](https://i.imgur.com/rFe59ku.png)
 
+![camera](https://media.giphy.com/media/MUlteqXcqDk2uDiyzK/giphy.gif)
+
+
+## Zooming (1.12.2 only)
+
+You can zoom in and out by scrolling.
+
+![camera](https://media.giphy.com/media/8Pg7NVhLqSaAeMnrVa/giphy.gif)
+
 
 ## Viewing an Image
 
@@ -67,6 +76,9 @@ The album can hold up to 54 images.
 You can add images by sneak + right-clicking the album.
 You can view the contained images by right-clicking the album.
 By scrolling up and down or pressing the arrow-up/down key, you can switch the currently viewed image.
+
+![camera](https://media.giphy.com/media/paW4B80XAyWLq8fQNL/giphy.gif)
+
 
 ## The Image Frame
 

@@ -1,1 +1,1 @@
-- Added key controls to album
+- Added zoom

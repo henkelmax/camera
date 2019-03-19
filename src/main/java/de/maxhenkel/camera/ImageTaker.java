@@ -18,11 +18,12 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = Main.MODID, value = Side.CLIENT)
 public class ImageTaker {
 
+    private static Minecraft mc = Minecraft.getMinecraft();
     private static boolean takeScreenshot;
     private static UUID uuid;
     private static boolean hide;
 
-    public static void takeScreenhot(UUID id) {
+    public static void takeScreenshot(UUID id) {
         Minecraft mc = Minecraft.getMinecraft();
 
         hide = mc.gameSettings.hideGUI;
@@ -42,8 +43,6 @@ public class ImageTaker {
         if (!takeScreenshot) {
             return;
         }
-
-        Minecraft mc = Minecraft.getMinecraft();
 
         BufferedImage image = ScreenShotHelper.createScreenshot(mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
 

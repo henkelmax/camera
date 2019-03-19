@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.UUID;
 
@@ -48,10 +49,10 @@ public class ItemCamera extends Item {
             ModItems.CAMERA.setActive(stack, true);
         } else if (CommonProxy.packetManager.canTakeImage(playerIn.getUniqueID())) {
             if (consumePaper(playerIn)) {
-                ModItems.CAMERA.setActive(stack, false);
                 worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
                 UUID uuid = UUID.randomUUID();
                 CommonProxy.simpleNetworkWrapper.sendTo(new MessageTakeImage(uuid), (EntityPlayerMP) playerIn);
+                ModItems.CAMERA.setActive(stack, false);
             } else {
                 playerIn.sendStatusMessage(new TextComponentTranslation("message.no_paper"), true);
             }
