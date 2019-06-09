@@ -150,7 +150,7 @@ public class RenderImage extends Render<EntityImage> {
     }
 
     private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
-        if (mc.objectMouseOver.entityHit != entity) {
+        if (mc.objectMouseOver == null || mc.objectMouseOver.entityHit != entity) {
             return;
         }
 

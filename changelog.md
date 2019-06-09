@@ -1,1 +1,1 @@
-- Added zoom
+- Fixed a crash
