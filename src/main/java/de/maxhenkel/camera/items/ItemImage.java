@@ -2,25 +2,21 @@ package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.ContainerImage;
 import de.maxhenkel.camera.gui.GuiImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,40 +34,13 @@ public class ItemImage extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (playerIn.world.isRemote) {
-            playerIn.displayGui(new IInteractionObject() {
-                @Override
-                public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-                    return new ContainerImage();
-                }
-
-                @Override
-                public String getGuiID() {
-                    return Main.MODID + ":image";
-                }
-
-                @Override
-                public ITextComponent getName() {
-                    return new TextComponentTranslation(ItemImage.this.getTranslationKey());
-                }
-
-                @Override
-                public boolean hasCustomName() {
-                    return false;
-                }
-
-                @Nullable
-                @Override
-                public ITextComponent getCustomName() {
-                    return null;
-                }
-            });
             openClientGui(stack);
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -84,41 +53,41 @@ public class ItemImage extends Item {
         String name = getOwner(stack);
 
         if (!name.isEmpty()) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)));
         }
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TextComponentTranslation("tooltip.image_time", TextFormatting.DARK_GRAY + Config.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Config.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    private static NBTTagCompound getImageTag(ItemStack stack) {
+    private static CompoundNBT getImageTag(ItemStack stack) {
         if (!stack.hasTag()) {
-            stack.setTag(new NBTTagCompound());
+            stack.setTag(new CompoundNBT());
         }
 
-        NBTTagCompound compound = stack.getTag();
+        CompoundNBT compound = stack.getTag();
 
-        if (!compound.hasKey("image")) {
-            compound.setTag("image", new NBTTagCompound());
+        if (!compound.contains("image")) {
+            compound.put("image", new CompoundNBT());
         }
 
         return compound.getCompound("image");
     }
 
     public static void setUUID(ItemStack stack, UUID uuid) {
-        NBTTagCompound compound = getImageTag(stack);
+        CompoundNBT compound = getImageTag(stack);
 
-        compound.setLong("image_id_most", uuid.getMostSignificantBits());
-        compound.setLong("image_id_least", uuid.getLeastSignificantBits());
+        compound.putLong("image_id_most", uuid.getMostSignificantBits());
+        compound.putLong("image_id_least", uuid.getLeastSignificantBits());
     }
 
     public static UUID getUUID(ItemStack stack) {
-        NBTTagCompound compound = getImageTag(stack);
+        CompoundNBT compound = getImageTag(stack);
 
-        if (!compound.hasKey("image_id_most") || !compound.hasKey("image_id_least")) {
+        if (!compound.contains("image_id_most") || !compound.contains("image_id_least")) {
             return null;
         }
 
@@ -128,14 +97,14 @@ public class ItemImage extends Item {
     }
 
     public static void setTime(ItemStack stack, long time) {
-        NBTTagCompound compound = getImageTag(stack);
-        compound.setLong("image_time", time);
+        CompoundNBT compound = getImageTag(stack);
+        compound.putLong("image_time", time);
     }
 
     public static long getTime(ItemStack stack) {
-        NBTTagCompound compound = getImageTag(stack);
+        CompoundNBT compound = getImageTag(stack);
 
-        if (!compound.hasKey("image_time")) {
+        if (!compound.contains("image_time")) {
             return 0L;
         }
 
@@ -143,14 +112,14 @@ public class ItemImage extends Item {
     }
 
     public static void setOwner(ItemStack stack, String name) {
-        NBTTagCompound compound = getImageTag(stack);
-        compound.setString("owner", name);
+        CompoundNBT compound = getImageTag(stack);
+        compound.putString("owner", name);
     }
 
     public static String getOwner(ItemStack stack) {
-        NBTTagCompound compound = getImageTag(stack);
+        CompoundNBT compound = getImageTag(stack);
 
-        if (!compound.hasKey("owner")) {
+        if (!compound.contains("owner")) {
             return "";
         }
 

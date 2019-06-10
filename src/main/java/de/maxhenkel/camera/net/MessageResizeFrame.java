@@ -1,7 +1,9 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.entities.EntityImage;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
@@ -19,12 +21,21 @@ public class MessageResizeFrame implements Message {
     public MessageResizeFrame(UUID uuid, Direction direction, boolean larger) {
         this.uuid = uuid;
         this.direction = direction;
-        this.larger=larger;
+        this.larger = larger;
     }
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
+        //TODO check
+        if (context.getSender().world instanceof ServerWorld) {
+            ServerWorld world = (ServerWorld) context.getSender().world;
+            Entity entity = world.func_217461_a(uuid);
+            if (entity instanceof EntityImage) {
+                EntityImage image = (EntityImage) entity;
+                image.resize(direction, larger);
+            }
+        }
+        // context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
     }
 
     @Override
@@ -38,7 +49,7 @@ public class MessageResizeFrame implements Message {
         long least = buf.readLong();
         uuid = new UUID(most, least);
         direction = Direction.valueOf(buf.readString(16));
-        larger=buf.readBoolean();
+        larger = buf.readBoolean();
         return this;
     }
 

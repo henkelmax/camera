@@ -1,7 +1,8 @@
 package de.maxhenkel.camera;
 
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -91,18 +92,19 @@ public class ImageTools {
         return dimg;
     }
 
-    public static File getImageFile(EntityPlayerMP playerMP, UUID uuid) {
-        File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
+    public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
+        //TODO check
+        File imageFolder = new File(playerMP.getServerWorld().getServer().getActiveAnvilConverter().getSaveLoader(playerMP.getServerWorld().getServer().getFolderName(), playerMP.getServerWorld().getServer()).getWorldDirectory(), "camera_images");
         return new File(imageFolder, uuid.toString() + ".png");
     }
 
-    public static void saveImage(EntityPlayerMP playerMP, UUID uuid, BufferedImage bufferedImage) throws IOException {
+    public static void saveImage(ServerPlayerEntity playerMP, UUID uuid, BufferedImage bufferedImage) throws IOException {
         File image = getImageFile(playerMP, uuid);
         image.mkdirs();
         ImageIO.write(bufferedImage, "png", image);
     }
 
-    public static BufferedImage loadImage(EntityPlayerMP playerMP, UUID uuid) throws IOException {
+    public static BufferedImage loadImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
         File image = ImageTools.getImageFile(playerMP, uuid);
 
         FileInputStream fis = new FileInputStream(image);

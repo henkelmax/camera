@@ -1,15 +1,15 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageSetShader;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
-public class GuiCamera extends GuiContainer {
+public class GuiCamera extends ContainerScreen {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
@@ -17,7 +17,7 @@ public class GuiCamera extends GuiContainer {
     private int index = 0;
 
     public GuiCamera(String currentShader) {
-        super(new ContainerImage());
+        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
         xSize = 248;
         ySize = 109;
 
@@ -36,36 +36,27 @@ public class GuiCamera extends GuiContainer {
     }
 
     @Override
-    protected void initGui() {
-        super.initGui();
-
+    protected void init() {
+        super.init();
         buttons.clear();
         int left = (width - xSize) / 2;
         int padding = 10;
         int buttonWidth = 75;
         int buttonHeight = 20;
-        addButton(new GuiButton(0, left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.prev").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                index--;
-                if (index < 0) {
-                    index = Shaders.SHADER_LIST.size() - 1;
-                }
-                sendShader();
+        addButton(new Button(left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.prev").getFormattedText(), (button) -> {
+            index--;
+            if (index < 0) {
+                index = Shaders.SHADER_LIST.size() - 1;
             }
-        });
-        addButton(new GuiButton(1, left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TextComponentTranslation("button.next").getFormattedText()) {
-            @Override
-            public void onClick(double x, double y) {
-                super.onClick(x, y);
-                index++;
-                if (index >= Shaders.SHADER_LIST.size()) {
-                    index = 0;
-                }
-                sendShader();
+            sendShader();
+        }));
+        addButton(new Button(left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.next").getFormattedText(), (button) -> {
+            index++;
+            if (index >= Shaders.SHADER_LIST.size()) {
+                index = 0;
             }
-        });
+            sendShader();
+        }));
     }
 
     private void sendShader() {
@@ -76,24 +67,24 @@ public class GuiCamera extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int x, int y) {
         super.drawGuiContainerForegroundLayer(x, y);
 
-        String title = new TextComponentTranslation("gui.camera.choosefilter").getFormattedText();
+        String title = new TranslationTextComponent("gui.camera.choosefilter").getFormattedText();
 
-        int titleWidth = fontRenderer.getStringWidth(title);
+        int titleWidth = font.getStringWidth(title);
 
-        fontRenderer.drawString(title, xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
+        font.drawString(title, xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
 
-        String shaderName = new TextComponentTranslation("shader." + Shaders.SHADER_LIST.get(index)).getFormattedText();
+        String shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index)).getFormattedText();
 
-        int shaderWidth = fontRenderer.getStringWidth(shaderName);
+        int shaderWidth = font.getStringWidth(shaderName);
 
-        fontRenderer.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, 40, 0xFFFFFFFF);
+        font.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, 40, 0xFFFFFFFF);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawDefaultBackground();
+        renderBackground();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(CAMERA_TEXTURE);
-        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
+        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 }

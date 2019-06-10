@@ -1,16 +1,16 @@
 package de.maxhenkel.camera;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngameMenu;
+import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -156,14 +156,14 @@ public class ClientEvents {
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (inCameraMode) {
-            if (event.getGui() instanceof GuiIngameMenu) {
+            if (event.getGui() instanceof IngameMenuScreen) {
                 Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }
     }
 
-    private ResourceLocation getShader(EntityPlayer player) {
+    private ResourceLocation getShader(PlayerEntity player) {
         ItemStack stack = mc.player.getHeldItemMainhand();
         if (!stack.getItem().equals(Main.CAMERA)) {
             return null;
@@ -174,10 +174,10 @@ public class ClientEvents {
 
     private void setShader(ResourceLocation shader) {
         if (shader == null) {
-            mc.entityRenderer.stopUseShader();
+            mc.gameRenderer.stopUseShader();
         } else if (!shader.equals(currentShader)) {
             try {
-                mc.entityRenderer.loadShader(shader);
+                mc.gameRenderer.loadShader(shader);
             } catch (Exception e) {
             }
         }
@@ -186,11 +186,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getEntityPlayer();
         if (player == mc.player) {
             return;
         }
-        for (EnumHand hand : EnumHand.values()) {
+        for (Hand hand : Hand.values()) {
             ItemStack stack = player.getHeldItem(hand);
             if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
                 player.setActiveHand(hand);
@@ -201,7 +201,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getEntityPlayer();
         if (player == mc.player) {
             return;
         }
@@ -251,7 +251,7 @@ public class ClientEvents {
         if (mc.player == null) {
             return null;
         }
-        for (EnumHand hand : EnumHand.values()) {
+        for (Hand hand : Hand.values()) {
             ItemStack stack = mc.player.getHeldItem(hand);
             if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
                 return stack;

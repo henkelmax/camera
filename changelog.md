@@ -1,1 +1,1 @@
-- Fixed a crash
+- Updated to 1.14.2

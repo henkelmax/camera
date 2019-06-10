@@ -1,30 +1,30 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.items.ItemImage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.UUID;
 
-public class GuiImage extends GuiContainer {
+public class GuiImage extends ContainerScreen {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
 
     private UUID imageUUID;
 
     public GuiImage(ItemStack image) {
-        super(new ContainerImage());
+        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
 
         imageUUID = ItemImage.getUUID(image);
     }
@@ -32,14 +32,14 @@ public class GuiImage extends GuiContainer {
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawDefaultBackground();
+        renderBackground();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageUUID == null) {
             return;
         }
 
-        drawImage(mc, width, height, zLevel, imageUUID);
+        drawImage(minecraft, width, height, 100, imageUUID); //TODO zLevel
 
     }
 

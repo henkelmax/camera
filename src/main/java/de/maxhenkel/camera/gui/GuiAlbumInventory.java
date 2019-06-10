@@ -1,30 +1,30 @@
 package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.Main;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
-public class GuiAlbumInventory extends GUIBase {
+public class GuiAlbumInventory extends GUIBase<ContainerAlbumInventory> {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/gui/album.png");
 
-    private IInventory playerInventory;
-    private IInventory albumInventory;
+    private PlayerInventory playerInventory;
 
-    public GuiAlbumInventory(IInventory playerInventory, IInventory albumInventory) {
-        super(DEFAULT_IMAGE, new ContainerAlbumInventory(playerInventory, albumInventory));
+    public GuiAlbumInventory(PlayerInventory playerInventory, ContainerAlbumInventory albumInventory, ITextComponent name) {
+        super(DEFAULT_IMAGE, albumInventory, playerInventory, name);
 
         this.playerInventory = playerInventory;
-        this.albumInventory = albumInventory;
-
         xSize = 176;
         ySize = 222;
     }
 
+
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
         super.drawGuiContainerForegroundLayer(x, y);
-        fontRenderer.drawString(albumInventory.getDisplayName().getFormattedText(), 8.0F, 6.0F, FONT_COLOR);
-        fontRenderer.drawString(playerInventory.getDisplayName().getFormattedText(), 8.0F, (float) (ySize - 96 + 2), FONT_COLOR);
+
+        font.drawString(getTitle().getFormattedText(), 8.0F, 6.0F, FONT_COLOR);
+        font.drawString(playerInventory.getDisplayName().getFormattedText(), 8.0F, (float) (ySize - 96 + 2), FONT_COLOR);
     }
 }

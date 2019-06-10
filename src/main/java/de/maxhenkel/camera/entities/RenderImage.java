@@ -1,22 +1,24 @@
 package de.maxhenkel.camera.entities;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class RenderImage extends Render<EntityImage> {
+public class RenderImage extends EntityRenderer<EntityImage> {
 
     private static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
     private static final ResourceLocation EMPTY_IMAGE = new ResourceLocation(Main.MODID, "textures/images/empty_image.png");
@@ -27,7 +29,7 @@ public class RenderImage extends Render<EntityImage> {
 
     private Minecraft mc;
 
-    public RenderImage(RenderManager renderManager) {
+    public RenderImage(EntityRendererManager renderManager) {
         super(renderManager);
         mc = Minecraft.getInstance();
     }
@@ -57,9 +59,9 @@ public class RenderImage extends Render<EntityImage> {
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
 
-        EnumFacing facing = entity.getFacing();
-        double width = entity.getWidth();
-        double height = entity.getHeight();
+        Direction facing = entity.getFacing();
+        double width = entity.getFrameWidth();
+        double height = entity.getFrameHeight();
 
         rotate(facing);
 
@@ -150,7 +152,7 @@ public class RenderImage extends Render<EntityImage> {
     }
 
     private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
-        if (mc.objectMouseOver == null || mc.objectMouseOver.entity != entity) {
+        if (mc.objectMouseOver == null || !mc.objectMouseOver.getType().equals(RayTraceResult.Type.ENTITY) || mc.objectMouseOver.hitInfo != entity) { //TODO
             return;
         }
 
@@ -159,7 +161,7 @@ public class RenderImage extends Render<EntityImage> {
         }
 
         GlStateManager.depthMask(false);
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.disableLighting();
         GlStateManager.disableCull();
         GlStateManager.disableBlend();
@@ -173,14 +175,14 @@ public class RenderImage extends Render<EntityImage> {
                 axisalignedbb.maxZ - entity.posZ + z,
                 0.25F, 0.25F, 0.25F, 1F
         );
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
         GlStateManager.enableLighting();
         GlStateManager.enableCull();
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
     }
 
-    public static void rotate(EnumFacing facing) {
+    public static void rotate(Direction facing) {
         switch (facing) {
             case NORTH:
                 GlStateManager.translated(1D, 0D, 1D);

@@ -4,7 +4,7 @@ import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.items.ItemImage;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 
@@ -28,7 +28,7 @@ public class PacketManager {
         this.times = new HashMap<>();
     }
 
-    public void addBytes(EntityPlayerMP playerMP, UUID imgUUID, int offset, int length, byte[] bytes) {
+    public void addBytes(ServerPlayerEntity playerMP, UUID imgUUID, int offset, int length, byte[] bytes) {
         byte[] data;
         if (!clientDataMap.containsKey(imgUUID)) {
             data = new byte[length];
@@ -54,7 +54,7 @@ public class PacketManager {
                         try {
                             ImageTools.saveImage(playerMP, imgUUID, image);
 
-                            playerMP.getServer().addScheduledTask(() -> {
+                            playerMP.getServer().func_213165_a(() -> {
                                 ItemStack stack = new ItemStack(Main.IMAGE);
                                 ItemImage.setUUID(stack, imgUUID);
                                 ItemImage.setTime(stack, System.currentTimeMillis());
@@ -76,7 +76,7 @@ public class PacketManager {
         }
     }
 
-    public BufferedImage getExistingImage(EntityPlayerMP playerMP, UUID uuid) throws IOException {
+    public BufferedImage getExistingImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
         if (imageCache.containsKey(uuid)) {
             return imageCache.get(uuid);
         }

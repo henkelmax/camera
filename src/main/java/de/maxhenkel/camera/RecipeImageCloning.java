@@ -1,16 +1,16 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeHidden;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class RecipeImageCloning extends IRecipeHidden {
-
+//TODO
+public class RecipeImageCloning/* extends IRecipeHidden */ {
+/*
     public RecipeImageCloning(ResourceLocation resourceLocation) {
         super(resourceLocation);
     }
@@ -75,6 +75,6 @@ public class RecipeImageCloning extends IRecipeHidden {
     @Override
     public IRecipeSerializer<?> getSerializer() {
         return Main.CRAFTING_SPECIAL_IMAGE_CLONING;
-    }
+    }*/
 
 }

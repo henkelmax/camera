@@ -1,26 +1,25 @@
 package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.ContainerAlbum;
 import de.maxhenkel.camera.gui.ContainerAlbumInventory;
 import de.maxhenkel.camera.gui.GuiAlbum;
 import de.maxhenkel.camera.inventory.InventoryAlbum;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,35 +38,21 @@ public class ItemAlbum extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
         if (playerIn.isSneaking()) {
-            if (!playerIn.world.isRemote && playerIn instanceof EntityPlayerMP) {
-                NetworkHooks.openGui((EntityPlayerMP) playerIn, new IInteractionObject() {
-                    @Override
-                    public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-                        return new ContainerAlbumInventory(playerInventory, new InventoryAlbum(stack));
-                    }
-
-                    @Override
-                    public String getGuiID() {
-                        return Main.MODID + ":album_inventory";
-                    }
-
-                    @Override
-                    public ITextComponent getName() {
-                        return new TextComponentTranslation(ItemAlbum.this.getTranslationKey());
-                    }
-
-                    @Override
-                    public boolean hasCustomName() {
-                        return false;
-                    }
+            if (!playerIn.world.isRemote && playerIn instanceof ServerPlayerEntity) {
+                NetworkHooks.openGui((ServerPlayerEntity) playerIn, new INamedContainerProvider() {
 
                     @Nullable
                     @Override
-                    public ITextComponent getCustomName() {
-                        return null;
+                    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                        return new ContainerAlbumInventory(id, playerInventory, new InventoryAlbum(stack));
+                    }
+
+                    @Override
+                    public ITextComponent getDisplayName() {
+                        return new TranslationTextComponent(ItemAlbum.this.getTranslationKey());
                     }
                 });
             }
@@ -75,38 +60,11 @@ public class ItemAlbum extends Item {
             if (playerIn.world.isRemote) {
                 List<UUID> images = Main.ALBUM.getImages(stack);
                 if (!images.isEmpty()) {
-                    playerIn.displayGui(new IInteractionObject() {
-                        @Override
-                        public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-                            return new ContainerAlbum();
-                        }
-
-                        @Override
-                        public String getGuiID() {
-                            return Main.MODID + ":album";
-                        }
-
-                        @Override
-                        public ITextComponent getName() {
-                            return new TextComponentTranslation(ItemAlbum.this.getTranslationKey());
-                        }
-
-                        @Override
-                        public boolean hasCustomName() {
-                            return false;
-                        }
-
-                        @Nullable
-                        @Override
-                        public ITextComponent getCustomName() {
-                            return null;
-                        }
-                    });
                     openClientGui(images);
                 }
             }
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -1,9 +1,9 @@
 package de.maxhenkel.camera;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -34,7 +34,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getEntityPlayer();
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             event.setUseBlock(Event.Result.DENY);
@@ -63,17 +63,17 @@ public class ServerEvents {
             if (event.isCancelable()) {
                 event.setCanceled(true);
             }
-            event.setCancellationResult(EnumActionResult.PASS);
+            event.setCancellationResult(ActionResultType.PASS);
         }
     }
 
     @SubscribeEvent
     public void onHit(LivingAttackEvent event) {
         Entity source = event.getSource().getImmediateSource();
-        if (!(source instanceof EntityPlayer)) {
+        if (!(source instanceof PlayerEntity)) {
             return;
         }
-        EntityPlayer player = (EntityPlayer) source;
+        PlayerEntity player = (PlayerEntity) source;
 
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {

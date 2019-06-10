@@ -5,6 +5,7 @@ import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
@@ -32,12 +33,7 @@ public class MessageImage implements Message {
     public void executeClientSide(NetworkEvent.Context context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
-            Minecraft.getInstance().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    TextureCache.instance().addImage(uuid, img);
-                }
-            });
+            Minecraft.getInstance().func_213165_a(() -> TextureCache.instance().addImage(uuid, img)); //TODO scheduledTask
         } catch (IOException e) {
             e.printStackTrace();
         }

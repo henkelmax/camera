@@ -1,37 +1,38 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.Main;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 import java.util.UUID;
 
-public class GuiAlbum extends GuiContainer {
+public class GuiAlbum extends ContainerScreen {
 
     private int index;
     private List<UUID> images;
 
     public GuiAlbum(List<UUID> images) {
-        super(new ContainerImage());
+        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
         this.images = images;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawDefaultBackground();
+        renderBackground();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (images.isEmpty()) {
             return;
         }
         UUID uuid = images.get(index);
-        GuiImage.drawImage(mc, width, height, zLevel, uuid);
+        GuiImage.drawImage(minecraft, width, height, 100, uuid); //TODO zLevel
     }
 
     @Override
-    public boolean mouseScrolled(double amount) {
+    public boolean mouseScrolled(double x, double y, double amount) {
         if (amount < 0D) {
             next();
         } else {
@@ -61,8 +62,8 @@ public class GuiAlbum extends GuiContainer {
     public void tick() {
         super.tick();
 
-        boolean isNextDown = InputMappings.isKeyDown(Main.KEY_NEXT.getKey().getKeyCode());
-        boolean isPreviousDown = InputMappings.isKeyDown(Main.KEY_PREVIOUS.getKey().getKeyCode());
+        boolean isNextDown = InputMappings.func_216506_a(minecraft.mainWindow.getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
+        boolean isPreviousDown = InputMappings.func_216506_a(minecraft.mainWindow.getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {
