@@ -16,6 +16,7 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -48,6 +54,10 @@ public class ImageEntity extends Entity {
     public ImageEntity(EntityType type, World world) {
         super(type, world);
         boundingBox = NULL_AABB;
+    }
+
+    public ImageEntity(World world) {
+        this(Main.IMAGE_ENTITY_TYPE, world);
     }
 
     public ImageEntity(World world, double x, double y, double z) {
@@ -309,7 +319,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public IPacket<?> createSpawnPacket() {
-        return new SpawnImagePacket(this);
+       return new SpawnImagePacket(this);
     }
 
     @Override

@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.play.IClientPlayNetHandler;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SpawnImagePacket extends SSpawnObjectPacket {
 
@@ -11,11 +13,20 @@ public class SpawnImagePacket extends SSpawnObjectPacket {
         super(entity);
     }
 
+    public SpawnImagePacket(){
+
+    }
+
     @Override
     public void processPacket(IClientPlayNetHandler handler) {
+        processPacketClient(handler);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void processPacketClient(IClientPlayNetHandler handler) {
         Minecraft mc = Minecraft.getInstance();
         PacketThreadUtil.func_218797_a(this, handler, mc);
-        double x = this.getX();
+        double x = getX();
         double y = getY();
         double z = getZ();
         ImageEntity entity = new ImageEntity(mc.world, x, y, z);

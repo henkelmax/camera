@@ -76,7 +76,6 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(EntityType.class, this::registerEntities);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainers);
-        //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IRecipe.class, this::registerRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
 
@@ -153,6 +152,7 @@ public class Main {
                 .setUpdateInterval(20)
                 .setShouldReceiveVelocityUpdates(false)
                 .size(1F, 1F)
+                .setCustomClientFactory((spawnEntity, world) -> new ImageEntity(world))
                 .build(Main.MODID + ":image_frame");
         IMAGE_ENTITY_TYPE.setRegistryName(new ResourceLocation(Main.MODID, "image_frame"));
         event.getRegistry().register(IMAGE_ENTITY_TYPE);
