@@ -26,7 +26,6 @@ public class MessageResizeFrame implements Message {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        //TODO check
         if (context.getSender().world instanceof ServerWorld) {
             ServerWorld world = (ServerWorld) context.getSender().world;
             Entity entity = world.func_217461_a(uuid);

@@ -17,7 +17,7 @@ public class CameraScreen extends ContainerScreen {
     private int index = 0;
 
     public CameraScreen(String currentShader) {
-        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
+        super(new DummyContainer(), null, new TranslationTextComponent("gui.camera.title"));
         xSize = 248;
         ySize = 109;
 

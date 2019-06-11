@@ -33,7 +33,7 @@ public class MessageImage implements Message {
     public void executeClientSide(NetworkEvent.Context context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
-            Minecraft.getInstance().func_213165_a(() -> TextureCache.instance().addImage(uuid, img)); //TODO scheduledTask
+            Minecraft.getInstance().func_213165_a(() -> TextureCache.instance().addImage(uuid, img));
         } catch (IOException e) {
             e.printStackTrace();
         }

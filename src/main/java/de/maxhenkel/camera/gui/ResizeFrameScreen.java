@@ -21,7 +21,7 @@ public class ResizeFrameScreen extends ContainerScreen {
     private UUID uuid;
 
     public ResizeFrameScreen(UUID uuid) {
-        super(new DummyContainer(), null, new TranslationTextComponent("gui.frame.resize")); //TODO
+        super(new DummyContainer(), null, new TranslationTextComponent("gui.frame.resize"));
         this.uuid = uuid;
         xSize = 248;
         ySize = 109;

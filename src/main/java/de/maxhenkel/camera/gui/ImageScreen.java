@@ -24,7 +24,7 @@ public class ImageScreen extends ContainerScreen {
     private UUID imageUUID;
 
     public ImageScreen(ItemStack image) {
-        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
+        super(new DummyContainer(), null, new TranslationTextComponent("gui.image.title"));
 
         imageUUID = ItemImage.getUUID(image);
     }
@@ -39,7 +39,7 @@ public class ImageScreen extends ContainerScreen {
             return;
         }
 
-        drawImage(minecraft, width, height, 100, imageUUID); //TODO zLevel
+        drawImage(minecraft, width, height, 100, imageUUID);
 
     }
 

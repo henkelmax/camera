@@ -15,7 +15,7 @@ public class AlbumScreen extends ContainerScreen {
     private List<UUID> images;
 
     public AlbumScreen(List<UUID> images) {
-        super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
+        super(new DummyContainer(), null, new TranslationTextComponent("gui.album.title"));
         this.images = images;
     }
 
@@ -28,7 +28,7 @@ public class AlbumScreen extends ContainerScreen {
             return;
         }
         UUID uuid = images.get(index);
-        ImageScreen.drawImage(minecraft, width, height, 100, uuid); //TODO zLevel
+        ImageScreen.drawImage(minecraft, width, height, 100, uuid);
     }
 
     @Override
