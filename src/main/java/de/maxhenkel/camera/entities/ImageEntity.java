@@ -1,14 +1,14 @@
 package de.maxhenkel.camera.entities;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.GuiResizeFrame;
+import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,7 +16,6 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -30,13 +29,13 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class EntityImage extends Entity {
+public class ImageEntity extends Entity {
 
-    private static final DataParameter<Optional<UUID>> ID = EntityDataManager.createKey(EntityImage.class, DataSerializers.field_187203_m);
-    private static final DataParameter<Direction> FACING = EntityDataManager.createKey(EntityImage.class, DataSerializers.field_187202_l);
-    private static final DataParameter<Integer> WIDTH = EntityDataManager.createKey(EntityImage.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Integer> HEIGHT = EntityDataManager.createKey(EntityImage.class, DataSerializers.field_187192_b);
-    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(EntityImage.class, DataSerializers.field_187196_f);
+    private static final DataParameter<Optional<UUID>> ID = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187203_m);
+    private static final DataParameter<Direction> FACING = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187202_l);
+    private static final DataParameter<Integer> WIDTH = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Integer> HEIGHT = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187196_f);
 
     private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -46,9 +45,18 @@ public class EntityImage extends Entity {
 
     private AxisAlignedBB boundingBox;
 
-    public EntityImage(EntityType type, World world) {
+    public ImageEntity(EntityType type, World world) {
         super(type, world);
         boundingBox = NULL_AABB;
+    }
+
+    public ImageEntity(World world, double x, double y, double z) {
+        this(Main.IMAGE_ENTITY_TYPE, world);
+        this.setPosition(x, y, z);
+        this.setMotion(Vec3d.ZERO);
+        this.prevPosX = x;
+        this.prevPosY = y;
+        this.prevPosZ = z;
     }
 
     @Override
@@ -105,7 +113,7 @@ public class EntityImage extends Entity {
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui() {
-        Minecraft.getInstance().displayGuiScreen(new GuiResizeFrame(getUniqueID()));
+        Minecraft.getInstance().displayGuiScreen(new ResizeFrameScreen(getUniqueID()));
     }
 
     @Override
@@ -126,7 +134,7 @@ public class EntityImage extends Entity {
     }
 
     public boolean isValid() {
-        return world.isCollisionBoxesEmpty(this, getBoundingBox()) && world.getEntitiesWithinAABB(EntityImage.class, getBoundingBox().contract(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty(); // was shrink //TODO
+        return world.isCollisionBoxesEmpty(this, getBoundingBox()) && world.getEntitiesWithinAABB(ImageEntity.class, getBoundingBox().contract(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty(); // was shrink //TODO
     }
 
     public void checkValid() {
@@ -301,7 +309,7 @@ public class EntityImage extends Entity {
 
     @Override
     public IPacket<?> createSpawnPacket() {
-        return new SSpawnObjectPacket(this, getType(), 0, getPosition()); //TODO
+        return new SpawnImagePacket(this);
     }
 
     @Override

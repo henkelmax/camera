@@ -9,12 +9,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.List;
 import java.util.UUID;
 
-public class GuiAlbum extends ContainerScreen {
+public class AlbumScreen extends ContainerScreen {
 
     private int index;
     private List<UUID> images;
 
-    public GuiAlbum(List<UUID> images) {
+    public AlbumScreen(List<UUID> images) {
         super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
         this.images = images;
     }
@@ -28,7 +28,7 @@ public class GuiAlbum extends ContainerScreen {
             return;
         }
         UUID uuid = images.get(index);
-        GuiImage.drawImage(minecraft, width, height, 100, uuid); //TODO zLevel
+        ImageScreen.drawImage(minecraft, width, height, 100, uuid); //TODO zLevel
     }
 
     @Override

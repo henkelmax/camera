@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 
-public class InventoryAlbum implements IInventory {
+public class AlbumInventory implements IInventory {
 
     private NonNullList<ItemStack> items;
     private ItemStack album;
@@ -16,7 +16,7 @@ public class InventoryAlbum implements IInventory {
     private CompoundNBT inventoryTag;
 
 
-    public InventoryAlbum(ItemStack album) {
+    public AlbumInventory(ItemStack album) {
         this.album = album;
         this.invSize = 54;
         this.items = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);

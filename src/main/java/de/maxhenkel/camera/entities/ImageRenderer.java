@@ -3,6 +3,7 @@ package de.maxhenkel.camera.entities;
 import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
+import de.maxhenkel.camera.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -12,13 +13,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class RenderImage extends EntityRenderer<EntityImage> {
+public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
     private static final ResourceLocation EMPTY_IMAGE = new ResourceLocation(Main.MODID, "textures/images/empty_image.png");
@@ -29,13 +29,13 @@ public class RenderImage extends EntityRenderer<EntityImage> {
 
     private Minecraft mc;
 
-    public RenderImage(EntityRendererManager renderManager) {
+    public ImageRenderer(EntityRendererManager renderManager) {
         super(renderManager);
         mc = Minecraft.getInstance();
     }
 
     @Override
-    public void doRender(EntityImage entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(ImageEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         float imageRatio = 1F;
         boolean stretch = true;
         ResourceLocation resourceLocation = EMPTY_IMAGE;
@@ -151,8 +151,8 @@ public class RenderImage extends EntityRenderer<EntityImage> {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 
-    private void renderBoundingBox(EntityImage entity, double x, double y, double z) {
-        if (mc.objectMouseOver == null || !mc.objectMouseOver.getType().equals(RayTraceResult.Type.ENTITY) || mc.objectMouseOver.hitInfo != entity) { //TODO
+    private void renderBoundingBox(ImageEntity entity, double x, double y, double z) {
+        if (Tools.getEntityLookingAt() != entity) {
             return;
         }
 
@@ -203,7 +203,7 @@ public class RenderImage extends EntityRenderer<EntityImage> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(EntityImage entity) {
+    protected ResourceLocation getEntityTexture(ImageEntity entity) {
         return DEFAULT_IMAGE;
     }
 

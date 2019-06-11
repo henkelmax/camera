@@ -7,13 +7,13 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public abstract class GUIBase<T extends Container> extends ContainerScreen<T> {
+public abstract class ScreenBase<T extends Container> extends ContainerScreen<T> {
 
     protected static final int FONT_COLOR = 4210752;
 
     protected ResourceLocation texture;
 
-    public GUIBase(ResourceLocation texture, T inventorySlotsIn, PlayerInventory playerInventory, ITextComponent name) {
+    public ScreenBase(ResourceLocation texture, T inventorySlotsIn, PlayerInventory playerInventory, ITextComponent name) {
         super(inventorySlotsIn, playerInventory, name);
         this.texture = texture;
     }

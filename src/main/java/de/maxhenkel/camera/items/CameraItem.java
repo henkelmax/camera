@@ -3,7 +3,7 @@ package de.maxhenkel.camera.items;
 import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
-import de.maxhenkel.camera.gui.GuiCamera;
+import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -20,9 +20,9 @@ import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.UUID;
 
-public class ItemCamera extends Item {
+public class CameraItem extends Item {
 
-    public ItemCamera() {
+    public CameraItem() {
         super(new Item.Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "camera"));
     }
@@ -63,7 +63,7 @@ public class ItemCamera extends Item {
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui(String currentShader) {
-        Minecraft.getInstance().displayGuiScreen(new GuiCamera(currentShader));
+        Minecraft.getInstance().displayGuiScreen(new CameraScreen(currentShader));
     }
 
     @Override

@@ -17,13 +17,13 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.UUID;
 
-public class GuiImage extends ContainerScreen {
+public class ImageScreen extends ContainerScreen {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
 
     private UUID imageUUID;
 
-    public GuiImage(ItemStack image) {
+    public ImageScreen(ItemStack image) {
         super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
 
         imageUUID = ItemImage.getUUID(image);

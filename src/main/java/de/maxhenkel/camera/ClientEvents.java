@@ -1,7 +1,7 @@
 package de.maxhenkel.camera;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import de.maxhenkel.camera.items.ItemCamera;
+import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
@@ -192,7 +192,7 @@ public class ClientEvents {
         }
         for (Hand hand : Hand.values()) {
             ItemStack stack = player.getHeldItem(hand);
-            if (stack.getItem() instanceof ItemCamera && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem() instanceof CameraItem && Main.CAMERA.isActive(stack)) {
                 player.setActiveHand(hand);
             }
         }

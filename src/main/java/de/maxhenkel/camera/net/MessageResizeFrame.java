@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.entities.EntityImage;
+import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.ServerWorld;
@@ -30,8 +30,8 @@ public class MessageResizeFrame implements Message {
         if (context.getSender().world instanceof ServerWorld) {
             ServerWorld world = (ServerWorld) context.getSender().world;
             Entity entity = world.func_217461_a(uuid);
-            if (entity instanceof EntityImage) {
-                EntityImage image = (EntityImage) entity;
+            if (entity instanceof ImageEntity) {
+                ImageEntity image = (ImageEntity) entity;
                 image.resize(direction, larger);
             }
         }

@@ -2,7 +2,7 @@ package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.GuiImage;
+import de.maxhenkel.camera.gui.ImageScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,7 +45,7 @@ public class ItemImage extends Item {
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui(ItemStack stack) {
-        Minecraft.getInstance().displayGuiScreen(new GuiImage(stack));
+        Minecraft.getInstance().displayGuiScreen(new ImageScreen(stack));
     }
 
     @Override

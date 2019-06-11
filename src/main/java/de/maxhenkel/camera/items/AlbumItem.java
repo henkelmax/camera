@@ -2,8 +2,8 @@ package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ContainerAlbumInventory;
-import de.maxhenkel.camera.gui.GuiAlbum;
-import de.maxhenkel.camera.inventory.InventoryAlbum;
+import de.maxhenkel.camera.gui.AlbumScreen;
+import de.maxhenkel.camera.inventory.AlbumInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemAlbum extends Item {
+public class AlbumItem extends Item {
 
-    public ItemAlbum() {
+    public AlbumItem() {
         super(new Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "album"));
     }
@@ -47,12 +47,12 @@ public class ItemAlbum extends Item {
                     @Nullable
                     @Override
                     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                        return new ContainerAlbumInventory(id, playerInventory, new InventoryAlbum(stack));
+                        return new ContainerAlbumInventory(id, playerInventory, new AlbumInventory(stack));
                     }
 
                     @Override
                     public ITextComponent getDisplayName() {
-                        return new TranslationTextComponent(ItemAlbum.this.getTranslationKey());
+                        return new TranslationTextComponent(AlbumItem.this.getTranslationKey());
                     }
                 });
             }
@@ -69,12 +69,12 @@ public class ItemAlbum extends Item {
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui(List<UUID> images) {
-        Minecraft.getInstance().displayGuiScreen(new GuiAlbum(images));
+        Minecraft.getInstance().displayGuiScreen(new AlbumScreen(images));
     }
 
     public List<UUID> getImages(ItemStack stack) {
         List<UUID> images = new ArrayList<>();
-        IInventory inventory = new InventoryAlbum(stack);
+        IInventory inventory = new AlbumInventory(stack);
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack s = inventory.getStackInSlot(i);
             UUID uuid = Main.IMAGE.getUUID(s);

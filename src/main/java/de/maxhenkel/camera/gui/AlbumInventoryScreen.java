@@ -5,13 +5,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class GuiAlbumInventory extends GUIBase<ContainerAlbumInventory> {
+public class AlbumInventoryScreen extends ScreenBase<ContainerAlbumInventory> {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/gui/album.png");
 
     private PlayerInventory playerInventory;
 
-    public GuiAlbumInventory(PlayerInventory playerInventory, ContainerAlbumInventory albumInventory, ITextComponent name) {
+    public AlbumInventoryScreen(PlayerInventory playerInventory, ContainerAlbumInventory albumInventory, ITextComponent name) {
         super(DEFAULT_IMAGE, albumInventory, playerInventory, name);
 
         this.playerInventory = playerInventory;

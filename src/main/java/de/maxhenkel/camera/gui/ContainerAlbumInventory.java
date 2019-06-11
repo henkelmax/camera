@@ -16,7 +16,7 @@ public class ContainerAlbumInventory extends ContainerBase {
         for (int x = 0; x < 6; x++) {
             for (int y = 0; y < 9; y++) {
 
-                addSlot(new SlotAlbum(albumInventory, y + x * 9, 8 + y * 18, 18 + x * 18));
+                addSlot(new AlbumSlot(albumInventory, y + x * 9, 8 + y * 18, 18 + x * 18));
             }
         }
 

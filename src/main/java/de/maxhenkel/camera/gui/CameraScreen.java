@@ -9,14 +9,14 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class GuiCamera extends ContainerScreen {
+public class CameraScreen extends ContainerScreen {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
 
     private int index = 0;
 
-    public GuiCamera(String currentShader) {
+    public CameraScreen(String currentShader) {
         super(new DummyContainer(), null, new TranslationTextComponent("test")); //TODO
         xSize = 248;
         ySize = 109;

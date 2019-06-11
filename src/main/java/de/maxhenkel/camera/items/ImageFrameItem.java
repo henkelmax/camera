@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.entities.EntityImage;
+import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.ActionResultType;
@@ -10,9 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ItemImageFrame extends Item {
+public class ImageFrameItem extends Item {
 
-    public ItemImageFrame() {
+    public ImageFrameItem() {
         super(new Properties().group(ItemGroup.DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "image_frame"));
     }
@@ -28,7 +28,7 @@ public class ItemImageFrame extends Item {
         }
 
         World world = context.getWorld();
-        EntityImage image = Main.IMAGE_ENTITY_TYPE.create(world);
+        ImageEntity image = Main.IMAGE_ENTITY_TYPE.create(world);
         image.setFacing(facing);
         image.setImagePosition(offset);
         if (image.isValid()) {
