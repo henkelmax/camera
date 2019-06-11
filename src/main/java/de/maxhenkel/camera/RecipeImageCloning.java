@@ -1,36 +1,22 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-//TODO
-public class RecipeImageCloning/* extends IRecipeHidden */ {
-/*
-    public RecipeImageCloning(ResourceLocation resourceLocation) {
-        super(resourceLocation);
+public class RecipeImageCloning extends SpecialRecipe {
+
+    public RecipeImageCloning(ResourceLocation idIn) {
+        super(idIn);
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(IInventory inv) {
-        NonNullList<ItemStack> items = NonNullList.create();
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
-            if (stack.getItem().equals(Main.IMAGE)) {
-                items.add(stack.copy());
-            } else {
-                items.add(ItemStack.EMPTY);
-            }
-        }
-        return items;
-    }
-
-    @Override
-    public boolean matches(IInventory inv, World worldIn) {
+    public boolean matches(CraftingInventory inv, World worldIn) {
         ItemStack paper = null;
         ItemStack image = null;
 
@@ -51,7 +37,7 @@ public class RecipeImageCloning/* extends IRecipeHidden */ {
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack getCraftingResult(CraftingInventory inv) {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.getItem().equals(Main.IMAGE)) {
@@ -63,6 +49,25 @@ public class RecipeImageCloning/* extends IRecipeHidden */ {
     }
 
     @Override
+    public IRecipeSerializer<?> getSerializer() {
+        return Main.CRAFTING_SPECIAL_IMAGE_CLONING;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
+        NonNullList<ItemStack> items = NonNullList.create();
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack stack = inv.getStackInSlot(i);
+            if (stack.getItem().equals(Main.IMAGE)) {
+                items.add(stack.copy());
+            } else {
+                items.add(ItemStack.EMPTY);
+            }
+        }
+        return items;
+    }
+
+    @Override
     public boolean canFit(int width, int height) {
         return width >= 2 && height >= 2;
     }
@@ -71,10 +76,4 @@ public class RecipeImageCloning/* extends IRecipeHidden */ {
     public ItemStack getRecipeOutput() {
         return new ItemStack(Main.IMAGE);
     }
-
-    @Override
-    public IRecipeSerializer<?> getSerializer() {
-        return Main.CRAFTING_SPECIAL_IMAGE_CLONING;
-    }*/
-
 }

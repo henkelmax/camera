@@ -14,8 +14,10 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,8 +45,7 @@ public class Main {
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
-    // TODO
-    // public static final RecipeSerializers.SimpleSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING = registerRecipe(new SimpleSerializer<>("crafting_special_imagecloning", RecipeImageCloning::new));
+    public static SpecialRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING = registerRecipeSerializer("crafting_special_imagecloning", new SpecialRecipeSerializer<>(RecipeImageCloning::new));
 
     @ObjectHolder(MODID + ":image_frame")
     public static ImageFrameItem FRAME_ITEM;
@@ -75,6 +76,7 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(EntityType.class, this::registerEntities);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainers);
+        //FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IRecipe.class, this::registerRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
 
@@ -161,6 +163,10 @@ public class Main {
         ALBUM_INVENTORY_CONTAINER = new ContainerType<>(ContainerAlbumInventory::new);
         ALBUM_INVENTORY_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album_inventory"));
         event.getRegistry().register(ALBUM_INVENTORY_CONTAINER);
+    }
+
+    private static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S registerRecipeSerializer(String p_222156_0_, S p_222156_1_) {
+        return (S) (Registry.<IRecipeSerializer<?>>register(Registry.field_218368_I, p_222156_0_, p_222156_1_));
     }
 
 }
