@@ -1,1 +1,1 @@
-- Re added the zoom function
+- Fixed a bug preventig worlds to save
