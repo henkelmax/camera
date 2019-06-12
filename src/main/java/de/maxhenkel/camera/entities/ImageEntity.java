@@ -29,6 +29,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nullable;
@@ -319,7 +320,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public IPacket<?> createSpawnPacket() {
-       return new SpawnImagePacket(this);
+       return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
