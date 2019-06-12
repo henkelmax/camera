@@ -45,7 +45,7 @@ public class Main {
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
-    public static SpecialRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING = registerRecipeSerializer("crafting_special_imagecloning", new SpecialRecipeSerializer<>(RecipeImageCloning::new));
+    public static SpecialRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING;
 
     @ObjectHolder(MODID + ":image_frame")
     public static ImageFrameItem FRAME_ITEM;
@@ -76,6 +76,7 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(EntityType.class, this::registerEntities);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainers);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IRecipeSerializer.class, this::registerRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
 
@@ -165,8 +166,10 @@ public class Main {
         event.getRegistry().register(ALBUM_INVENTORY_CONTAINER);
     }
 
-    private static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S registerRecipeSerializer(String p_222156_0_, S p_222156_1_) {
-        return (S) (Registry.<IRecipeSerializer<?>>register(Registry.field_218368_I, p_222156_0_, p_222156_1_));
+    @SubscribeEvent
+    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+        CRAFTING_SPECIAL_IMAGE_CLONING=new SpecialRecipeSerializer<>(RecipeImageCloning::new);
+        CRAFTING_SPECIAL_IMAGE_CLONING.setRegistryName(MODID, "crafting_special_imagecloning");
+        event.getRegistry().register(CRAFTING_SPECIAL_IMAGE_CLONING);
     }
-
 }
