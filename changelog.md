@@ -1,1 +1,1 @@
-- Updated to 1.14.2
+- Re added the zoom function
