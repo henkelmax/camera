@@ -45,23 +45,30 @@ public class ClientEvents {
         fov = 0D;
 
         try {
-            Method m;
+            Method m = null;
             try {
                 m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "func_198020_a", long.class, double.class, double.class);
             } catch (Exception e) {
-                m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "scrollCallback", long.class, double.class, double.class);
+                try {
+                    m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "scrollCallback", long.class, double.class, double.class);
+                } catch (Exception e1) {
+                    e.printStackTrace();
+                    e1.printStackTrace();
+                }
             }
 
             Method scrollCallback = m;
-            GLFW.glfwSetScrollCallback(mc.mainWindow.getHandle(), (window, xoffset, yoffset) -> {
-                if (!scrollCallback(window, xoffset, yoffset)) {
-                    try {
-                        scrollCallback.invoke(mc.mouseHelper, window, xoffset, yoffset);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            if (scrollCallback != null) {
+                GLFW.glfwSetScrollCallback(mc.mainWindow.getHandle(), (window, xoffset, yoffset) -> {
+                    if (!scrollCallback(window, xoffset, yoffset)) {
+                        try {
+                            scrollCallback.invoke(mc.mouseHelper, window, xoffset, yoffset);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
