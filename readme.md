@@ -56,7 +56,7 @@ By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
 ![camera](https://media.giphy.com/media/MUlteqXcqDk2uDiyzK/giphy.gif)
 
 
-## Zooming (1.12.2 only)
+## Zooming (1.12.2 and 1.14.2 only)
 
 You can zoom in and out by scrolling.
 
@@ -98,6 +98,17 @@ To remove it from the frame just right-click the frame again.
 ## Recipes
 
 Images can be copied by combining it with a piece of paper in the crafting table.
+
+## Config
+
+``` toml
+# The time in milliseconds the camera will be on cooldown after taking an image
+image_cooldown = 5000
+# The format the date will be displayed on the image
+image_date_format = "MM/dd/yyyy HH:mm"
+# The Item that is consumed when taking an image
+camera_consume_item = "{id:\"minecraft:paper\",Count:1b}"
+```
 
 
 
