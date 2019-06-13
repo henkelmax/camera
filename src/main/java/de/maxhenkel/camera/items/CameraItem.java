@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.items;
 
+import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
@@ -18,6 +19,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkDirection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CameraItem extends Item {
@@ -51,13 +54,11 @@ public class CameraItem extends Item {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_paper"), true);
+                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", Config.cameraConsume.getDisplayName(), Config.cameraConsume.getCount()), true);
             }
         } else {
             playerIn.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
         }
-
-
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
@@ -93,36 +94,43 @@ public class CameraItem extends Item {
             return true;
         }
 
-        ItemStack paper = findPaper(player);
+        int amountNeeded = Config.cameraConsume.getCount();
+        List<ItemStack> consumeStacks = findPaper(player);
 
-        if (paper == null) {
-            return false;
+        int count = 0;
+        for (ItemStack stack : consumeStacks) {
+            count += stack.getCount();
+        }
+        if (count >= amountNeeded) {
+            for (ItemStack stack : consumeStacks) {
+                amountNeeded -= stack.getCount() - ItemTools.itemStackAmount(-amountNeeded, stack, null);
+            }
+            return true;
         }
 
-        ItemTools.decrItemStack(paper, null);
-        return true;
+        return false;
     }
 
-    private ItemStack findPaper(PlayerEntity player) {
-        if (isPaper(player.getHeldItem(Hand.OFF_HAND))) {
-            return player.getHeldItem(Hand.OFF_HAND);
-        } else if (isPaper(player.getHeldItem(Hand.MAIN_HAND))) {
-            return player.getHeldItem(Hand.MAIN_HAND);
-        } else {
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-                if (isPaper(itemstack)) {
-                    return itemstack;
-                }
-            }
-
-            return null;
+    private List<ItemStack> findPaper(PlayerEntity player) {
+        List<ItemStack> items = new ArrayList<>();
+        if (isPaper(player.getHeldItem(Hand.MAIN_HAND))) {
+            items.add(player.getHeldItem(Hand.MAIN_HAND));
         }
+        if (isPaper(player.getHeldItem(Hand.OFF_HAND))) {
+            items.add(player.getHeldItem(Hand.OFF_HAND));
+        }
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+            ItemStack itemstack = player.inventory.getStackInSlot(i);
+
+            if (isPaper(itemstack)) {
+                items.add(itemstack);
+            }
+        }
+        return items;
     }
 
     protected boolean isPaper(ItemStack stack) {
-        return stack.getItem().equals(Items.PAPER);
+        return ItemTools.areItemsEqual(stack, Config.cameraConsume);
     }
 
     public boolean isActive(ItemStack stack) {

@@ -1,1 +1,1 @@
-- Fixed a bug preventig worlds to save
+- Added config option for camera consumable item

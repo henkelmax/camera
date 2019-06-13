@@ -1,12 +1,11 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.entity.LivingEntity;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.*;
 
 import java.util.List;
 
@@ -87,44 +86,44 @@ public class ItemTools {
      * @param amount The amount to change
      * @param stack  The Item Stack
      * @param player The player. Can be null
-     * @return The Itemstack with the changed amount
+     * @return The amount left
      */
-    public static ItemStack itemStackAmount(int amount, ItemStack stack, PlayerEntity player) {
+    public static int itemStackAmount(int amount, ItemStack stack, PlayerEntity player) {
         if (stack == null) {
-            return ItemStack.EMPTY;
+            return 0;
         }
 
-        if (player != null && player.playerAbilities.isCreativeMode) {
-            return stack;
+        if (player == null || !player.playerAbilities.isCreativeMode) {
+            stack.setCount(stack.getCount() + amount);
+            if (stack.getCount() <= 0) {
+                stack.setCount(0);
+            }
         }
 
-        stack.setCount(stack.getCount() + amount);
-        if (stack.getCount() <= 0) {
-            stack.setCount(0);
-            return ItemStack.EMPTY;
-        }
 
         if (stack.getCount() > stack.getMaxStackSize()) {
             stack.setCount(stack.getMaxStackSize());
         }
 
-        return stack;
+        return stack.getCount();
     }
 
-    public static ItemStack decrItemStack(ItemStack stack, PlayerEntity player) {
+    public static int decrItemStack(ItemStack stack, PlayerEntity player) {
         return itemStackAmount(-1, stack, player);
     }
 
-    public static ItemStack incrItemStack(ItemStack stack, PlayerEntity player) {
+    public static int incrItemStack(ItemStack stack, PlayerEntity player) {
         return itemStackAmount(1, stack, player);
     }
 
+    /*
     public static ItemStack damageStack(ItemStack stack, int amount, LivingEntity entity) {
         //TODO check
         stack.func_222118_a(amount, entity, (livingEntity -> {
         }));
         return stack;
     }
+    */
 
     public static void removeStackFromSlot(IInventory inventory, int index) {
         inventory.setInventorySlotContents(index, ItemStack.EMPTY);
@@ -163,6 +162,19 @@ public class ItemTools {
             if (j >= 0 && j < inv.getSizeInventory()) {
                 inv.setInventorySlotContents(j, ItemStack.read(nbttagcompound));
             }
+        }
+    }
+
+    public static String serializeItemStack(ItemStack stack) {
+        return stack.serializeNBT().toString();
+    }
+
+    public static ItemStack deserializeItemStack(String json) {
+        try {
+            return ItemStack.read(JsonToNBT.getTagFromJson(json));
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
+            return ItemStack.EMPTY;
         }
     }
 
