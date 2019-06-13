@@ -56,7 +56,7 @@ By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
 ![camera](https://media.giphy.com/media/MUlteqXcqDk2uDiyzK/giphy.gif)
 
 
-## Zooming (1.12.2 and 1.14.2 only)
+## Zooming
 
 You can zoom in and out by scrolling.
 
