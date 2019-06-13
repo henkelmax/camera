@@ -3,6 +3,7 @@ package de.maxhenkel.camera;
 import de.maxhenkel.camera.items.ItemCamera;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHelper;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,13 +15,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
+import java.lang.reflect.Method;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
@@ -29,16 +31,47 @@ public class ClientEvents {
     private static final ResourceLocation VIEWFINDER = new ResourceLocation(Main.MODID, "textures/gui/viewfinder_overlay.png");
     private static final ResourceLocation ZOOM = new ResourceLocation(Main.MODID, "textures/gui/zoom.png");
 
-    // public static final float MAX_FOV = 90F;
-    // public static final float MIN_FOV = 5F;
+    public static final double MAX_FOV = 90D;
+    public static final double MIN_FOV = 5D;
 
     private Minecraft mc;
     private boolean inCameraMode;
-    // private float fov;
+    private double fov;
     private ResourceLocation currentShader;
 
     public ClientEvents() {
         mc = Minecraft.getInstance();
+        inCameraMode = false;
+        fov = 0D;
+
+        try {
+            Method m = null;
+            try {
+                m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "func_198020_a", long.class, double.class, double.class);
+            } catch (Exception e) {
+                try {
+                    m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "scrollCallback", long.class, double.class, double.class);
+                } catch (Exception e1) {
+                    e.printStackTrace();
+                    e1.printStackTrace();
+                }
+            }
+
+            Method scrollCallback = m;
+            if (scrollCallback != null) {
+                GLFW.glfwSetScrollCallback(mc.mainWindow.getHandle(), (window, xoffset, yoffset) -> {
+                    if (!scrollCallback(window, xoffset, yoffset)) {
+                        try {
+                            scrollCallback.invoke(mc.mouseHelper, window, xoffset, yoffset);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
@@ -64,7 +97,7 @@ public class ClientEvents {
         setShader(getShader(mc.player));
 
         drawViewFinder();
-        drawZoom(1F/*getFOVPercentage()*/);
+        drawZoom(getFOVPercentage());
     }
 
     private void drawViewFinder() {
@@ -108,7 +141,7 @@ public class ClientEvents {
         GlStateManager.popMatrix();
     }
 
-    private void drawZoom(float percent) {
+    private void drawZoom(double percent) {
 
         GlStateManager.pushMatrix();
 
@@ -133,7 +166,7 @@ public class ClientEvents {
         buffer.pos(left + zoomWidth, top + zoomHeight / 2, 0D).tex(1D, 0.5D).endVertex();
         buffer.pos(left + zoomWidth, top, 0D).tex(1D, 0D).endVertex();
 
-        int percWidth = (int) (Math.max(Math.min(percent, 1F), 0F) * (float) zoomWidth);
+        int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
         buffer.pos(left, top, 0D).tex(0D, 0.5D).endVertex();
         buffer.pos(left, top + zoomHeight / 2, 0D).tex(0D, 1D).endVertex();
@@ -212,7 +245,22 @@ public class ClientEvents {
         event.getEntityPlayer().resetActiveHand();
     }
 
-    /*@SubscribeEvent
+    private boolean scrollCallback(long handle, double xoffset, double yoffset) {
+        if (!inCameraMode) {
+            return false;
+        }
+
+        if (yoffset < 0) {
+            fov = Math.min(fov + 5F, MAX_FOV);
+        } else {
+            fov = Math.max(fov - 5F, MIN_FOV);
+        }
+        return true;
+    }
+
+    // TODO Implement when the MouseEvent is available
+    /*
+    @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
         if (event.getDwheel() == 0) {
             return;
@@ -227,25 +275,27 @@ public class ClientEvents {
             fov = Math.max(fov - 5F, MIN_FOV);
         }
         event.setCanceled(true);
-    }*/
+    }
+    */
 
-    /*@SubscribeEvent
+    @SubscribeEvent
     public void onFOVModifierEvent(EntityViewRenderEvent.FOVModifier event) {
-        if (event.getEntity() != mc.player) {
-            return;
-        }
-
         if (!inCameraMode) {
             fov = event.getFOV();
             return;
         }
-        mc.player.setPositionAndRotation(mc.player.posX, mc.player.posY + 0.000000001D, mc.player.posZ, mc.player.rotationYaw, mc.player.rotationPitch);
+
+        /*
+            To trigger the rendering of the chunks that were outside of the FOV
+        */
+        mc.player.posY += 0.000000001D;
+
         event.setFOV(fov);
     }
 
-    public float getFOVPercentage() {
-        return 1F - (fov - MIN_FOV) / (MAX_FOV - MIN_FOV);
-    }*/
+    public double getFOVPercentage() {
+        return 1D - (fov - MIN_FOV) / (MAX_FOV - MIN_FOV);
+    }
 
     private ItemStack getActiveCamera() {
         if (mc.player == null) {
