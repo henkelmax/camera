@@ -63,7 +63,7 @@ public class EntityImage extends Entity {
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        if (player.isSneaking()) {
+        if (player.isSneaking() && player.capabilities.allowEdit) {
             player.openGui(Main.MODID, GuiHandler.GUI_RESIZE_FRAME, player.world, (int) posX, (int) posY, (int) posZ);
             return true;
         }
@@ -106,6 +106,13 @@ public class EntityImage extends Entity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (!(source.getImmediateSource() instanceof EntityPlayer)) {
+            return false;
+        }
+        if (!((EntityPlayer) source.getImmediateSource()).capabilities.allowEdit) {
+            return false;
+        }
+
         if (hasImage()) {
             ItemStack image = removeImage();
             if (!world.isRemote) {

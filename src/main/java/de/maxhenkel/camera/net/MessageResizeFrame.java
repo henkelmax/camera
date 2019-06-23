@@ -25,7 +25,9 @@ public class MessageResizeFrame extends MessageToServer<MessageResizeFrame> {
 
     @Override
     public void execute(EntityPlayerMP player, MessageResizeFrame message) {
-        player.world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(message.uuid)).forEach(image -> image.resize(message.direction, message.larger));
+        if (player.capabilities.allowEdit) {
+            player.world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(message.uuid)).forEach(image -> image.resize(message.direction, message.larger));
+        }
     }
 
     @Override

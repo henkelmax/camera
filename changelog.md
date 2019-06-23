@@ -1,1 +1,1 @@
-- Fixed a crash
+- Fixed bug that players in adventure mode can break the image frame
