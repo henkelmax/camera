@@ -19,12 +19,14 @@ public class MessageResizeFrame implements Message {
     public MessageResizeFrame(UUID uuid, Direction direction, boolean larger) {
         this.uuid = uuid;
         this.direction = direction;
-        this.larger=larger;
+        this.larger = larger;
     }
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
+        if (context.getSender().abilities.allowEdit) {
+            context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
+        }
     }
 
     @Override
@@ -38,7 +40,7 @@ public class MessageResizeFrame implements Message {
         long least = buf.readLong();
         uuid = new UUID(most, least);
         direction = Direction.valueOf(buf.readString(16));
-        larger=buf.readBoolean();
+        larger = buf.readBoolean();
         return this;
     }
 

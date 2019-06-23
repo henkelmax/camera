@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,7 +63,7 @@ public class EntityImage extends Entity {
 
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
-        if (player.isSneaking()) {
+        if (player.isSneaking() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }
@@ -112,6 +113,13 @@ public class EntityImage extends Entity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (!(source.getImmediateSource() instanceof EntityPlayer)) {
+            return false;
+        }
+        if (!((EntityPlayer) source.getImmediateSource()).abilities.allowEdit) {
+            return false;
+        }
+
         if (hasImage()) {
             ItemStack image = removeImage();
             if (!world.isRemote) {
