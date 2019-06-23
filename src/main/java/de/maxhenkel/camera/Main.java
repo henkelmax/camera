@@ -83,6 +83,8 @@ public class Main {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            // Moved from clientSetup because of entities not rendering
+            RenderingRegistry.registerEntityRenderingHandler(ImageEntity.class, manager -> new ImageRenderer(manager));
             FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
         });
     }
@@ -114,8 +116,6 @@ public class Main {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(ImageEntity.class, manager -> new ImageRenderer(manager));
-
         MinecraftForge.EVENT_BUS.register(new ImageTaker());
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
 

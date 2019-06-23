@@ -19,13 +19,13 @@ public class Tools {
         if (mc.world == null) {
             return null;
         }
-        double reachDistance = mc.field_71442_b.getBlockReachDistance();
+        double reachDistance = mc.playerController.getBlockReachDistance();
 
         Vec3d eyePosition = entity.getEyePosition(mc.getRenderPartialTicks());
         double reachDistanceSquared = reachDistance * reachDistance;
         Vec3d lookVec = entity.getLook(1.0F);
         Vec3d lookVecReach = eyePosition.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
-        AxisAlignedBB extendedBoundingBox = entity.getBoundingBox().func_216361_a(lookVec.scale(reachDistance)).grow(1.0D, 1.0D, 1.0D);
+        AxisAlignedBB extendedBoundingBox = entity.getBoundingBox().expand(lookVec.scale(reachDistance)).grow(1.0D, 1.0D, 1.0D);
         EntityRayTraceResult result = ProjectileHelper.func_221273_a(entity, eyePosition, lookVecReach, extendedBoundingBox, (entity1) -> true, reachDistanceSquared);
         if (result == null) {
             return null;

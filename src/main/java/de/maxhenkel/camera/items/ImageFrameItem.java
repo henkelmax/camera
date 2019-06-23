@@ -34,7 +34,7 @@ public class ImageFrameItem extends Item {
         if (image.isValid()) {
             if (!world.isRemote) {
                 image.playPlaceSound();
-                world.func_217376_c(image);
+                world.addEntity(image);
             }
             context.getItem().shrink(1);
             return ActionResultType.SUCCESS;

@@ -90,7 +90,7 @@ public class CameraItem extends Item {
     }
 
     private boolean consumePaper(PlayerEntity player) {
-        if (player.playerAbilities.isCreativeMode) {
+        if (player.abilities.isCreativeMode) {
             return true;
         }
 

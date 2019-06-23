@@ -16,7 +16,6 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,12 +24,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -38,11 +32,11 @@ import java.util.UUID;
 
 public class ImageEntity extends Entity {
 
-    private static final DataParameter<Optional<UUID>> ID = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187203_m);
-    private static final DataParameter<Direction> FACING = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187202_l);
-    private static final DataParameter<Integer> WIDTH = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Integer> HEIGHT = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(ImageEntity.class, DataSerializers.field_187196_f);
+    private static final DataParameter<Optional<UUID>> ID = EntityDataManager.createKey(ImageEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+    private static final DataParameter<Direction> FACING = EntityDataManager.createKey(ImageEntity.class, DataSerializers.DIRECTION);
+    private static final DataParameter<Integer> WIDTH = EntityDataManager.createKey(ImageEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> HEIGHT = EntityDataManager.createKey(ImageEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(ImageEntity.class, DataSerializers.ITEMSTACK);
 
     private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -79,7 +73,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
-        if (player.isSneaking()) {
+        if (player.isSneaking() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }
@@ -129,6 +123,12 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (!(source.getImmediateSource() instanceof PlayerEntity)) {
+            return false;
+        }
+        if (!((PlayerEntity) source.getImmediateSource()).abilities.allowEdit) {
+            return false;
+        }
         if (hasImage()) {
             ItemStack image = removeImage();
             if (!world.isRemote) {
@@ -161,7 +161,7 @@ public class ImageEntity extends Entity {
         playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F);
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            if (player.playerAbilities.isCreativeMode) {
+            if (player.abilities.isCreativeMode) {
                 return;
             }
         }
@@ -271,7 +271,7 @@ public class ImageEntity extends Entity {
         BlockPos center = getCenterPosition();
         ItemEntity entityitem = new ItemEntity(world, center.getX() + 0.5D, center.getY() + 0.5D, center.getZ() + 0.5D, stack);
         entityitem.setDefaultPickupDelay();
-        world.func_217376_c(entityitem);
+        world.addEntity(entityitem);
         return entityitem;
     }
 
@@ -320,7 +320,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public IPacket<?> createSpawnPacket() {
-       return NetworkHooks.getEntitySpawningPacket(this);
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override

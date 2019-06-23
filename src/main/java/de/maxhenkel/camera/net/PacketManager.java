@@ -54,7 +54,7 @@ public class PacketManager {
                         try {
                             ImageTools.saveImage(playerMP, imgUUID, image);
 
-                            playerMP.getServer().func_213165_a(() -> {
+                            playerMP.getServer().deferTask(() -> {
                                 ItemStack stack = new ItemStack(Main.IMAGE);
                                 ItemImage.setUUID(stack, imgUUID);
                                 ItemImage.setTime(stack, System.currentTimeMillis());

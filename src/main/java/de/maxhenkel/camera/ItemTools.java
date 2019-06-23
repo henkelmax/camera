@@ -93,7 +93,7 @@ public class ItemTools {
             return 0;
         }
 
-        if (player == null || !player.playerAbilities.isCreativeMode) {
+        if (player == null || !player.abilities.isCreativeMode) {
             stack.setCount(stack.getCount() + amount);
             if (stack.getCount() <= 0) {
                 stack.setCount(0);

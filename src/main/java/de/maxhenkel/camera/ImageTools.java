@@ -93,7 +93,7 @@ public class ImageTools {
     }
 
     public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
-        File imageFolder = new File(playerMP.getServerWorld().func_217485_w().getWorldDirectory(), "camera_images");
+        File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
         return new File(imageFolder, uuid.toString() + ".png");
     }
 

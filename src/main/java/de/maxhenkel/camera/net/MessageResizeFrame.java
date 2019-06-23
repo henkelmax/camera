@@ -26,15 +26,14 @@ public class MessageResizeFrame implements Message {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        if (context.getSender().world instanceof ServerWorld) {
+        if (context.getSender().world instanceof ServerWorld && context.getSender().abilities.allowEdit) {
             ServerWorld world = (ServerWorld) context.getSender().world;
-            Entity entity = world.func_217461_a(uuid);
+            Entity entity = world.getEntityByUuid(uuid);
             if (entity instanceof ImageEntity) {
                 ImageEntity image = (ImageEntity) entity;
                 image.resize(direction, larger);
             }
         }
-        // context.getSender().world.getEntities(EntityImage.class, entityImage -> entityImage.getUniqueID().equals(uuid)).forEach(image -> image.resize(direction, larger));
     }
 
     @Override
