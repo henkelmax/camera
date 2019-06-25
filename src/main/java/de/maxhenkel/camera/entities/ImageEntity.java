@@ -21,6 +21,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -155,7 +156,7 @@ public class ImageEntity extends Entity {
     }
 
     public void onBroken(Entity entity) {
-        if (!world.getGameRules().getBoolean("doEntityDrops")) {
+        if (!world.getGameRules().func_223586_b(GameRules.field_223604_g)) {
             return;
         }
         playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F);
