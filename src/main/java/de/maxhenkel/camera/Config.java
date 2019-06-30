@@ -19,7 +19,7 @@ public class Config {
     }
 
     public static SimpleDateFormat imageDateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-    public static long imageCooldown = 5000;
+    public static int imageCooldown = 5000;
     public static ItemStack cameraConsume;
 
     public static void loadServer() {
@@ -29,7 +29,7 @@ public class Config {
     }
 
     public static class ServerConfig {
-        public ForgeConfigSpec.LongValue imageCooldown;
+        public ForgeConfigSpec.IntValue imageCooldown;
         public ForgeConfigSpec.ConfigValue<String> imageDateFormat;
         public ForgeConfigSpec.ConfigValue<String> cameraConsume;
 
@@ -37,7 +37,7 @@ public class Config {
             imageCooldown = builder
                     .comment("The time in milliseconds the camera will be on cooldown after taking an image")
                     .translation("image_cooldown")
-                    .defineInRange("image_cooldown", 5000L, 100L, Integer.MAX_VALUE);
+                    .defineInRange("image_cooldown", 5000, 100, Integer.MAX_VALUE);
             imageDateFormat = builder
                     .comment("The format the date will be displayed on the image")
                     .translation("image_date_format")

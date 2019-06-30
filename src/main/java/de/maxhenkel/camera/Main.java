@@ -83,10 +83,15 @@ public class Main {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            // Moved from clientSetup because of entities not rendering
-            RenderingRegistry.registerEntityRenderingHandler(ImageEntity.class, manager -> new ImageRenderer(manager));
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
+            clientStart();
         });
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void clientStart() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
+        // Moved from clientSetup because of entities not rendering
+        RenderingRegistry.registerEntityRenderingHandler(ImageEntity.class, manager -> new ImageRenderer(manager));
     }
 
     @SubscribeEvent
@@ -168,7 +173,7 @@ public class Main {
 
     @SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        CRAFTING_SPECIAL_IMAGE_CLONING=new SpecialRecipeSerializer<>(RecipeImageCloning::new);
+        CRAFTING_SPECIAL_IMAGE_CLONING = new SpecialRecipeSerializer<>(RecipeImageCloning::new);
         CRAFTING_SPECIAL_IMAGE_CLONING.setRegistryName(MODID, "crafting_special_imagecloning");
         event.getRegistry().register(CRAFTING_SPECIAL_IMAGE_CLONING);
     }
