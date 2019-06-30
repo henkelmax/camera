@@ -1,3 +1,1 @@
-- Fixed bug that players in adventure mode can break the image frame
-- Fixed Image Frame not rendering in newer forge versions
-- Updated forge mappings
+- Fixed crash on servers
