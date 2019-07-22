@@ -156,7 +156,7 @@ public class ImageEntity extends Entity {
     }
 
     public void onBroken(Entity entity) {
-        if (!world.getGameRules().func_223586_b(GameRules.field_223604_g)) {
+        if (!world.getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
             return;
         }
         playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F);

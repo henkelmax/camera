@@ -3,7 +3,7 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
