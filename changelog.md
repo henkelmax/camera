@@ -1,1 +1,1 @@
-- Fixed crash with newest forge version
+- Added tr_tr and de_de translation

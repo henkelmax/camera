@@ -110,7 +110,10 @@ image_date_format = "MM/dd/yyyy HH:mm"
 camera_consume_item = "{id:\"minecraft:paper\",Count:1b}"
 ```
 
+## Translations
 
+- `tr_tr` [
+oynthe](https://www.curseforge.com/members/oynthe)
 
 ![camera](https://i.imgur.com/d7YTnGg.png)
 
