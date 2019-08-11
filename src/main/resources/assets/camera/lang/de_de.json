@@ -5,10 +5,12 @@
   "item.camera.album": "Album",
   "message.no_consumable": "Kein oder nicht genug %s im Inventar (%s benötigt)",
   "message.image_cooldown": "Kamera ist im cooldown",
+  "message.upload_error": "Bild uploadfehler: %s",
   "tooltip.image_time": "Am %s gemacht",
   "tooltip.image_owner": "Von %s",
-  "button.prev": "Zurück",
-  "button.next": "Weiter",
+  "button.camera.prev": "Zurück",
+  "button.camera.next": "Weiter",
+  "button.camera.upload": "Hochladen",
   "gui.camera.choosefilter": "Wähle einen Filter aus",
   "gui.camera.title": "Kamera",
   "gui.frame.resize": "Größe des Bilderrahmens anpassen",
@@ -27,5 +29,7 @@
   "button.frame.up": "Hoch",
   "button.frame.down": "Runter",
   "key.next_image": "Nächstes Bild",
-  "key.previous_image": "Vorheriges Bild"
+  "key.previous_image": "Vorheriges Bild",
+  "filetype.images": "Bilder",
+  "title.choose_image": "Bild auswählen"
 }

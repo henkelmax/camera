@@ -19,8 +19,8 @@ public class MessageSetShader implements Message {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        ItemStack stack=context.getSender().getHeldItemMainhand();
-        if(stack.getItem().equals(Main.CAMERA)){
+        ItemStack stack = context.getSender().getHeldItemMainhand();
+        if (stack.getItem().equals(Main.CAMERA)) {
             Main.CAMERA.setShader(stack, shader);
         }
     }
@@ -32,7 +32,7 @@ public class MessageSetShader implements Message {
 
     @Override
     public MessageSetShader fromBytes(PacketBuffer buf) {
-        shader = buf.readString(128);
+        shader = buf.readString();
         return this;
     }
 

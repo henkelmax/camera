@@ -1,20 +1,22 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.ImageTaker;
+import de.maxhenkel.camera.ClientImageUploadManager;
+import de.maxhenkel.camera.ImageProcessor;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.awt.image.BufferedImage;
 import java.util.UUID;
 
-public class MessageTakeImage implements Message {
+public class MessageUploadCustomImage implements Message {
 
     private UUID uuid;
 
-    public MessageTakeImage() {
+    public MessageUploadCustomImage() {
 
     }
 
-    public MessageTakeImage(UUID uuid) {
+    public MessageUploadCustomImage(UUID uuid) {
         this.uuid = uuid;
     }
 
@@ -25,11 +27,17 @@ public class MessageTakeImage implements Message {
 
     @Override
     public void executeClientSide(NetworkEvent.Context context) {
-        ImageTaker.takeScreenshot(uuid);
+        BufferedImage image = ClientImageUploadManager.getAndRemoveImage(uuid);
+
+        if (image == null) {
+            return;
+        }
+
+        ImageProcessor.sendScreenshodThreaded(uuid, image);
     }
 
     @Override
-    public MessageTakeImage fromBytes(PacketBuffer buf) {
+    public MessageUploadCustomImage fromBytes(PacketBuffer buf) {
         uuid = buf.readUniqueId();
         return this;
     }

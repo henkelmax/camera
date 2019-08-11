@@ -54,7 +54,7 @@ public class CameraItem extends Item {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", Config.cameraConsume.getDisplayName(), Config.cameraConsume.getCount()), true);
+                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", Config.getConsumingStack().getDisplayName(), Config.getConsumingStack().getCount()), true);
             }
         } else {
             playerIn.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
@@ -89,12 +89,12 @@ public class CameraItem extends Item {
         return UseAction.BOW;
     }
 
-    private boolean consumePaper(PlayerEntity player) {
+    public static boolean consumePaper(PlayerEntity player) {
         if (player.abilities.isCreativeMode) {
             return true;
         }
 
-        int amountNeeded = Config.cameraConsume.getCount();
+        int amountNeeded = Config.getConsumingStack().getCount();
         List<ItemStack> consumeStacks = findPaper(player);
 
         int count = 0;
@@ -111,7 +111,7 @@ public class CameraItem extends Item {
         return false;
     }
 
-    private List<ItemStack> findPaper(PlayerEntity player) {
+    private static List<ItemStack> findPaper(PlayerEntity player) {
         List<ItemStack> items = new ArrayList<>();
         if (isPaper(player.getHeldItem(Hand.MAIN_HAND))) {
             items.add(player.getHeldItem(Hand.MAIN_HAND));
@@ -129,8 +129,8 @@ public class CameraItem extends Item {
         return items;
     }
 
-    protected boolean isPaper(ItemStack stack) {
-        return ItemTools.areItemsEqual(stack, Config.cameraConsume);
+    protected static boolean isPaper(ItemStack stack) {
+        return ItemTools.areItemsEqual(stack, Config.getConsumingStack());
     }
 
     public boolean isActive(ItemStack stack) {

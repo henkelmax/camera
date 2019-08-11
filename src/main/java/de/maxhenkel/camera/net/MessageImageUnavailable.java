@@ -3,6 +3,7 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
@@ -30,15 +31,12 @@ public class MessageImageUnavailable implements Message {
 
     @Override
     public MessageImageUnavailable fromBytes(PacketBuffer buf) {
-        long l1 = buf.readLong();
-        long l2 = buf.readLong();
-        imgUUID = new UUID(l1, l2);
+        imgUUID = buf.readUniqueId();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeLong(imgUUID.getMostSignificantBits());
-        buf.writeLong(imgUUID.getLeastSignificantBits());
+        buf.writeUniqueId(imgUUID);
     }
 }

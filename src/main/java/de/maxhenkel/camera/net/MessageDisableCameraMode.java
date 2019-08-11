@@ -13,8 +13,8 @@ public class MessageDisableCameraMode implements Message {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        ItemStack stack=context.getSender().getHeldItemMainhand();
-        if(stack.getItem().equals(Main.CAMERA)){
+        ItemStack stack = context.getSender().getHeldItemMainhand();
+        if (stack.getItem().equals(Main.CAMERA)) {
             Main.CAMERA.setActive(stack, false);
         }
     }

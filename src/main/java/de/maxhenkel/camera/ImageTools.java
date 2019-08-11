@@ -1,13 +1,17 @@
 package de.maxhenkel.camera;
 
+import com.sun.javafx.application.PlatformImpl;
+import javafx.stage.FileChooser;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ImageTools {
 
@@ -104,9 +108,11 @@ public class ImageTools {
     }
 
     public static BufferedImage loadImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
-        File image = ImageTools.getImageFile(playerMP, uuid);
+        return loadImage(ImageTools.getImageFile(playerMP, uuid));
+    }
 
-        FileInputStream fis = new FileInputStream(image);
+    public static BufferedImage loadImage(File file) throws IOException {
+        FileInputStream fis = new FileInputStream(file);
 
         BufferedImage bufferedImage = ImageIO.read(fis);
 
@@ -115,6 +121,27 @@ public class ImageTools {
         }
 
         return bufferedImage;
+    }
+
+    public static void chooseImage(Consumer<File> onResult) {
+        PlatformImpl.startup(() -> {
+            FileChooser chooser = new FileChooser();
+            String lastPath = Config.CLIENT.LAST_IMAGE_PATH.get();
+            if (!lastPath.isEmpty()) {
+                chooser.setInitialDirectory(new File(lastPath));
+            }
+            chooser.setTitle(new TranslationTextComponent("title.choose_image").getFormattedText());
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(new TranslationTextComponent("filetype.images").getFormattedText(), "*.png", "*.jpg", "*.jpeg");
+            chooser.getExtensionFilters().clear();
+            chooser.getExtensionFilters().add(filter);
+            chooser.setSelectedExtensionFilter(filter);
+            File file = chooser.showOpenDialog(null);
+            if (file != null && file.exists() && !file.isDirectory()) {
+                Config.CLIENT.LAST_IMAGE_PATH.set(file.getParent());
+                Config.CLIENT.LAST_IMAGE_PATH.save();
+                onResult.accept(file);
+            }
+        });
     }
 
 }

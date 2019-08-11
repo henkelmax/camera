@@ -103,7 +103,7 @@ public class PacketManager {
 
     public boolean canTakeImage(UUID player) {
         if (times.containsKey(player)) {
-            if (System.currentTimeMillis() - times.get(player).longValue() < Config.imageCooldown) {
+            if (System.currentTimeMillis() - times.get(player).longValue() < Config.SERVER.IMAGE_COOLDOWN.get()) {
                 return false;
             } else {
                 times.put(player, System.currentTimeMillis());

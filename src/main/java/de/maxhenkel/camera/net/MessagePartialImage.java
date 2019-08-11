@@ -3,6 +3,7 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+
 import java.util.UUID;
 
 public class MessagePartialImage implements Message {
@@ -35,26 +36,19 @@ public class MessagePartialImage implements Message {
 
     @Override
     public MessagePartialImage fromBytes(PacketBuffer buf) {
-        long l1 = buf.readLong();
-        long l2 = buf.readLong();
-        imgUUID = new UUID(l1, l2);
+        imgUUID = buf.readUniqueId();
         offset = buf.readInt();
         length = buf.readInt();
-
-        int length = buf.readInt();
-        bytes = new byte[length];
-        buf.readBytes(bytes);
+        bytes = buf.readByteArray();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeLong(imgUUID.getMostSignificantBits());
-        buf.writeLong(imgUUID.getLeastSignificantBits());
+        buf.writeUniqueId(imgUUID);
         buf.writeInt(offset);
         buf.writeInt(length);
 
-        buf.writeInt(bytes.length);
-        buf.writeBytes(bytes);
+        buf.writeByteArray(bytes);
     }
 }

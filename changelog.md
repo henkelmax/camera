@@ -1,1 +1,1 @@
-- Added tr_tr and de_de translation
+- Added image upload functionality

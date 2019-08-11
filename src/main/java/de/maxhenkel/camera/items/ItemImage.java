@@ -58,7 +58,7 @@ public class ItemImage extends Item {
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Config.imageDateFormat.format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Config.getImageDateFormat().format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

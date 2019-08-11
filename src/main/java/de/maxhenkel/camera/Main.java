@@ -2,11 +2,12 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.entities.ImageRenderer;
-import de.maxhenkel.camera.gui.*;
+import de.maxhenkel.camera.gui.AlbumInventoryScreen;
+import de.maxhenkel.camera.gui.ContainerAlbumInventory;
 import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.CameraItem;
-import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.items.ImageFrameItem;
+import de.maxhenkel.camera.items.ItemImage;
 import de.maxhenkel.camera.net.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -14,10 +15,10 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -81,6 +82,7 @@ public class Main {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::configEvent);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             clientStart();
@@ -97,7 +99,9 @@ public class Main {
     @SubscribeEvent
     public void configEvent(ModConfig.ModConfigEvent event) {
         if (event.getConfig().getType() == ModConfig.Type.SERVER) {
-            Config.loadServer();
+            Config.onServerConfigUpdate();
+        } else if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
+            Config.onClientConfigUpdate();
         }
     }
 
@@ -116,6 +120,8 @@ public class Main {
         SIMPLE_CHANNEL.registerMessage(5, MessageSetShader.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageSetShader().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
         SIMPLE_CHANNEL.registerMessage(6, MessageDisableCameraMode.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageDisableCameraMode().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
         SIMPLE_CHANNEL.registerMessage(7, MessageResizeFrame.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageResizeFrame().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(8, MessageRequestUploadCustomImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageRequestUploadCustomImage().fromBytes(buf), (msg, fun) -> msg.executeServerSide(fun.get()));
+        SIMPLE_CHANNEL.registerMessage(9, MessageUploadCustomImage.class, (msg, buf) -> msg.toBytes(buf), (buf) -> new MessageUploadCustomImage().fromBytes(buf), (msg, fun) -> msg.executeClientSide(fun.get()));
     }
 
     @SubscribeEvent

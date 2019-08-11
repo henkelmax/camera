@@ -43,19 +43,16 @@ public class MessageResizeFrame implements Message {
 
     @Override
     public MessageResizeFrame fromBytes(PacketBuffer buf) {
-        long most = buf.readLong();
-        long least = buf.readLong();
-        uuid = new UUID(most, least);
-        direction = Direction.valueOf(buf.readString(16));
+        uuid = buf.readUniqueId();
+        direction = Direction.values()[buf.readInt()];
         larger = buf.readBoolean();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeLong(uuid.getMostSignificantBits());
-        buf.writeLong(uuid.getLeastSignificantBits());
-        buf.writeString(direction.name());
+        buf.writeUniqueId(uuid);
+        buf.writeInt(direction.ordinal());
         buf.writeBoolean(larger);
     }
 

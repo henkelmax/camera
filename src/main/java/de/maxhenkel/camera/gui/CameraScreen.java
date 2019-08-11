@@ -1,13 +1,20 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import de.maxhenkel.camera.ClientImageUploadManager;
+import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.Shaders;
+import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.UUID;
 
 public class CameraScreen extends ContainerScreen {
 
@@ -39,23 +46,37 @@ public class CameraScreen extends ContainerScreen {
     protected void init() {
         super.init();
         buttons.clear();
-        int left = (width - xSize) / 2;
         int padding = 10;
-        int buttonWidth = 75;
+        int buttonWidth = 70;
         int buttonHeight = 20;
-        addButton(new Button(left + padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.prev").getFormattedText(), (button) -> {
+        addButton(new Button(guiLeft + padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.prev").getFormattedText(), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
             sendShader();
         }));
-        addButton(new Button(left + xSize - buttonWidth - padding, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.next").getFormattedText(), (button) -> {
+        addButton(new Button(guiLeft + xSize - buttonWidth - padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.next").getFormattedText(), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
             sendShader();
+        }));
+
+        addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
+            ImageTools.chooseImage(file -> {
+                try {
+                    UUID uuid = UUID.randomUUID();
+                    BufferedImage image = ImageTools.loadImage(file);
+                    ClientImageUploadManager.addImage(uuid, image);
+                    Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
+                } catch (IOException e) {
+                    playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()));
+                    e.printStackTrace();
+                }
+                minecraft.currentScreen = null;
+            });
         }));
     }
 
@@ -77,7 +98,7 @@ public class CameraScreen extends ContainerScreen {
 
         int shaderWidth = font.getStringWidth(shaderName);
 
-        font.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, 40, 0xFFFFFFFF);
+        font.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, 0xFFFFFFFF);
     }
 
     @Override

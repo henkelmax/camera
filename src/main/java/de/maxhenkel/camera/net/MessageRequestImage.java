@@ -4,6 +4,7 @@ import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -37,15 +38,12 @@ public class MessageRequestImage implements Message {
 
     @Override
     public MessageRequestImage fromBytes(PacketBuffer buf) {
-        long l1 = buf.readLong();
-        long l2 = buf.readLong();
-        imgUUID = new UUID(l1, l2);
+        imgUUID = buf.readUniqueId();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeLong(imgUUID.getMostSignificantBits());
-        buf.writeLong(imgUUID.getLeastSignificantBits());
+        buf.writeUniqueId(imgUUID);
     }
 }

@@ -41,22 +41,15 @@ public class MessageImage implements Message {
 
     @Override
     public MessageImage fromBytes(PacketBuffer buf) {
-        long l1 = buf.readLong();
-        long l2 = buf.readLong();
-        uuid = new UUID(l1, l2);
-
-        int length = buf.readInt();
-        image = new byte[length];
-        buf.readBytes(image);
+        uuid = buf.readUniqueId();
+        image = buf.readByteArray();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeLong(uuid.getMostSignificantBits());
-        buf.writeLong(uuid.getLeastSignificantBits());
+        buf.writeUniqueId(uuid);
 
-        buf.writeInt(image.length);
-        buf.writeBytes(image);
+        buf.writeByteArray(image);
     }
 }
