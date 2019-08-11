@@ -9,6 +9,7 @@ The Camera takes real images of your game.
 - Images can be displayed by right-clicking the image
 - Images can be put into image frames
 - Images can be copied
+- Custom images can be uploaded
 - Image Frames can be resized up to 12 x 12 blocks
 - Date and photographer name are stored with the image item
 - The Camera consumes a piece of paper for every taken image
