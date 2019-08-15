@@ -48,25 +48,22 @@ public class PacketManager {
                 }
                 imageCache.put(imgUUID, image);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImageTools.saveImage(playerMP, imgUUID, image);
+                new Thread(() -> {
+                    try {
+                        ImageTools.saveImage(playerMP, imgUUID, image);
 
-                            playerMP.getServer().deferTask(() -> {
-                                ItemStack stack = new ItemStack(Main.IMAGE);
-                                ItemImage.setUUID(stack, imgUUID);
-                                ItemImage.setTime(stack, System.currentTimeMillis());
-                                ItemImage.setOwner(stack, playerMP.getName().getUnformattedComponentText());
+                        playerMP.getServer().deferTask(() -> {
+                            ItemStack stack = new ItemStack(Main.IMAGE);
+                            ItemImage.setUUID(stack, imgUUID);
+                            ItemImage.setTime(stack, System.currentTimeMillis());
+                            ItemImage.setOwner(stack, playerMP.getName().getUnformattedComponentText());
 
-                                if (!playerMP.addItemStackToInventory(stack)) {
-                                    InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
-                                }
-                            });
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                            if (!playerMP.addItemStackToInventory(stack)) {
+                                InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }, "SaveImageThread").start();
 

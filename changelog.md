@@ -1,1 +1,1 @@
-- Added image upload functionality
+- Reduced image size by using jpeg and compression

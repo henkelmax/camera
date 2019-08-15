@@ -6,7 +6,11 @@ import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -14,6 +18,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ImageTools {
+
+    private static final int MAX_IMAGE_SIZE = 1080;
 
     public static BufferedImage fromNativeImage(NativeImage nativeImage) {
         BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -70,7 +76,7 @@ public class ImageTools {
     public static byte[] toBytes(BufferedImage image) throws IOException {
         ImageIO.setUseCache(false);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", baos);
+        ImageIO.write(image, "jpg", baos);
         baos.flush();
         byte[] data = baos.toByteArray();
         baos.close();
@@ -85,30 +91,93 @@ public class ImageTools {
         return image;
     }
 
+    public static byte[] optimizeImage(BufferedImage image) throws IOException {
+        float ratio = ((float) image.getHeight()) / ((float) image.getWidth());
+        int newWidth = image.getWidth();
+        int newHeight = image.getHeight();
+
+        if (image.getHeight() > MAX_IMAGE_SIZE || image.getWidth() > MAX_IMAGE_SIZE) {
+            if (ratio < 1F) {
+                newHeight = ((int) (((float) MAX_IMAGE_SIZE) * ratio));
+                newWidth = MAX_IMAGE_SIZE;
+            } else {
+                newWidth = ((int) (((float) MAX_IMAGE_SIZE) * ratio));
+                newHeight = MAX_IMAGE_SIZE;
+            }
+        }
+
+        image = ImageTools.resize(image, newWidth, newHeight);
+
+        float factor = 1F;
+        byte[] data = null;
+
+        while (data == null || data.length > 200_000) {
+            data = ImageTools.compressToBytes(image, factor);
+            System.out.println("Compressed: " + factor + " size: " + data.length);
+            factor -= 0.1F;
+            if (factor <= 0F) {
+                throw new IOException("Image could not be compressed (too large)");
+            }
+        }
+
+        return data;
+    }
+
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bufferedImage = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
 
-        Graphics2D g2d = dimg.createGraphics();
+        Graphics2D g2d = bufferedImage.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
         g2d.dispose();
 
-        return dimg;
+        return bufferedImage;
+    }
+
+    public static BufferedImage compress(BufferedImage img, float factor) throws IOException {
+        return fromBytes(compressToBytes(img, factor));
+    }
+
+    public static byte[] compressToBytes(BufferedImage img, float factor) throws IOException {
+        ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+        ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+        jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        jpgWriteParam.setCompressionQuality(factor);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MemoryCacheImageOutputStream stream = new MemoryCacheImageOutputStream(baos);
+        jpgWriter.setOutput(stream);
+        IIOImage outputImage = new IIOImage(img, null, null);
+        jpgWriter.write(null, outputImage, jpgWriteParam);
+        jpgWriter.dispose();
+        baos.flush();
+        byte[] data = baos.toByteArray();
+        baos.close();
+        return data;
+    }
+
+    @Deprecated
+    public static File getImageFileLegacy(ServerPlayerEntity playerMP, UUID uuid) {
+        File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
+        File image = new File(imageFolder, uuid.toString() + ".jpg");
+        if (!image.exists()) {
+            image = new File(imageFolder, uuid.toString() + ".png");
+        }
+        return image;
     }
 
     public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
         File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
-        return new File(imageFolder, uuid.toString() + ".png");
+        return new File(imageFolder, uuid.toString() + ".jpg");
     }
 
     public static void saveImage(ServerPlayerEntity playerMP, UUID uuid, BufferedImage bufferedImage) throws IOException {
         File image = getImageFile(playerMP, uuid);
         image.mkdirs();
-        ImageIO.write(bufferedImage, "png", image);
+        ImageIO.write(bufferedImage, "jpg", image);
     }
 
     public static BufferedImage loadImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
-        return loadImage(ImageTools.getImageFile(playerMP, uuid));
+        return loadImage(ImageTools.getImageFileLegacy(playerMP, uuid));
     }
 
     public static BufferedImage loadImage(File file) throws IOException {

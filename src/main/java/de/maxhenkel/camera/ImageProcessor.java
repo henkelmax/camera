@@ -9,16 +9,11 @@ import java.util.UUID;
 
 public class ImageProcessor {
 
-    public static void sendScreenshot(UUID uuid, BufferedImage image) {
-        if (image.getWidth() > 1080) {
-            float ratio = ((float) image.getHeight()) / ((float) image.getWidth());
-            int newHeight = ((int) (((float) 1080) * ratio));
-            image = ImageTools.resize(image, 1080, newHeight);
-        }
 
+    public static void sendScreenshot(UUID uuid, BufferedImage image) {
         byte[] data;
         try {
-            data = ImageTools.toBytes(image);
+            data = ImageTools.optimizeImage(image);
         } catch (IOException e) {
             e.printStackTrace();
             return;

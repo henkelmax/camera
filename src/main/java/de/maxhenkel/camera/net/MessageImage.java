@@ -19,9 +19,12 @@ public class MessageImage implements Message {
 
     }
 
-    public MessageImage(UUID uuid, byte[] image) {
+    public MessageImage(UUID uuid, byte[] image) throws IOException {
         this.uuid = uuid;
         this.image = image;
+        if (image.length > 1_000_000) {
+            throw new IOException("Image too large: " + image.length + " bytes (max 1.000.000)");
+        }
     }
 
     @Override
