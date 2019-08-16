@@ -113,8 +113,8 @@ public class ImageTools {
 
         while (data == null || data.length > 200_000) {
             data = ImageTools.compressToBytes(image, factor);
-            System.out.println("Compressed: " + factor + " size: " + data.length);
-            factor -= 0.1F;
+            Main.LOGGER.debug("Trying to compress image: " + Math.round(factor * 100F) + "% " + data.length + " bytes (max 200.000)");
+            factor -= 0.05F;
             if (factor <= 0F) {
                 throw new IOException("Image could not be compressed (too large)");
             }

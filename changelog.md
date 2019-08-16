@@ -1,1 +1,1 @@
-- Reduced image size by using jpeg and compression
+- Fixed debug messages
