@@ -207,7 +207,9 @@ public class ClientEvents {
 
     private void setShader(ResourceLocation shader) {
         if (shader == null) {
-            mc.gameRenderer.stopUseShader();
+            if(currentShader != null){
+                mc.gameRenderer.stopUseShader();
+            }
         } else if (!shader.equals(currentShader)) {
             try {
                 mc.gameRenderer.loadShader(shader);
