@@ -221,7 +221,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre event) {
-        PlayerEntity player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayer();
         if (player == mc.player) {
             return;
         }
@@ -236,7 +236,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post event) {
-        PlayerEntity player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayer();
         if (player == mc.player) {
             return;
         }
@@ -244,7 +244,7 @@ public class ClientEvents {
             return;
         }
 
-        event.getEntityPlayer().resetActiveHand();
+        event.getPlayer().resetActiveHand();
     }
 
     private boolean scrollCallback(long handle, double xoffset, double yoffset) {
