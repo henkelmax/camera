@@ -32,7 +32,7 @@ public class MessageSetShader implements Message {
 
     @Override
     public MessageSetShader fromBytes(PacketBuffer buf) {
-        shader = buf.readString();
+        shader = buf.readString(128);
         return this;
     }
 

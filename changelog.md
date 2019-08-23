@@ -1,1 +1,1 @@
-- Fixed debug messages
+- Fixed crash on servers
