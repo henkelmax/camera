@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.MouseHelper;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -18,11 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
-import java.lang.reflect.Method;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
@@ -43,35 +38,6 @@ public class ClientEvents {
         mc = Minecraft.getInstance();
         inCameraMode = false;
         fov = 0D;
-
-        try {
-            Method m = null;
-            try {
-                m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "func_198020_a", long.class, double.class, double.class);
-            } catch (Exception e) {
-                try {
-                    m = ObfuscationReflectionHelper.findMethod(MouseHelper.class, "scrollCallback", long.class, double.class, double.class);
-                } catch (Exception e1) {
-                    e.printStackTrace();
-                    e1.printStackTrace();
-                }
-            }
-
-            Method scrollCallback = m;
-            if (scrollCallback != null) {
-                GLFW.glfwSetScrollCallback(mc.mainWindow.getHandle(), (window, xoffset, yoffset) -> {
-                    if (!scrollCallback(window, xoffset, yoffset)) {
-                        try {
-                            scrollCallback.invoke(mc.mouseHelper, window, xoffset, yoffset);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @SubscribeEvent
@@ -207,7 +173,7 @@ public class ClientEvents {
 
     private void setShader(ResourceLocation shader) {
         if (shader == null) {
-            if(currentShader != null){
+            if (currentShader != null) {
                 mc.gameRenderer.stopUseShader();
             }
         } else if (!shader.equals(currentShader)) {
@@ -247,38 +213,22 @@ public class ClientEvents {
         event.getPlayer().resetActiveHand();
     }
 
-    private boolean scrollCallback(long handle, double xoffset, double yoffset) {
-        if (!inCameraMode) {
-            return false;
-        }
-
-        if (yoffset < 0) {
-            fov = Math.min(fov + 5F, MAX_FOV);
-        } else {
-            fov = Math.max(fov - 5F, MIN_FOV);
-        }
-        return true;
-    }
-
-    // TODO Implement when the MouseEvent is available
-    /*
     @SubscribeEvent
-    public void onMouseEvent(MouseEvent event) {
-        if (event.getDwheel() == 0) {
+    public void onMouseEvent(InputEvent.MouseScrollEvent event) {
+        if (event.getScrollDelta() == 0D) {
             return;
         }
         if (!inCameraMode) {
             return;
         }
 
-        if (event.getDwheel() < 0) {
+        if (event.getScrollDelta() < 0D) {
             fov = Math.min(fov + 5F, MAX_FOV);
         } else {
             fov = Math.max(fov - 5F, MIN_FOV);
         }
         event.setCanceled(true);
     }
-    */
 
     @SubscribeEvent
     public void onFOVModifierEvent(EntityViewRenderEvent.FOVModifier event) {
