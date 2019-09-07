@@ -94,7 +94,7 @@ public class ResizeFrameScreen extends ContainerScreen {
         if (aabb == null) {
             return false;
         }
-        aabb = aabb.grow(10D);
-        return minecraft.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(minecraft.player) <= 5);
+        aabb = aabb.grow(32D);
+        return minecraft.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(minecraft.player) <= 32F);
     }
 }
