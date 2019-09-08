@@ -1,1 +1,2 @@
 - Fixed image frame gui constantly closing
+- Add WAILA/HWYLA support for image frames

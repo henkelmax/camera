@@ -45,6 +45,8 @@ minecraft {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
+
+    compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
 }
 
 jar {
@@ -84,6 +86,13 @@ curseforge {
         mainArtifact(jar) {
             displayName = "[${mod_minecraft_version}] ${mod_name} ${mod_version}"
         }
+    }
+}
+
+repositories {
+    maven {
+        name = "Hwyla"
+        url "http://tehnut.info/maven"
     }
 }
 

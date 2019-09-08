@@ -1,4 +1,5 @@
 {
+  "entity.camera.image_frame": "Bilderrahmen",
   "item.camera.camera": "Kamera",
   "item.camera.image": "Bild",
   "item.camera.image_frame": "Bilderrahmen",
@@ -8,6 +9,7 @@
   "message.upload_error": "Bild uploadfehler: %s",
   "tooltip.image_time": "Am %s gemacht",
   "tooltip.image_owner": "Von %s",
+  "tooltip.image_frame_empty": "Kein Bild",
   "button.camera.prev": "Zurück",
   "button.camera.next": "Weiter",
   "button.camera.upload": "Hochladen",
