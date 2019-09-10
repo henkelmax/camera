@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 public class ImageTools {
 
-    private static final int MAX_IMAGE_SIZE = 1080;
+    private static final int MAX_IMAGE_SIZE = 1920;
 
     public static BufferedImage fromNativeImage(NativeImage nativeImage) {
         BufferedImage bufferedImage = new BufferedImage(nativeImage.getWidth(), nativeImage.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -108,17 +108,18 @@ public class ImageTools {
 
         image = ImageTools.resize(image, newWidth, newHeight);
 
-        float factor = 1F;
-        byte[] data = null;
+        float factor = 0.5F;
+        byte[] data;
 
-        while (data == null || data.length > 200_000) {
-            data = ImageTools.compressToBytes(image, factor);
-            Main.LOGGER.debug("Trying to compress image: " + Math.round(factor * 100F) + "% " + data.length + " bytes (max 200.000)");
-            factor -= 0.05F;
+        while ((data = ImageTools.compressToBytes(image, factor)).length > Config.SERVER.MAX_IMAGE_SIZE.get()) {
+            Main.LOGGER.debug("Trying to compress image: {}% {} bytes (max {})", Math.round(factor * 100F), data.length, Config.SERVER.MAX_IMAGE_SIZE.get());
+            factor -= 0.025F;
             if (factor <= 0F) {
                 throw new IOException("Image could not be compressed (too large)");
             }
         }
+
+        Main.LOGGER.debug("Image compressed to {}% ({} bytes)", Math.round(factor * 100F), data.length);
 
         return data;
     }

@@ -1,2 +1,2 @@
-- Fixed image frame gui constantly closing
-- Add WAILA/HWYLA support for image frames
+- Increased maximum image size to 1920 pixels
+- Made maximum image size configurable

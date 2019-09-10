@@ -109,6 +109,10 @@ image_cooldown = 5000
 image_date_format = "MM/dd/yyyy HH:mm"
 # The Item that is consumed when taking an image
 camera_consume_item = "{id:\"minecraft:paper\",Count:1b}"
+#The maximum size of an image in bytes
+#Higher values mean more delay/lag when taking an image
+#Range: 50000 ~ 1000000
+max_image_size = 200000
 ```
 
 ## Translations

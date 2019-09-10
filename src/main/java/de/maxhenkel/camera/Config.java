@@ -28,6 +28,7 @@ public class Config {
     public static class ServerConfig {
         public ForgeConfigSpec.IntValue IMAGE_COOLDOWN;
         public ForgeConfigSpec.ConfigValue<String> CAMERA_CONSUME_ITEM;
+        public ForgeConfigSpec.IntValue MAX_IMAGE_SIZE;
 
         public ServerConfig(ForgeConfigSpec.Builder builder) {
             IMAGE_COOLDOWN = builder
@@ -37,6 +38,10 @@ public class Config {
             CAMERA_CONSUME_ITEM = builder
                     .comment("The Item that is consumed when taking an image")
                     .define("camera_consume_item", ItemTools.serializeItemStack(new ItemStack(Items.PAPER, 1)));
+
+            MAX_IMAGE_SIZE = builder
+                    .comment("The maximum size of an image in bytes when transferred to the server", "Higher values mean more delay/lag between taking an image and getting it into your inventory")
+                    .defineInRange("max_image_size", 200_000, 50_000, 1_000_000);
         }
     }
 
