@@ -31,7 +31,6 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run').canonicalPath
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             args = ['--username', 'henkelmax']
             source sourceSets.main
@@ -39,7 +38,6 @@ minecraft {
 
         server {
             workingDirectory project.file('run/server').canonicalPath
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             source sourceSets.main
         }
