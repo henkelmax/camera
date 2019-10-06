@@ -1,2 +1,1 @@
-- Increased maximum image size to 1920 pixels
-- Made maximum image size configurable
+- Fixed JEI interface being on top of the image GUI
