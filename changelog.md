@@ -1,1 +1,2 @@
 - Updated to 1.15.1
+- Reduced maximum image size to 8x8

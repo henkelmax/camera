@@ -42,8 +42,8 @@ public class ImageEntity extends Entity {
     private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
 
     private static final double THICKNESS = 1D / 16D;
-    private static final int MAX_WIDTH = 12;
-    private static final int MAX_HEIGHT = 12;
+    private static final int MAX_WIDTH = 8;
+    private static final int MAX_HEIGHT = 8;
 
     private AxisAlignedBB boundingBox;
 
@@ -74,7 +74,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
-        if (player.isCrouching() && player.abilities.allowEdit) {
+        if (player.func_225608_bj_() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }

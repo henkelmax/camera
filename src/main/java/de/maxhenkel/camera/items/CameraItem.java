@@ -7,10 +7,12 @@ import de.maxhenkel.camera.ModSounds;
 import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -34,14 +36,14 @@ public class CameraItem extends Item {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
 
-        if (playerIn.isCrouching() && !isActive(stack)) {
+        if (playerIn.func_225608_bj_() && !isActive(stack)) {
             if (worldIn.isRemote) {
                 openClientGui(getShader(stack));
             }
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
 
-        if (worldIn.isRemote || !(playerIn instanceof ServerPlayerEntity)) {
+        if (!(playerIn instanceof ServerPlayerEntity)) {
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
 
@@ -68,25 +70,17 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-        if (!isActive(stack)) {
-            return false;
-        }
-
-        if (entity instanceof PlayerEntity) {
-            onItemRightClick(entity.world, (PlayerEntity) entity, Hand.MAIN_HAND);
-        }
-        return true;
-    }
-
-    @Override
     public int getUseDuration(ItemStack stack) {
         return 50000;
     }
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BOW;
+        if (isActive(stack)) {
+            return UseAction.BOW;
+        } else {
+            return UseAction.NONE;
+        }
     }
 
     public static boolean consumePaper(PlayerEntity player) {
