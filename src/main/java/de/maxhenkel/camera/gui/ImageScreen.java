@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.items.ItemImage;
@@ -33,7 +33,7 @@ public class ImageScreen extends ContainerScreen {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         renderBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageUUID == null) {
             return;
@@ -44,7 +44,7 @@ public class ImageScreen extends ContainerScreen {
     }
 
     public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
         ResourceLocation location = TextureCache.instance().getImage(uuid);
 
@@ -90,13 +90,13 @@ public class ImageScreen extends ContainerScreen {
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        buffer.pos(left, top, zLevel).tex(0D, 0D).endVertex();
-        buffer.pos(left, top + hnew, zLevel).tex(0D, 1D).endVertex();
-        buffer.pos(left + wnew, top + hnew, zLevel).tex(1D, 1D).endVertex();
-        buffer.pos(left + wnew, top, zLevel).tex(1D, 0D).endVertex();
+        buffer.func_225582_a_(left, top, zLevel).func_225583_a_(0F, 0F).endVertex();
+        buffer.func_225582_a_(left, top + hnew, zLevel).func_225583_a_(0F, 1F).endVertex();
+        buffer.func_225582_a_(left + wnew, top + hnew, zLevel).func_225583_a_(1F, 1F).endVertex();
+        buffer.func_225582_a_(left + wnew, top, zLevel).func_225583_a_(1F, 0F).endVertex();
 
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 }

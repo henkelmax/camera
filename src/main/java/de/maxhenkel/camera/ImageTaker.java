@@ -42,7 +42,7 @@ public class ImageTaker {
 
         Minecraft mc = Minecraft.getInstance();
 
-        NativeImage image = ScreenShotHelper.createScreenshot(mc.mainWindow.getWidth(), mc.mainWindow.getHeight(), mc.getFramebuffer());
+        NativeImage image = ScreenShotHelper.createScreenshot(mc.func_228018_at_().getWidth(), mc.func_228018_at_().getHeight(), mc.getFramebuffer());
 
         mc.gameSettings.hideGUI = hide;
         takeScreenshot = false;

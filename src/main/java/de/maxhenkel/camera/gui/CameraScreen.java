@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
@@ -104,7 +104,7 @@ public class CameraScreen extends ContainerScreen {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         renderBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
         blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     }

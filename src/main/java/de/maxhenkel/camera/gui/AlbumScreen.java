@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.util.InputMappings;
@@ -22,7 +22,7 @@ public class AlbumScreen extends ContainerScreen {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         renderBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (images.isEmpty()) {
             return;
@@ -62,8 +62,8 @@ public class AlbumScreen extends ContainerScreen {
     public void tick() {
         super.tick();
 
-        boolean isNextDown = InputMappings.isKeyDown(minecraft.mainWindow.getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
-        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.mainWindow.getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
+        boolean isNextDown = InputMappings.isKeyDown(minecraft.func_228018_at_().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
+        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.func_228018_at_().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {

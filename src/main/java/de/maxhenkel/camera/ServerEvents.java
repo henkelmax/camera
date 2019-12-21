@@ -34,7 +34,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-        PlayerEntity player = event.getEntityPlayer();
+        PlayerEntity player = event.getPlayer();
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             event.setUseBlock(Event.Result.DENY);
@@ -58,7 +58,7 @@ public class ServerEvents {
     }
 
     public void handleLeftClick(PlayerInteractEvent event) {
-        ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
+        ItemStack stack = event.getPlayer().getHeldItemMainhand();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             if (event.isCancelable()) {
                 event.setCanceled(true);

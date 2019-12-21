@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.integration.waila;
 
-import de.maxhenkel.camera.Config;
+/*import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.items.ItemImage;
@@ -15,10 +15,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 
 import java.util.Date;
-import java.util.List;
+import java.util.List;*/
 
-public class HUDHandlerCars implements IEntityComponentProvider {
-
+public class HUDHandlerCars /*implements IEntityComponentProvider*/ {
+/*
     static final ResourceLocation OBJECT_NAME_TAG = new ResourceLocation("waila", "object_name");
     static final ResourceLocation CONFIG_SHOW_REGISTRY = new ResourceLocation("waila", "show_registry");
     static final ResourceLocation REGISTRY_NAME_TAG = new ResourceLocation("waila", "registry_name");
@@ -61,5 +61,5 @@ public class HUDHandlerCars implements IEntityComponentProvider {
     @Override
     public void appendTail(List<ITextComponent> tooltip, IEntityAccessor accessor, IPluginConfig config) {
         tooltip.add(new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getModName(), ModIdentification.getModInfo(accessor.getEntity()).getName())));
-    }
+    }*/
 }

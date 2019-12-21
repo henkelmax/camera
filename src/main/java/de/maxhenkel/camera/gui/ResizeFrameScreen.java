@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
@@ -70,7 +70,7 @@ public class ResizeFrameScreen extends ContainerScreen {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         renderBackground();
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
         blit(guiLeft, guiTop, 0, 0, xSize, ySize);
     }

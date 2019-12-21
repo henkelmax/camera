@@ -1,1 +1,1 @@
-- Fixed JEI interface being on top of the image GUI
+- Updated to 1.15.1

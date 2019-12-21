@@ -96,8 +96,6 @@ public class Main {
     @OnlyIn(Dist.CLIENT)
     public void clientStart() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
-        // Moved from clientSetup because of entities not rendering
-        RenderingRegistry.registerEntityRenderingHandler(ImageEntity.class, manager -> new ImageRenderer(manager));
     }
 
     @SubscribeEvent
@@ -142,6 +140,8 @@ public class Main {
 
         ScreenManager.IScreenFactory factory = (ScreenManager.IScreenFactory<ContainerAlbumInventory, AlbumInventoryScreen>) (container, playerInventory, name) -> new AlbumInventoryScreen(playerInventory, container, name);
         ScreenManager.registerFactory(Main.ALBUM_INVENTORY_CONTAINER, factory);
+
+        RenderingRegistry.registerEntityRenderingHandler(IMAGE_ENTITY_TYPE, manager -> new ImageRenderer(manager));
     }
 
     @SubscribeEvent

@@ -1,6 +1,7 @@
 package de.maxhenkel.camera.entities;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.camera.Tools;
@@ -9,11 +10,11 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     private static final ResourceLocation FRAME_SIDE = new ResourceLocation(Main.MODID, "textures/images/frame_side.png");
     private static final ResourceLocation FRAME_BACK = new ResourceLocation(Main.MODID, "textures/images/frame_back.png");
 
-    private static final double THICKNESS = 1D / 16D;
+    private static final float THICKNESS = 1F / 16F;
 
     private Minecraft mc;
 
@@ -34,8 +35,24 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         mc = Minecraft.getInstance();
     }
 
+    private void vertex(ImageEntity image, IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v) {
+        MatrixStack.Entry entry = matrixStack.func_227866_c_();
+        Matrix4f matrix4f = entry.func_227870_a_();
+        Matrix3f matrix3f = entry.func_227872_b_();
+        int lightLevel = WorldRenderer.func_228421_a_(image.world, image.getCenterPosition());
+        builder.func_227888_a_(matrix4f, x, y, z) // Matrix and position?
+                .func_225586_a_(255, 255, 255, 255) // Color
+                .func_225583_a_(u, v) // U V
+                .func_227891_b_(OverlayTexture.field_229196_a_) //Overlay Texture
+                .func_227886_a_(lightLevel) // Light
+                .func_227887_a_(matrix3f, 0F, 0F, -1F) // ???
+                .endVertex();
+    }
+
     @Override
-    public void doRender(ImageEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void func_225623_a_(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int i) {
+        matrixStack.func_227860_a_();
+
         float imageRatio = 1F;
         boolean stretch = true;
         ResourceLocation resourceLocation = EMPTY_IMAGE;
@@ -54,25 +71,15 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             }
         }
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(x - 0.5D, y, z - 0.5D);
-        GlStateManager.disableLighting();
-        GlStateManager.disableBlend();
+        matrixStack.func_227861_a_(-0.5D, 0D, -0.5D);
 
         Direction facing = entity.getFacing();
-        double width = entity.getFrameWidth();
-        double height = entity.getFrameHeight();
+        float width = entity.getFrameWidth();
+        float height = entity.getFrameHeight();
 
-        rotate(facing);
+        rotate(facing, matrixStack);
 
-        bindTexture(resourceLocation);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-        float frameRatio = (float) (width / height);
+        float frameRatio = width / height;
 
         float ratio = imageRatio / frameRatio;
 
@@ -95,117 +102,94 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             ratioY *= height;
         }
 
-        buffer.pos(0D + ratioX, ratioY, THICKNESS).tex(0D, 1D).endVertex();
-        buffer.pos(width - ratioX, ratioY, THICKNESS).tex(1D, 1D).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D, 0D).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D, 0D).endVertex();
+        IVertexBuilder builderFront = buffer1.getBuffer(RenderType.func_228634_a_(resourceLocation));
 
-        tessellator.draw();
+        // Front
+        vertex(entity, builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F);
+        vertex(entity, builderFront, matrixStack, width - ratioX, ratioY, THICKNESS, 1F, 1F);
+        vertex(entity, builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F);
+        vertex(entity, builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F);
 
-        bindTexture(FRAME_SIDE);
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        IVertexBuilder builderSide = buffer1.getBuffer(RenderType.func_228634_a_(FRAME_SIDE));
 
         //Left
-        buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(1D, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(1D - THICKNESS, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(1D - THICKNESS, 1D - ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(1D, 1D - ratioY).endVertex();
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY);
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY);
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY);
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY);
 
         //Right
-        buffer.pos(width - ratioX, 0D + ratioY, 0D).tex(0D, 0D + ratioY).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, 0D).tex(0D, 1D - ratioY).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(THICKNESS, 1D - ratioY).endVertex();
-        buffer.pos(width - ratioX, 0D + ratioY, THICKNESS).tex(THICKNESS, 0D + ratioY).endVertex();
+        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY);
+        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY);
+        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY);
+        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY);
 
         //Top
-        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D + ratioX, 1D).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, THICKNESS).tex(0D + ratioX, 1D - THICKNESS).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, THICKNESS).tex(1D - ratioX, 1D - THICKNESS).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, 0D).tex(1D - ratioX, 1D).endVertex();
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F);
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS);
+        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS);
+        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F);
 
         //Bottom
-        buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(0D + ratioX, 0D).endVertex();
-        buffer.pos(width - ratioX, 0D + ratioY, 0D).tex(1D - ratioX, 0D).endVertex();
-        buffer.pos(width - ratioX, 0D + ratioY, THICKNESS).tex(1D - ratioX, THICKNESS).endVertex();
-        buffer.pos(0D + ratioX, 0D + ratioY, THICKNESS).tex(0D + ratioX, THICKNESS).endVertex();
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F);
+        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F);
+        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS);
+        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS);
 
-        tessellator.draw();
-
-        bindTexture(FRAME_BACK);
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        IVertexBuilder builderBack = buffer1.getBuffer(RenderType.func_228634_a_(FRAME_BACK));
 
         //Back
-        buffer.pos(width - ratioX, 0D + ratioY, 0D).tex(1D - ratioX, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, 0D + ratioY, 0D).tex(0D + ratioX, 0D + ratioY).endVertex();
-        buffer.pos(0D + ratioX, height - ratioY, 0D).tex(0D + ratioX, 1D - ratioY).endVertex();
-        buffer.pos(width - ratioX, height - ratioY, 0D).tex(1D - ratioX, 1D - ratioY).endVertex();
+        vertex(entity, builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY);
+        vertex(entity, builderBack, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY);
+        vertex(entity, builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY);
+        vertex(entity, builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY);
 
-        tessellator.draw();
+        matrixStack.func_227865_b_();
 
-        GlStateManager.enableLighting();
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-
-        renderBoundingBox(entity, x, y, z);
-
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+        renderBoundingBox(entity, matrixStack, buffer1);
+        super.func_225623_a_(entity, f1, f2, matrixStack, buffer1, 0xFFFFFF);
     }
 
-    private void renderBoundingBox(ImageEntity entity, double x, double y, double z) {
+    private void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
         if (Tools.getEntityLookingAt() != entity) {
             return;
         }
-
         if (mc.gameSettings.hideGUI) {
             return;
         }
-
-        GlStateManager.depthMask(false);
-        GlStateManager.disableTexture();
-        GlStateManager.disableLighting();
-        GlStateManager.disableCull();
-        GlStateManager.disableBlend();
-        AxisAlignedBB axisalignedbb = entity.getBoundingBox();
-        WorldRenderer.drawBoundingBox(
-                axisalignedbb.minX - entity.posX + x,
-                axisalignedbb.minY - entity.posY + y,
-                axisalignedbb.minZ - entity.posZ + z,
-                axisalignedbb.maxX - entity.posX + x,
-                axisalignedbb.maxY - entity.posY + y,
-                axisalignedbb.maxZ - entity.posZ + z,
-                0.25F, 0.25F, 0.25F, 1F
-        );
-        GlStateManager.enableTexture();
-        GlStateManager.enableLighting();
-        GlStateManager.enableCull();
-        GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
+        matrixStack.func_227860_a_();
+        renderBoundingBox(matrixStack, buffer, entity);
+        matrixStack.func_227865_b_();
     }
 
-    public static void rotate(Direction facing) {
+    private void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
+        AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.func_226277_ct_(), -entity.func_226278_cu_(), -entity.func_226281_cx_());
+        WorldRenderer.func_228430_a_(matrixStack, buffer.getBuffer(RenderType.func_228659_m_()), axisalignedbb, 0.125F, 0.125F, 0.125F, 1.0F);
+    }
+
+    public static void rotate(Direction facing, MatrixStack matrixStack) {
         switch (facing) {
             case NORTH:
-                GlStateManager.translated(1D, 0D, 1D);
-                GlStateManager.rotatef(180F, 0F, 1F, 0F);
+                matrixStack.func_227861_a_(1D, 0D, 1D);
+                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180F));
                 break;
             case SOUTH:
                 break;
             case EAST:
-                GlStateManager.translated(0D, 0D, 1D);
-                GlStateManager.rotatef(90F, 0F, 1F, 0F);
+                matrixStack.func_227861_a_(0D, 0D, 1D);
+                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(90F));
                 break;
             case WEST:
-                GlStateManager.translated(1D, 0D, 0D);
-                GlStateManager.rotatef(270F, 0F, 1F, 0F);
+                matrixStack.func_227861_a_(1D, 0D, 0D);
+                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(270F));
                 break;
         }
     }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(ImageEntity entity) {
-        return DEFAULT_IMAGE;
+    public ResourceLocation getEntityTexture(ImageEntity entity) {
+        return EMPTY_IMAGE;
     }
-
 
 }

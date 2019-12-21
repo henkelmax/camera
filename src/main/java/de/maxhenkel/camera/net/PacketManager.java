@@ -59,7 +59,7 @@ public class PacketManager {
                             ItemImage.setOwner(stack, playerMP.getName().getUnformattedComponentText());
 
                             if (!playerMP.addItemStackToInventory(stack)) {
-                                InventoryHelper.spawnItemStack(playerMP.world, playerMP.posX, playerMP.posY, playerMP.posZ, stack);
+                                InventoryHelper.spawnItemStack(playerMP.world, playerMP.getPositionVector().x, playerMP.getPositionVector().y, playerMP.getPositionVector().z, stack);
                             }
                         });
                     } catch (IOException e) {

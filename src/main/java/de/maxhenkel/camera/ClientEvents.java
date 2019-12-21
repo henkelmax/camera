@@ -1,6 +1,6 @@
 package de.maxhenkel.camera;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
@@ -26,18 +26,18 @@ public class ClientEvents {
     private static final ResourceLocation VIEWFINDER = new ResourceLocation(Main.MODID, "textures/gui/viewfinder_overlay.png");
     private static final ResourceLocation ZOOM = new ResourceLocation(Main.MODID, "textures/gui/zoom.png");
 
-    public static final double MAX_FOV = 90D;
-    public static final double MIN_FOV = 5D;
+    public static final float MAX_FOV = 90F;
+    public static final float MIN_FOV = 5F;
 
     private Minecraft mc;
     private boolean inCameraMode;
-    private double fov;
+    private float fov;
     private ResourceLocation currentShader;
 
     public ClientEvents() {
         mc = Minecraft.getInstance();
         inCameraMode = false;
-        fov = 0D;
+        fov = 0F;
     }
 
     @SubscribeEvent
@@ -67,7 +67,7 @@ public class ClientEvents {
     }
 
     private void drawViewFinder() {
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
         mc.getTextureManager().bindTexture(VIEWFINDER);
         float imageWidth = 192F;
@@ -77,8 +77,8 @@ public class ClientEvents {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float ws = (float) mc.mainWindow.getScaledWidth();
-        float hs = (float) mc.mainWindow.getScaledHeight();
+        float ws = (float) mc.func_228018_at_().getScaledWidth();
+        float hs = (float) mc.func_228018_at_().getScaledHeight();
 
         float rs = ws / hs;
         float ri = imageWidth / imageHeight;
@@ -97,19 +97,19 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        buffer.pos(left, top, 0D).tex(0D, 0D).endVertex();
-        buffer.pos(left, top + hnew, 0D).tex(0D, 1D).endVertex();
-        buffer.pos(left + wnew, top + hnew, 0D).tex(1D, 1D).endVertex();
-        buffer.pos(left + wnew, top, 0D).tex(1D, 0D).endVertex();
+        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0F).endVertex();
+        buffer.func_225582_a_(left, top + hnew, 0D).func_225583_a_(0F, 1F).endVertex();
+        buffer.func_225582_a_(left + wnew, top + hnew, 0D).func_225583_a_(1F, 1F).endVertex();
+        buffer.func_225582_a_(left + wnew, top, 0D).func_225583_a_(1F, 0F).endVertex();
 
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
-    private void drawZoom(double percent) {
+    private void drawZoom(float percent) {
 
-        GlStateManager.pushMatrix();
+        RenderSystem.pushMatrix();
 
         mc.getTextureManager().bindTexture(ZOOM);
 
@@ -119,29 +119,29 @@ public class ClientEvents {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
-        int width = mc.mainWindow.getScaledWidth();
-        int height = mc.mainWindow.getScaledHeight();
+        int width = mc.func_228018_at_().getScaledWidth();
+        int height = mc.func_228018_at_().getScaledHeight();
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        buffer.pos(left, top, 0D).tex(0D, 0D).endVertex();
-        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0D, 0.5D).endVertex();
-        buffer.pos(left + zoomWidth, top + zoomHeight / 2, 0D).tex(1D, 0.5D).endVertex();
-        buffer.pos(left + zoomWidth, top, 0D).tex(1D, 0D).endVertex();
+        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0F).endVertex();
+        buffer.func_225582_a_(left, top + zoomHeight / 2, 0D).func_225583_a_(0F, 0.5F).endVertex();
+        buffer.func_225582_a_(left + zoomWidth, top + zoomHeight / 2, 0D).func_225583_a_(1F, 0.5F).endVertex();
+        buffer.func_225582_a_(left + zoomWidth, top, 0D).func_225583_a_(1F, 0F).endVertex();
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        buffer.pos(left, top, 0D).tex(0D, 0.5D).endVertex();
-        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0D, 1D).endVertex();
-        buffer.pos(left + percWidth, top + zoomHeight / 2, 0D).tex(1D * percent, 1D).endVertex();
-        buffer.pos(left + percWidth, top, 0D).tex(1D * percent, 0.5D).endVertex();
+        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0.5F).endVertex();
+        buffer.func_225582_a_(left, top + zoomHeight / 2, 0D).func_225583_a_(0F, 1F).endVertex();
+        buffer.func_225582_a_(left + percWidth, top + zoomHeight / 2, 0D).func_225583_a_(1F * percent, 1F).endVertex();
+        buffer.func_225582_a_(left + percWidth, top, 0D).func_225583_a_(1F * percent, 0.5F).endVertex();
 
         tessellator.draw();
 
-        GlStateManager.popMatrix();
+        RenderSystem.popMatrix();
     }
 
 
@@ -163,7 +163,7 @@ public class ClientEvents {
     }
 
     private ResourceLocation getShader(PlayerEntity player) {
-        ItemStack stack = mc.player.getHeldItemMainhand();
+        ItemStack stack = player.getHeldItemMainhand();
         if (!stack.getItem().equals(Main.CAMERA)) {
             return null;
         }
@@ -233,20 +233,20 @@ public class ClientEvents {
     @SubscribeEvent
     public void onFOVModifierEvent(EntityViewRenderEvent.FOVModifier event) {
         if (!inCameraMode) {
-            fov = event.getFOV();
+            fov = (float) event.getFOV();
             return;
         }
 
         /*
             To trigger the rendering of the chunks that were outside of the FOV
         */
-        mc.player.posY += 0.000000001D;
+        mc.player.setPosition(mc.player.getPositionVector().x, mc.player.getPositionVector().y + 0.000000001D, mc.player.getPositionVector().z);
 
         event.setFOV(fov);
     }
 
-    public double getFOVPercentage() {
-        return 1D - (fov - MIN_FOV) / (MAX_FOV - MIN_FOV);
+    public float getFOVPercentage() {
+        return 1F - (fov - MIN_FOV) / (MAX_FOV - MIN_FOV);
     }
 
     private ItemStack getActiveCamera() {
