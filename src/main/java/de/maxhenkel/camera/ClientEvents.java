@@ -240,7 +240,7 @@ public class ClientEvents {
         /*
             To trigger the rendering of the chunks that were outside of the FOV
         */
-        mc.player.setPosition(mc.player.getPositionVector().x, mc.player.getPositionVector().y + 0.000000001D, mc.player.getPositionVector().z);
+        mc.player.setPosition(mc.player.func_226277_ct_(), mc.player.func_226278_cu_() + 0.000000001D, mc.player.func_226281_cx_());
 
         event.setFOV(fov);
     }
