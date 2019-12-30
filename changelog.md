@@ -1,1 +1,1 @@
-- Fixed album sneak-opening issue
+- Fixed image uploading not working
