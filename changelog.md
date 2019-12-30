@@ -1,1 +1,1 @@
-- Fixed JEI interface being on top of the image GUI
+- Fixed image uploading not working

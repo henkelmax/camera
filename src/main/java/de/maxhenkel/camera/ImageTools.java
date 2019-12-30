@@ -198,7 +198,10 @@ public class ImageTools {
             FileChooser chooser = new FileChooser();
             String lastPath = Config.CLIENT.LAST_IMAGE_PATH.get();
             if (!lastPath.isEmpty()) {
-                chooser.setInitialDirectory(new File(lastPath));
+                File last = new File(lastPath);
+                if (last.exists()) {
+                    chooser.setInitialDirectory(last);
+                }
             }
             chooser.setTitle(new TranslationTextComponent("title.choose_image").getFormattedText());
             FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(new TranslationTextComponent("filetype.images").getFormattedText(), "*.png", "*.jpg", "*.jpeg");
