@@ -1,1 +1,1 @@
-- Fixed image uploading not working
+- Updated to 1.15.2
