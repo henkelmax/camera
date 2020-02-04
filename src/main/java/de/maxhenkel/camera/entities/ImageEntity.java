@@ -74,7 +74,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
-        if (player.func_225608_bj_() && player.abilities.allowEdit) {
+        if (player.isShiftKeyDown() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }

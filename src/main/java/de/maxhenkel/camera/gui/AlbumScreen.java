@@ -62,8 +62,8 @@ public class AlbumScreen extends ContainerScreen {
     public void tick() {
         super.tick();
 
-        boolean isNextDown = InputMappings.isKeyDown(minecraft.func_228018_at_().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
-        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.func_228018_at_().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
+        boolean isNextDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
+        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {

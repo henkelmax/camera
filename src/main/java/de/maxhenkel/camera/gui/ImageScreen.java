@@ -90,10 +90,10 @@ public class ImageScreen extends ContainerScreen {
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        buffer.func_225582_a_(left, top, zLevel).func_225583_a_(0F, 0F).endVertex();
-        buffer.func_225582_a_(left, top + hnew, zLevel).func_225583_a_(0F, 1F).endVertex();
-        buffer.func_225582_a_(left + wnew, top + hnew, zLevel).func_225583_a_(1F, 1F).endVertex();
-        buffer.func_225582_a_(left + wnew, top, zLevel).func_225583_a_(1F, 0F).endVertex();
+        buffer.pos(left, top, zLevel).tex(0F, 0F).endVertex();
+        buffer.pos(left, top + hnew, zLevel).tex(0F, 1F).endVertex();
+        buffer.pos(left + wnew, top + hnew, zLevel).tex(1F, 1F).endVertex();
+        buffer.pos(left + wnew, top, zLevel).tex(1F, 0F).endVertex();
 
         tessellator.draw();
 

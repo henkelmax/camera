@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class TextureCache {
         CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
-        Minecraft.getInstance().getRenderManager().textureManager.func_229263_a_(resourceLocation, cameraTextureObject);
+        Minecraft.getInstance().getRenderManager().textureManager.loadTexture(resourceLocation, cameraTextureObject);
     }
 
     public ResourceLocation getImage(UUID uuid) {

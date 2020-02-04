@@ -26,7 +26,7 @@ public class Tools {
         Vec3d lookVec = entity.getLook(1.0F);
         Vec3d lookVecReach = eyePosition.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
         AxisAlignedBB extendedBoundingBox = entity.getBoundingBox().expand(lookVec.scale(reachDistance)).grow(1.0D, 1.0D, 1.0D);
-        EntityRayTraceResult result = ProjectileHelper.func_221273_a(entity, eyePosition, lookVecReach, extendedBoundingBox, (entity1) -> true, reachDistanceSquared);
+        EntityRayTraceResult result = ProjectileHelper.rayTraceEntities(entity, eyePosition, lookVecReach, extendedBoundingBox, (entity1) -> true, reachDistanceSquared);
         if (result == null) {
             return null;
         }

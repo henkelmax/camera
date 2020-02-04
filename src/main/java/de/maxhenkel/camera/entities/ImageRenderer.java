@@ -36,22 +36,22 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     }
 
     private void vertex(ImageEntity image, IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v) {
-        MatrixStack.Entry entry = matrixStack.func_227866_c_();
-        Matrix4f matrix4f = entry.func_227870_a_();
-        Matrix3f matrix3f = entry.func_227872_b_();
-        int lightLevel = WorldRenderer.func_228421_a_(image.world, image.getCenterPosition());
-        builder.func_227888_a_(matrix4f, x, y, z) // Matrix and position?
-                .func_225586_a_(255, 255, 255, 255) // Color
-                .func_225583_a_(u, v) // U V
-                .func_227891_b_(OverlayTexture.field_229196_a_) //Overlay Texture
-                .func_227886_a_(lightLevel) // Light
-                .func_227887_a_(matrix3f, 0F, 0F, -1F) // ???
+        MatrixStack.Entry entry = matrixStack.getLast();
+        Matrix4f matrix4f = entry.getPositionMatrix();
+        Matrix3f matrix3f = entry.getNormalMatrix();
+        int lightLevel = WorldRenderer.getCombinedLight(image.world, image.getCenterPosition());
+        builder.pos(matrix4f, x, y, z)
+                .color(255, 255, 255, 255)
+                .tex(u, v)
+                .overlay(OverlayTexture.DEFAULT_LIGHT)
+                .lightmap(lightLevel)
+                .normal(matrix3f, 0F, 0F, -1F)
                 .endVertex();
     }
 
     @Override
-    public void func_225623_a_(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int i) {
-        matrixStack.func_227860_a_();
+    public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int i) {
+        matrixStack.push();
 
         float imageRatio = 1F;
         boolean stretch = true;
@@ -71,7 +71,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             }
         }
 
-        matrixStack.func_227861_a_(-0.5D, 0D, -0.5D);
+        matrixStack.translate(-0.5D, 0D, -0.5D);
 
         Direction facing = entity.getFacing();
         float width = entity.getFrameWidth();
@@ -102,7 +102,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             ratioY *= height;
         }
 
-        IVertexBuilder builderFront = buffer1.getBuffer(RenderType.func_228634_a_(resourceLocation));
+        IVertexBuilder builderFront = buffer1.getBuffer(RenderType.entitySolid(resourceLocation));
 
         // Front
         vertex(entity, builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F);
@@ -110,7 +110,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(entity, builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F);
         vertex(entity, builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F);
 
-        IVertexBuilder builderSide = buffer1.getBuffer(RenderType.func_228634_a_(FRAME_SIDE));
+        IVertexBuilder builderSide = buffer1.getBuffer(RenderType.entitySolid(FRAME_SIDE));
 
         //Left
         vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY);
@@ -136,7 +136,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS);
         vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS);
 
-        IVertexBuilder builderBack = buffer1.getBuffer(RenderType.func_228634_a_(FRAME_BACK));
+        IVertexBuilder builderBack = buffer1.getBuffer(RenderType.entitySolid(FRAME_BACK));
 
         //Back
         vertex(entity, builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY);
@@ -144,10 +144,10 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(entity, builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY);
         vertex(entity, builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY);
 
-        matrixStack.func_227865_b_();
+        matrixStack.pop();
 
         renderBoundingBox(entity, matrixStack, buffer1);
-        super.func_225623_a_(entity, f1, f2, matrixStack, buffer1, 0xFFFFFF);
+        super.render(entity, f1, f2, matrixStack, buffer1, 0xFFFFFF);
     }
 
     private void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
@@ -157,31 +157,31 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         if (mc.gameSettings.hideGUI) {
             return;
         }
-        matrixStack.func_227860_a_();
+        matrixStack.push();
         renderBoundingBox(matrixStack, buffer, entity);
-        matrixStack.func_227865_b_();
+        matrixStack.pop();
     }
 
     private void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
-        AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.func_226277_ct_(), -entity.func_226278_cu_(), -entity.func_226281_cx_());
-        WorldRenderer.func_228430_a_(matrixStack, buffer.getBuffer(RenderType.func_228659_m_()), axisalignedbb, 0.125F, 0.125F, 0.125F, 1.0F);
+        AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
+        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0.125F, 0.125F, 0.125F, 1.0F);
     }
 
     public static void rotate(Direction facing, MatrixStack matrixStack) {
         switch (facing) {
             case NORTH:
-                matrixStack.func_227861_a_(1D, 0D, 1D);
-                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180F));
+                matrixStack.translate(1D, 0D, 1D);
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(180F));
                 break;
             case SOUTH:
                 break;
             case EAST:
-                matrixStack.func_227861_a_(0D, 0D, 1D);
-                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(90F));
+                matrixStack.translate(0D, 0D, 1D);
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(90F));
                 break;
             case WEST:
-                matrixStack.func_227861_a_(1D, 0D, 0D);
-                matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(270F));
+                matrixStack.translate(1D, 0D, 0D);
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(270F));
                 break;
         }
     }

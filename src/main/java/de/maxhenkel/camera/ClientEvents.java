@@ -77,8 +77,8 @@ public class ClientEvents {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float ws = (float) mc.func_228018_at_().getScaledWidth();
-        float hs = (float) mc.func_228018_at_().getScaledHeight();
+        float ws = (float) mc.getMainWindow().getScaledWidth();
+        float hs = (float) mc.getMainWindow().getScaledHeight();
 
         float rs = ws / hs;
         float ri = imageWidth / imageHeight;
@@ -97,10 +97,10 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0F).endVertex();
-        buffer.func_225582_a_(left, top + hnew, 0D).func_225583_a_(0F, 1F).endVertex();
-        buffer.func_225582_a_(left + wnew, top + hnew, 0D).func_225583_a_(1F, 1F).endVertex();
-        buffer.func_225582_a_(left + wnew, top, 0D).func_225583_a_(1F, 0F).endVertex();
+        buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
+        buffer.pos(left, top + hnew, 0D).tex(0F, 1F).endVertex();
+        buffer.pos(left + wnew, top + hnew, 0D).tex(1F, 1F).endVertex();
+        buffer.pos(left + wnew, top, 0D).tex(1F, 0F).endVertex();
 
         tessellator.draw();
 
@@ -119,25 +119,25 @@ public class ClientEvents {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
-        int width = mc.func_228018_at_().getScaledWidth();
-        int height = mc.func_228018_at_().getScaledHeight();
+        int width = mc.getMainWindow().getScaledWidth();
+        int height = mc.getMainWindow().getScaledHeight();
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0F).endVertex();
-        buffer.func_225582_a_(left, top + zoomHeight / 2, 0D).func_225583_a_(0F, 0.5F).endVertex();
-        buffer.func_225582_a_(left + zoomWidth, top + zoomHeight / 2, 0D).func_225583_a_(1F, 0.5F).endVertex();
-        buffer.func_225582_a_(left + zoomWidth, top, 0D).func_225583_a_(1F, 0F).endVertex();
+        buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
+        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0F, 0.5F).endVertex();
+        buffer.pos(left + zoomWidth, top + zoomHeight / 2, 0D).tex(1F, 0.5F).endVertex();
+        buffer.pos(left + zoomWidth, top, 0D).tex(1F, 0F).endVertex();
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        buffer.func_225582_a_(left, top, 0D).func_225583_a_(0F, 0.5F).endVertex();
-        buffer.func_225582_a_(left, top + zoomHeight / 2, 0D).func_225583_a_(0F, 1F).endVertex();
-        buffer.func_225582_a_(left + percWidth, top + zoomHeight / 2, 0D).func_225583_a_(1F * percent, 1F).endVertex();
-        buffer.func_225582_a_(left + percWidth, top, 0D).func_225583_a_(1F * percent, 0.5F).endVertex();
+        buffer.pos(left, top, 0D).tex(0F, 0.5F).endVertex();
+        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0F, 1F).endVertex();
+        buffer.pos(left + percWidth, top + zoomHeight / 2, 0D).tex(1F * percent, 1F).endVertex();
+        buffer.pos(left + percWidth, top, 0D).tex(1F * percent, 0.5F).endVertex();
 
         tessellator.draw();
 
@@ -240,7 +240,7 @@ public class ClientEvents {
         /*
             To trigger the rendering of the chunks that were outside of the FOV
         */
-        mc.player.setPosition(mc.player.func_226277_ct_(), mc.player.func_226278_cu_() + 0.000000001D, mc.player.func_226281_cx_());
+        mc.player.setPosition(mc.player.getPosX(), mc.player.getPosY() + 0.000000001D, mc.player.getPosZ());
 
         event.setFOV(fov);
     }
