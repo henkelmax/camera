@@ -1,1 +1,1 @@
-- Updated forge and mcp mappings
+- Added config option to disable image uploads

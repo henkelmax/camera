@@ -1,10 +1,7 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import de.maxhenkel.camera.ClientImageUploadManager;
-import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.Shaders;
+import de.maxhenkel.camera.*;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -64,20 +61,22 @@ public class CameraScreen extends ContainerScreen {
             sendShader();
         }));
 
-        addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
-            ImageTools.chooseImage(file -> {
-                try {
-                    UUID uuid = UUID.randomUUID();
-                    BufferedImage image = ImageTools.loadImage(file);
-                    ClientImageUploadManager.addImage(uuid, image);
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
-                } catch (IOException e) {
-                    playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()));
-                    e.printStackTrace();
-                }
-                minecraft.currentScreen = null;
-            });
-        }));
+        if (Config.SERVER.ALLOW_IMAGE_UPLOAD.get()) {
+            addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
+                ImageTools.chooseImage(file -> {
+                    try {
+                        UUID uuid = UUID.randomUUID();
+                        BufferedImage image = ImageTools.loadImage(file);
+                        ClientImageUploadManager.addImage(uuid, image);
+                        Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
+                    } catch (IOException e) {
+                        playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()));
+                        e.printStackTrace();
+                    }
+                    minecraft.currentScreen = null;
+                });
+            }));
+        }
     }
 
     private void sendShader() {
