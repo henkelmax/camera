@@ -11,10 +11,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -95,7 +97,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             ratioY *= height;
         }
 
-        IVertexBuilder builderFront = buffer1.getBuffer(RenderType.entitySolid(resourceLocation));
+        IVertexBuilder builderFront = buffer1.getBuffer(getRenderType(resourceLocation));
 
         // Front
         vertex(builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
@@ -103,7 +105,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
         vertex(builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
 
-        IVertexBuilder builderSide = buffer1.getBuffer(RenderType.entitySolid(FRAME_SIDE));
+        IVertexBuilder builderSide = buffer1.getBuffer(getRenderType(FRAME_SIDE));
 
         //Left
         vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
@@ -129,7 +131,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
         vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
 
-        IVertexBuilder builderBack = buffer1.getBuffer(RenderType.entitySolid(FRAME_BACK));
+        IVertexBuilder builderBack = buffer1.getBuffer(getRenderType(FRAME_BACK));
 
         //Back
         vertex(builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
@@ -153,6 +155,18 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
                 .endVertex();
     }
 
+    private static RenderType getRenderType(ResourceLocation resourceLocation) {
+        RenderType.State state = RenderType.State
+                .builder()
+                .texture(new RenderState.TextureState(resourceLocation, false, false))
+                .diffuseLighting(new RenderState.DiffuseLightingState(false))
+                .lightmap(new RenderState.LightmapState(true))
+                .overlay(new RenderState.OverlayState(true))
+                .cull(new RenderState.CullState(true))
+                .build(true);
+        return RenderType.get("entity_cutout", DefaultVertexFormats.ITEM, GL11.GL_QUADS, 256, true, false, state);
+    }
+
     private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
         if (Tools.getEntityLookingAt() != entity) {
             return;
@@ -167,7 +181,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
         AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
-        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0.125F, 0.125F, 0.125F, 1.0F);
+        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
     }
 
     public static void rotate(Direction facing, MatrixStack matrixStack) {

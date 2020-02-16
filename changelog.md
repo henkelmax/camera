@@ -1,1 +1,3 @@
-- Added image item rendering
+- Fixed images too dark
+- Fixed image frame outline color
+- Fixed image item gui rotation
