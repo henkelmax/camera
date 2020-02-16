@@ -53,12 +53,16 @@ public class Config {
     public static class ClientConfig {
         public ForgeConfigSpec.ConfigValue<String> IMAGE_DATE_FORMAT;
         public ForgeConfigSpec.ConfigValue<String> LAST_IMAGE_PATH;
+        public ForgeConfigSpec.BooleanValue RENDER_IMAGE_ITEM;
 
         public ClientConfig(ForgeConfigSpec.Builder builder) {
             IMAGE_DATE_FORMAT = builder
                     .comment("The format the date will be displayed on the image")
                     .define("image_date_format", "MM/dd/yyyy HH:mm");
             LAST_IMAGE_PATH = builder.define("last_image_path", "");
+            RENDER_IMAGE_ITEM = builder
+                    .comment("If the image item should render the actual image (This may cause poor performance)")
+                    .define("render_image_item", true);
         }
     }
 

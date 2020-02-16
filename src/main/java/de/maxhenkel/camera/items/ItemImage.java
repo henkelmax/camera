@@ -3,6 +3,7 @@ package de.maxhenkel.camera.items;
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ImageScreen;
+import de.maxhenkel.camera.items.render.ImageItemRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +30,7 @@ import java.util.UUID;
 public class ItemImage extends Item {
 
     public ItemImage() {
-        super(new Item.Properties().maxStackSize(1));
+        super(new Item.Properties().maxStackSize(1).setISTER(() -> ImageItemRenderer::new));
         setRegistryName(new ResourceLocation(Main.MODID, "image"));
     }
 

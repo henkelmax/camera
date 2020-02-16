@@ -27,37 +27,34 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     private static final ResourceLocation FRAME_BACK = new ResourceLocation(Main.MODID, "textures/images/frame_back.png");
 
     private static final float THICKNESS = 1F / 16F;
+    public static final UUID DEFAULT_IMAGE_UUID = new UUID(0L, 0L);
 
-    private Minecraft mc;
+    private static Minecraft mc;
 
     public ImageRenderer(EntityRendererManager renderManager) {
         super(renderManager);
         mc = Minecraft.getInstance();
     }
 
-    private void vertex(ImageEntity image, IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v) {
-        MatrixStack.Entry entry = matrixStack.getLast();
-        Matrix4f matrix4f = entry.getPositionMatrix();
-        Matrix3f matrix3f = entry.getNormalMatrix();
-        int lightLevel = WorldRenderer.getCombinedLight(image.world, image.getCenterPosition());
-        builder.pos(matrix4f, x, y, z)
-                .color(255, 255, 255, 255)
-                .tex(u, v)
-                .overlay(OverlayTexture.DEFAULT_LIGHT)
-                .lightmap(lightLevel)
-                .normal(matrix3f, 0F, 0F, -1F)
-                .endVertex();
+    @Override
+    public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
+        int imageLight = WorldRenderer.getCombinedLight(entity.world, entity.getCenterPosition());
+        renderImage(entity.getImageUUID(), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
+        renderBoundingBox(entity, matrixStack, buffer1);
+        super.render(entity, f1, f2, matrixStack, buffer1, light);
     }
 
-    @Override
-    public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int i) {
+    public static void renderImage(UUID imageUUID, Direction facing, float width, float height, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
         matrixStack.push();
 
         float imageRatio = 1F;
         boolean stretch = true;
         ResourceLocation resourceLocation = EMPTY_IMAGE;
-        UUID imageUUID = entity.getImageUUID();
-        if (imageUUID != null) {
+        if (DEFAULT_IMAGE_UUID.equals(imageUUID)) {
+            resourceLocation = DEFAULT_IMAGE;
+            imageRatio = 1.5F;
+            stretch = false;
+        } else if (imageUUID != null) {
             ResourceLocation rl = TextureCache.instance().getImage(imageUUID);
             if (rl != null) {
                 resourceLocation = rl;
@@ -72,10 +69,6 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         }
 
         matrixStack.translate(-0.5D, 0D, -0.5D);
-
-        Direction facing = entity.getFacing();
-        float width = entity.getFrameWidth();
-        float height = entity.getFrameHeight();
 
         rotate(facing, matrixStack);
 
@@ -105,52 +98,62 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         IVertexBuilder builderFront = buffer1.getBuffer(RenderType.entitySolid(resourceLocation));
 
         // Front
-        vertex(entity, builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F);
-        vertex(entity, builderFront, matrixStack, width - ratioX, ratioY, THICKNESS, 1F, 1F);
-        vertex(entity, builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F);
-        vertex(entity, builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F);
+        vertex(builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
+        vertex(builderFront, matrixStack, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
+        vertex(builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
+        vertex(builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
 
         IVertexBuilder builderSide = buffer1.getBuffer(RenderType.entitySolid(FRAME_SIDE));
 
         //Left
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY);
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY);
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY);
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY);
+        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
+        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light);
+        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY, light);
+        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY, light);
 
         //Right
-        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY);
-        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY);
-        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY);
-        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY);
+        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY, light);
+        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY, light);
+        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY, light);
+        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY, light);
 
         //Top
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F);
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS);
-        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS);
-        vertex(entity, builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F);
+        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F, light);
+        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS, light);
+        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS, light);
+        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F, light);
 
         //Bottom
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F);
-        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F);
-        vertex(entity, builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS);
-        vertex(entity, builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS);
+        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F, light);
+        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F, light);
+        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
+        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
 
         IVertexBuilder builderBack = buffer1.getBuffer(RenderType.entitySolid(FRAME_BACK));
 
         //Back
-        vertex(entity, builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY);
-        vertex(entity, builderBack, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY);
-        vertex(entity, builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY);
-        vertex(entity, builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY);
+        vertex(builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
+        vertex(builderBack, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light);
+        vertex(builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light);
+        vertex(builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light);
 
         matrixStack.pop();
-
-        renderBoundingBox(entity, matrixStack, buffer1);
-        super.render(entity, f1, f2, matrixStack, buffer1, 0xFFFFFF);
     }
 
-    private void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    private static void vertex(IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v, int light) {
+        MatrixStack.Entry entry = matrixStack.getLast();
+        Matrix4f matrix4f = entry.getPositionMatrix();
+        Matrix3f matrix3f = entry.getNormalMatrix();
+        builder.pos(matrix4f, x, y, z)
+                .color(255, 255, 255, 255)
+                .tex(u, v)
+                .overlay(OverlayTexture.DEFAULT_LIGHT)
+                .lightmap(light)
+                .normal(matrix3f, 0F, 0F, -1F)
+                .endVertex();
+    }
+
+    private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
         if (Tools.getEntityLookingAt() != entity) {
             return;
         }
@@ -162,7 +165,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         matrixStack.pop();
     }
 
-    private void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
+    private static void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
         AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
         WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0.125F, 0.125F, 0.125F, 1.0F);
     }

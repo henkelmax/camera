@@ -1,1 +1,1 @@
-- Added config option to disable image uploads
+- Added image item rendering
