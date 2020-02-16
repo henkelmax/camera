@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.inventory;
 
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
@@ -74,7 +74,7 @@ public class AlbumInventory implements IInventory {
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return !(stack.getItem() instanceof ItemImage);
+        return !(stack.getItem() instanceof ImageItem);
     }
 
     @Override

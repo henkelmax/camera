@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -12,6 +12,6 @@ public class AlbumSlot extends Slot {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() instanceof ItemImage;
+        return stack.getItem() instanceof ImageItem;
     }
 }

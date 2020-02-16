@@ -27,9 +27,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemImage extends Item {
+public class ImageItem extends Item {
 
-    public ItemImage() {
+    public ImageItem() {
         super(new Item.Properties().maxStackSize(1).setISTER(() -> ImageItemRenderer::new));
         setRegistryName(new ResourceLocation(Main.MODID, "image"));
     }

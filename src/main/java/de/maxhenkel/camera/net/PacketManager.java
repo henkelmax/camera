@@ -3,7 +3,7 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -54,9 +54,9 @@ public class PacketManager {
 
                         playerMP.getServer().deferTask(() -> {
                             ItemStack stack = new ItemStack(Main.IMAGE);
-                            ItemImage.setUUID(stack, imgUUID);
-                            ItemImage.setTime(stack, System.currentTimeMillis());
-                            ItemImage.setOwner(stack, playerMP.getName().getUnformattedComponentText());
+                            ImageItem.setUUID(stack, imgUUID);
+                            ImageItem.setTime(stack, System.currentTimeMillis());
+                            ImageItem.setOwner(stack, playerMP.getName().getUnformattedComponentText());
 
                             if (!playerMP.addItemStackToInventory(stack)) {
                                 InventoryHelper.spawnItemStack(playerMP.world, playerMP.getPosX(), playerMP.getPosY(), playerMP.getPosZ(), stack);

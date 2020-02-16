@@ -7,7 +7,7 @@ import de.maxhenkel.camera.gui.ContainerAlbumInventory;
 import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.items.ImageFrameItem;
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.*;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -59,7 +59,7 @@ public class Main {
     public static CameraItem CAMERA;
 
     @ObjectHolder(MODID + ":image")
-    public static ItemImage IMAGE;
+    public static ImageItem IMAGE;
 
     @ObjectHolder(MODID + ":album")
     public static AlbumItem ALBUM;
@@ -149,7 +149,7 @@ public class Main {
         event.getRegistry().registerAll(
                 FRAME_ITEM = new ImageFrameItem(),
                 CAMERA = new CameraItem(),
-                IMAGE = new ItemImage(),
+                IMAGE = new ImageItem(),
                 ALBUM = new AlbumItem()
         );
     }

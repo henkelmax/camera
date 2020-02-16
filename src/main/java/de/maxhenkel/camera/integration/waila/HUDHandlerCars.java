@@ -3,7 +3,7 @@ package de.maxhenkel.camera.integration.waila;
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import mcp.mobius.waila.Waila;
 import mcp.mobius.waila.api.IEntityAccessor;
 import mcp.mobius.waila.api.IEntityComponentProvider;
@@ -41,7 +41,7 @@ public class HUDHandlerCars implements IEntityComponentProvider {
 
         ItemStack imageItem = image.getItem();
 
-        if (!(imageItem.getItem() instanceof ItemImage)) {
+        if (!(imageItem.getItem() instanceof ImageItem)) {
             tooltip.add(new TranslationTextComponent("tooltip.image_frame_empty"));
             return;
         }

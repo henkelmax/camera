@@ -2,7 +2,7 @@ package de.maxhenkel.camera.entities;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
-import de.maxhenkel.camera.items.ItemImage;
+import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -102,7 +102,7 @@ public class ImageEntity extends Entity {
         }
 
         if (stack.getItem().equals(Main.IMAGE)) {
-            UUID uuid = ItemImage.getUUID(stack);
+            UUID uuid = ImageItem.getUUID(stack);
             if (uuid == null) {
                 return true;
             }
