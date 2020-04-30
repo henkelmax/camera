@@ -1,1 +1,2 @@
-- Fixed empty image item rendering
+- Updated forge version
+- Updated MCP mappings

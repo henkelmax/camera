@@ -74,7 +74,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
-        if (player.isShiftKeyDown() && player.abilities.allowEdit) {
+        if (player.isSneaking() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }
@@ -146,8 +146,7 @@ public class ImageEntity extends Entity {
     }
 
     public boolean isValid() {
-        //isCollisionBoxesEmpty
-        return world.func_226665_a__(this, getBoundingBox()) && world.getEntitiesWithinAABB(ImageEntity.class, getBoundingBox().contract(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
+        return world.hasNoCollisions(this, getBoundingBox()) && world.getEntitiesWithinAABB(ImageEntity.class, getBoundingBox().contract(getFacing().getXOffset() == 0 ? 2D / 16D : 0D, getFacing().getYOffset() == 0 ? 2D / 16D : 0D, getFacing().getZOffset() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
     }
 
     public void checkValid() {

@@ -144,12 +144,12 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static void vertex(IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v, int light) {
         MatrixStack.Entry entry = matrixStack.getLast();
-        Matrix4f matrix4f = entry.getPositionMatrix();
-        Matrix3f matrix3f = entry.getNormalMatrix();
+        Matrix4f matrix4f = entry.getMatrix();
+        Matrix3f matrix3f = entry.getNormal();
         builder.pos(matrix4f, x, y, z)
                 .color(255, 255, 255, 255)
                 .tex(u, v)
-                .overlay(OverlayTexture.DEFAULT_LIGHT)
+                .overlay(OverlayTexture.NO_OVERLAY)
                 .lightmap(light)
                 .normal(matrix3f, 0F, 0F, -1F)
                 .endVertex();
@@ -157,14 +157,14 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static RenderType getRenderType(ResourceLocation resourceLocation) {
         RenderType.State state = RenderType.State
-                .builder()
+                .getBuilder()
                 .texture(new RenderState.TextureState(resourceLocation, false, false))
                 .diffuseLighting(new RenderState.DiffuseLightingState(false))
                 .lightmap(new RenderState.LightmapState(true))
                 .overlay(new RenderState.OverlayState(true))
                 .cull(new RenderState.CullState(true))
                 .build(true);
-        return RenderType.get("entity_cutout", DefaultVertexFormats.ITEM, GL11.GL_QUADS, 256, true, false, state);
+        return RenderType.makeType("entity_cutout", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, false, state);
     }
 
     private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
@@ -181,7 +181,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
         AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
-        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
+        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.getLines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
     }
 
     public static void rotate(Direction facing, MatrixStack matrixStack) {

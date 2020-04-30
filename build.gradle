@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://maven.maxhenkel.de/artifactory/public' }
+        maven { url = 'https://maven.maxhenkel.de/repository/public' }
         jcenter()
         mavenCentral()
     }

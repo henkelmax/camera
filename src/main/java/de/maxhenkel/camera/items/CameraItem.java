@@ -36,7 +36,7 @@ public class CameraItem extends Item {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
 
-        if (playerIn.isShiftKeyDown() && !isActive(stack)) {
+        if (playerIn.isSneaking() && !isActive(stack)) {
             if (worldIn.isRemote) {
                 openClientGui(getShader(stack));
             }
