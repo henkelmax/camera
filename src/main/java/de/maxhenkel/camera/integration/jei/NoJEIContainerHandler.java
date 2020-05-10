@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.Rectangle2d;
 import java.util.Arrays;
 import java.util.List;
 
-public class ImageContainerHandler<T extends ContainerScreen> implements IGuiContainerHandler<T> {
+public class NoJEIContainerHandler<T extends ContainerScreen> implements IGuiContainerHandler<T> {
 
     @Override
     public List<Rectangle2d> getGuiExtraAreas(T containerScreen) {

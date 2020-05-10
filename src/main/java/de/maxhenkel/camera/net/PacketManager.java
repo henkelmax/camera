@@ -54,9 +54,9 @@ public class PacketManager {
 
                         playerMP.getServer().deferTask(() -> {
                             ItemStack stack = new ItemStack(Main.IMAGE);
-                            ImageItem.setUUID(stack, imgUUID);
-                            ImageItem.setTime(stack, System.currentTimeMillis());
-                            ImageItem.setOwner(stack, playerMP.getName().getUnformattedComponentText());
+                            Main.IMAGE.setUUID(stack, imgUUID);
+                            Main.IMAGE.setTime(stack, System.currentTimeMillis());
+                            Main.IMAGE.setOwner(stack, playerMP.getName().getUnformattedComponentText());
 
                             if (!playerMP.addItemStackToInventory(stack)) {
                                 InventoryHelper.spawnItemStack(playerMP.world, playerMP.getPosX(), playerMP.getPosY(), playerMP.getPosZ(), stack);

@@ -64,7 +64,7 @@ public class ImageItem extends Item {
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    private static CompoundNBT getImageTag(ItemStack stack) {
+    private CompoundNBT getImageTag(ItemStack stack) {
         if (!stack.hasTag()) {
             stack.setTag(new CompoundNBT());
         }
@@ -78,14 +78,14 @@ public class ImageItem extends Item {
         return compound.getCompound("image");
     }
 
-    public static void setUUID(ItemStack stack, UUID uuid) {
+    public void setUUID(ItemStack stack, UUID uuid) {
         CompoundNBT compound = getImageTag(stack);
 
         compound.putLong("image_id_most", uuid.getMostSignificantBits());
         compound.putLong("image_id_least", uuid.getLeastSignificantBits());
     }
 
-    public static UUID getUUID(ItemStack stack) {
+    public UUID getUUID(ItemStack stack) {
         CompoundNBT compound = getImageTag(stack);
 
         if (!compound.contains("image_id_most") || !compound.contains("image_id_least")) {
@@ -97,12 +97,12 @@ public class ImageItem extends Item {
         return new UUID(most, least);
     }
 
-    public static void setTime(ItemStack stack, long time) {
+    public void setTime(ItemStack stack, long time) {
         CompoundNBT compound = getImageTag(stack);
         compound.putLong("image_time", time);
     }
 
-    public static long getTime(ItemStack stack) {
+    public long getTime(ItemStack stack) {
         CompoundNBT compound = getImageTag(stack);
 
         if (!compound.contains("image_time")) {
@@ -112,12 +112,12 @@ public class ImageItem extends Item {
         return compound.getLong("image_time");
     }
 
-    public static void setOwner(ItemStack stack, String name) {
+    public void setOwner(ItemStack stack, String name) {
         CompoundNBT compound = getImageTag(stack);
         compound.putString("owner", name);
     }
 
-    public static String getOwner(ItemStack stack) {
+    public String getOwner(ItemStack stack) {
         CompoundNBT compound = getImageTag(stack);
 
         if (!compound.contains("owner")) {

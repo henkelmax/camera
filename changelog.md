@@ -1,2 +1,4 @@
-- Updated forge version
-- Updated MCP mappings
+- Reworked image frame resizing
+- Updated german translation to fit space
+- Added transparency setting for frame resizing GUI
+- Fixed JEI items showing up in GUIs with no inventory

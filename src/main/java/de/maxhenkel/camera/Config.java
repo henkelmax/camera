@@ -54,6 +54,7 @@ public class Config {
         public ForgeConfigSpec.ConfigValue<String> IMAGE_DATE_FORMAT;
         public ForgeConfigSpec.ConfigValue<String> LAST_IMAGE_PATH;
         public ForgeConfigSpec.BooleanValue RENDER_IMAGE_ITEM;
+        public ForgeConfigSpec.DoubleValue RESIZE_GUI_OPACITY;
 
         public ClientConfig(ForgeConfigSpec.Builder builder) {
             IMAGE_DATE_FORMAT = builder
@@ -63,6 +64,9 @@ public class Config {
             RENDER_IMAGE_ITEM = builder
                     .comment("If the image item should render the actual image (This may cause poor performance)")
                     .define("render_image_item", true);
+            RESIZE_GUI_OPACITY = builder
+                    .comment("The opacity of the resize image frame GUI")
+                    .defineInRange("resize_gui_opacity", 1D, 0D, 1D);
         }
     }
 

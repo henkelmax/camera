@@ -3,7 +3,6 @@ package de.maxhenkel.camera.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
-import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -26,7 +25,7 @@ public class ImageScreen extends ContainerScreen {
     public ImageScreen(ItemStack image) {
         super(new DummyContainer(), null, new TranslationTextComponent("gui.image.title"));
 
-        imageUUID = ImageItem.getUUID(image);
+        imageUUID = Main.IMAGE.getUUID(image);
     }
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
