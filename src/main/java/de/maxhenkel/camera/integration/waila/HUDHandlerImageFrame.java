@@ -17,13 +17,13 @@ import net.minecraft.util.text.*;
 import java.util.Date;
 import java.util.List;
 
-public class HUDHandlerCars implements IEntityComponentProvider {
+public class HUDHandlerImageFrame implements IEntityComponentProvider {
 
     static final ResourceLocation OBJECT_NAME_TAG = new ResourceLocation("waila", "object_name");
     static final ResourceLocation CONFIG_SHOW_REGISTRY = new ResourceLocation("waila", "show_registry");
     static final ResourceLocation REGISTRY_NAME_TAG = new ResourceLocation("waila", "registry_name");
 
-    static final HUDHandlerCars INSTANCE = new HUDHandlerCars();
+    static final HUDHandlerImageFrame INSTANCE = new HUDHandlerImageFrame();
 
     @Override
     public void appendHead(List<ITextComponent> tooltip, IEntityAccessor accessor, IPluginConfig config) {
