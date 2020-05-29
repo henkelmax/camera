@@ -98,9 +98,9 @@ public class ClientEvents {
         float left = (ws - wnew) / 2F;
 
         buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
-        buffer.pos(left, top + hnew, 0D).tex(0F, 100F/256F).endVertex();
-        buffer.pos(left + wnew, top + hnew, 0D).tex(192F/256F, 100F/256F).endVertex();
-        buffer.pos(left + wnew, top, 0D).tex(192F/256F, 0F).endVertex();
+        buffer.pos(left, top + hnew, 0D).tex(0F, 100F / 256F).endVertex();
+        buffer.pos(left + wnew, top + hnew, 0D).tex(192F / 256F, 100F / 256F).endVertex();
+        buffer.pos(left + wnew, top, 0D).tex(192F / 256F, 0F).endVertex();
 
         tessellator.draw();
 
@@ -128,16 +128,16 @@ public class ClientEvents {
         int top = height / 40;
 
         buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
-        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0F, 0.5F).endVertex();
-        buffer.pos(left + zoomWidth, top + zoomHeight / 2, 0D).tex(1F, 0.5F).endVertex();
-        buffer.pos(left + zoomWidth, top, 0D).tex(1F, 0F).endVertex();
+        buffer.pos(left, (float) (top + zoomHeight / 2), 0D).tex(0F, 10F / 128F).endVertex();
+        buffer.pos(left + zoomWidth, (float) (top + zoomHeight / 2), 0D).tex(112F / 128F, 10F / 128F).endVertex();
+        buffer.pos(left + zoomWidth, top, 0D).tex(112F / 128F, 0F).endVertex();
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        buffer.pos(left, top, 0D).tex(0F, 0.5F).endVertex();
-        buffer.pos(left, top + zoomHeight / 2, 0D).tex(0F, 1F).endVertex();
-        buffer.pos(left + percWidth, top + zoomHeight / 2, 0D).tex(1F * percent, 1F).endVertex();
-        buffer.pos(left + percWidth, top, 0D).tex(1F * percent, 0.5F).endVertex();
+        buffer.pos(left, top, 0D).tex(0F, 10F / 128F).endVertex();
+        buffer.pos(left, (float) (top + zoomHeight / 2), 0D).tex(0F, 20F / 128F).endVertex();
+        buffer.pos(left + percWidth, (float) (top + zoomHeight / 2), 0D).tex((112F / 128F) * percent, 20F / 128F).endVertex();
+        buffer.pos(left + percWidth, top, 0D).tex((112F / 128F) * percent, 10F / 128F).endVertex();
 
         tessellator.draw();
 

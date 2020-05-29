@@ -1,1 +1,1 @@
-- Fixed viewfinder overlay not working correctly in some cases
+- Fixed zoom overlay not working correctly in some cases
