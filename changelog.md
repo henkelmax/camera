@@ -1,4 +1,1 @@
-- Reworked image frame resizing
-- Updated german translation to fit space
-- Added transparency setting for frame resizing GUI
-- Fixed JEI items showing up in GUIs with no inventory
+- Fixed viewfinder overlay not working correctly in some cases

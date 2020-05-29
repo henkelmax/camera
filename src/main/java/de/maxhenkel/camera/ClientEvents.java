@@ -98,9 +98,9 @@ public class ClientEvents {
         float left = (ws - wnew) / 2F;
 
         buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
-        buffer.pos(left, top + hnew, 0D).tex(0F, 1F).endVertex();
-        buffer.pos(left + wnew, top + hnew, 0D).tex(1F, 1F).endVertex();
-        buffer.pos(left + wnew, top, 0D).tex(1F, 0F).endVertex();
+        buffer.pos(left, top + hnew, 0D).tex(0F, 100F/256F).endVertex();
+        buffer.pos(left + wnew, top + hnew, 0D).tex(192F/256F, 100F/256F).endVertex();
+        buffer.pos(left + wnew, top, 0D).tex(192F/256F, 0F).endVertex();
 
         tessellator.draw();
 
