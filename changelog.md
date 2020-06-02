@@ -1,1 +1,1 @@
-- Fixed bug that players in adventure mode can break the image frame
+- Fixed JEI screen overlaying image GUI
