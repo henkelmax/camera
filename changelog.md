@@ -1,1 +1,1 @@
-- Fixed zoom overlay not working correctly in some cases
+- Fixed WAILA image frame HUD

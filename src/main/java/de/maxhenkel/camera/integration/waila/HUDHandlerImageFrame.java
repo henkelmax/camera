@@ -26,10 +26,12 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
     static final HUDHandlerImageFrame INSTANCE = new HUDHandlerImageFrame();
 
     @Override
-    public void appendHead(List<ITextComponent> tooltip, IEntityAccessor accessor, IPluginConfig config) {
-        ((ITaggableList<ResourceLocation, ITextComponent>) tooltip).setTag(OBJECT_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getEntityName(), accessor.getEntity().getDisplayName().getFormattedText())));
-        if (config.get(CONFIG_SHOW_REGISTRY))
-            ((ITaggableList<ResourceLocation, ITextComponent>) tooltip).setTag(REGISTRY_NAME_TAG, new StringTextComponent(accessor.getEntity().getType().getRegistryName().toString()).setStyle(new Style().setColor(TextFormatting.GRAY)));
+    public void appendHead(List<ITextComponent> t, IEntityAccessor accessor, IPluginConfig config) {
+        ITaggableList<ResourceLocation, ITextComponent> tooltip = (ITaggableList<ResourceLocation, ITextComponent>) t;
+        tooltip.setTag(OBJECT_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getEntityName(), accessor.getEntity().getDisplayName().getFormattedText())));
+        if (config.get(CONFIG_SHOW_REGISTRY)){
+            tooltip.setTag(REGISTRY_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getRegistryName(), accessor.getEntity().getType().getRegistryName().toString())));
+        }
     }
 
     @Override
