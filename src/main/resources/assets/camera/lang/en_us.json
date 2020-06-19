@@ -36,5 +36,6 @@
   "key.next_image": "Next Image",
   "key.previous_image": "Previous Image",
   "filetype.images": "Images",
-  "title.choose_image": "Choose Image"
+  "title.choose_image": "Choose Image",
+  "sound.camera.take_image": "Camera taking an image"
 }

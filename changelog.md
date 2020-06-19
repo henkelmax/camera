@@ -1,1 +1,1 @@
-- Fixed WAILA image frame HUD
+- Fixed camera sound description

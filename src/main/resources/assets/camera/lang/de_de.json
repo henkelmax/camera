@@ -36,5 +36,6 @@
   "key.next_image": "Nächstes Bild",
   "key.previous_image": "Vorheriges Bild",
   "filetype.images": "Bilder",
-  "title.choose_image": "Bild auswählen"
+  "title.choose_image": "Bild auswählen",
+  "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt"
 }
