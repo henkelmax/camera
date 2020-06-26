@@ -5,6 +5,7 @@ import javafx.stage.FileChooser;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.storage.FolderName;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -18,6 +19,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class ImageTools {
+
+    public static FolderName CAMERA_IMAGES = new FolderName("camera_images");
 
     private static final int MAX_IMAGE_SIZE = 1920;
 
@@ -158,7 +161,7 @@ public class ImageTools {
 
     @Deprecated
     public static File getImageFileLegacy(ServerPlayerEntity playerMP, UUID uuid) {
-        File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
+        File imageFolder = playerMP.server.func_240776_a_(CAMERA_IMAGES).toFile();
         File image = new File(imageFolder, uuid.toString() + ".jpg");
         if (!image.exists()) {
             image = new File(imageFolder, uuid.toString() + ".png");
@@ -167,7 +170,7 @@ public class ImageTools {
     }
 
     public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
-        File imageFolder = new File(playerMP.getServerWorld().getSaveHandler().getWorldDirectory(), "camera_images");
+        File imageFolder = playerMP.server.func_240776_a_(CAMERA_IMAGES).toFile();
         return new File(imageFolder, uuid.toString() + ".jpg");
     }
 
@@ -203,8 +206,8 @@ public class ImageTools {
                     chooser.setInitialDirectory(last);
                 }
             }
-            chooser.setTitle(new TranslationTextComponent("title.choose_image").getFormattedText());
-            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(new TranslationTextComponent("filetype.images").getFormattedText(), "*.png", "*.jpg", "*.jpeg");
+            chooser.setTitle(new TranslationTextComponent("title.choose_image").getString());
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(new TranslationTextComponent("filetype.images").getString(), "*.png", "*.jpg", "*.jpeg");
             chooser.getExtensionFilters().clear();
             chooser.getExtensionFilters().add(filter);
             chooser.setSelectedExtensionFilter(filter);

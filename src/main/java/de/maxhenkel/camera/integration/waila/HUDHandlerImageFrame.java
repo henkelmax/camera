@@ -1,5 +1,5 @@
 package de.maxhenkel.camera.integration.waila;
-
+/*
 import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
@@ -64,4 +64,4 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
     public void appendTail(List<ITextComponent> tooltip, IEntityAccessor accessor, IPluginConfig config) {
         tooltip.add(new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getModName(), ModIdentification.getModInfo(accessor.getEntity()).getName())));
     }
-}
+}*/

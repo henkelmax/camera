@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -20,19 +21,19 @@ public class AlbumScreen extends ContainerScreen {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        renderBackground();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        func_230446_a_(matrixStack);
+        RenderSystem.color4f(1F, 1F, 1F, 1F);
 
         if (images.isEmpty()) {
             return;
         }
         UUID uuid = images.get(index);
-        ImageScreen.drawImage(minecraft, width, height, 100, uuid);
+        ImageScreen.drawImage(field_230706_i_, field_230708_k_, field_230709_l_, 100, uuid);
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double amount) {
+    public boolean func_231043_a_(double x, double y, double amount) {
         if (amount < 0D) {
             next();
         } else {
@@ -59,15 +60,20 @@ public class AlbumScreen extends ContainerScreen {
     private boolean wasPreviousDown;
 
     @Override
-    public void tick() {
-        super.tick();
+    public void func_231023_e_() {
+        super.func_231023_e_();
 
-        boolean isNextDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
-        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
+        boolean isNextDown = InputMappings.isKeyDown(field_230706_i_.getMainWindow().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
+        boolean isPreviousDown = InputMappings.isKeyDown(field_230706_i_.getMainWindow().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {
             previous();
         }
+    }
+
+    @Override
+    protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
+
     }
 }

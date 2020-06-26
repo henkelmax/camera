@@ -1,10 +1,9 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import de.maxhenkel.camera.*;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -13,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
-public class CameraScreen extends ContainerScreen {
+public class CameraScreen extends ScreenBase {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
@@ -21,7 +20,7 @@ public class CameraScreen extends ContainerScreen {
     private int index = 0;
 
     public CameraScreen(String currentShader) {
-        super(new DummyContainer(), null, new TranslationTextComponent("gui.camera.title"));
+        super(CAMERA_TEXTURE, new DummyContainer(), null, new TranslationTextComponent("gui.camera.title"));
         xSize = 248;
         ySize = 109;
 
@@ -40,29 +39,31 @@ public class CameraScreen extends ContainerScreen {
     }
 
     @Override
-    protected void init() {
-        super.init();
-        buttons.clear();
+    protected void func_231160_c_() {
+        super.func_231160_c_();
+        field_230710_m_.clear();
         int padding = 10;
         int buttonWidth = 70;
         int buttonHeight = 20;
-        addButton(new Button(guiLeft + padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.prev").getFormattedText(), button -> {
+        Button prev = func_230480_a_(new Button(guiLeft + padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.prev"), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
             sendShader();
         }));
-        addButton(new Button(guiLeft + xSize - buttonWidth - padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.next").getFormattedText(), button -> {
+        prev.field_230693_o_ = false; //TODO fix shaders
+        Button next = func_230480_a_(new Button(guiLeft + xSize - buttonWidth - padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.next"), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
             sendShader();
         }));
+        next.field_230693_o_ = false; //TODO fix shaders
 
         if (Config.SERVER.ALLOW_IMAGE_UPLOAD.get()) {
-            addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
+            func_230480_a_(new Button(guiLeft + xSize / 2 - buttonWidth / 2, field_230709_l_ / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -70,10 +71,10 @@ public class CameraScreen extends ContainerScreen {
                         ClientImageUploadManager.addImage(uuid, image);
                         Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
-                        playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()));
+                        playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()), playerInventory.player.getUniqueID());
                         e.printStackTrace();
                     }
-                    minecraft.currentScreen = null;
+                    field_230706_i_.currentScreen = null;
                 });
             }));
         }
@@ -84,27 +85,19 @@ public class CameraScreen extends ContainerScreen {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
-        super.drawGuiContainerForegroundLayer(x, y);
+    protected void func_230451_b_(MatrixStack matrixStack, int x, int y) {
+        super.func_230451_b_(matrixStack, x, y);
 
-        String title = new TranslationTextComponent("gui.camera.choosefilter").getFormattedText();
+        String title = new TranslationTextComponent("gui.camera.choosefilter").getString();
 
-        int titleWidth = font.getStringWidth(title);
+        int titleWidth = field_230712_o_.getStringWidth(title);
 
-        font.drawString(title, xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
+        field_230712_o_.func_238421_b_(matrixStack, title, xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
 
-        String shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index)).getFormattedText();
+        String shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index)).getString();
 
-        int shaderWidth = font.getStringWidth(shaderName);
+        int shaderWidth = field_230712_o_.getStringWidth(shaderName);
 
-        font.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, 0xFFFFFFFF);
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        renderBackground();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
-        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+        field_230712_o_.func_238421_b_(matrixStack, shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT / 2, 0xFFFFFFFF);
     }
 }

@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
@@ -30,16 +31,15 @@ public class ImageScreen extends ContainerScreen {
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        renderBackground();
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        func_230446_a_(matrixStack);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageUUID == null) {
             return;
         }
 
-        drawImage(minecraft, width, height, 100, imageUUID);
-
+        drawImage(field_230706_i_, field_230708_k_, field_230709_l_, 100, imageUUID);
     }
 
     public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
@@ -97,5 +97,10 @@ public class ImageScreen extends ContainerScreen {
         tessellator.draw();
 
         RenderSystem.popMatrix();
+    }
+
+    @Override
+    protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
+
     }
 }

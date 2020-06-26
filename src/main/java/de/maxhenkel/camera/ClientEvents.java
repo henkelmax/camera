@@ -1,17 +1,19 @@
 package de.maxhenkel.camera;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
@@ -55,27 +57,24 @@ public class ClientEvents {
 
         event.setCanceled(true);
 
-        if (!event.getType().equals(RenderGameOverlayEvent.ElementType.EXPERIENCE)) {
+        if (!event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
             return;
         }
 
         mc.gameSettings.thirdPersonView = 0;
-        setShader(getShader(mc.player));
 
-        drawViewFinder();
-        drawZoom(getFOVPercentage());
+        // setShader(getShader(mc.player)); //TODO fix shaders
+        drawViewFinder(event.getMatrixStack());
+        drawZoom(event.getMatrixStack(), getFOVPercentage());
     }
 
-    private void drawViewFinder() {
-        RenderSystem.pushMatrix();
-
+    private void drawViewFinder(MatrixStack matrixStack) {
         mc.getTextureManager().bindTexture(VIEWFINDER);
         float imageWidth = 192F;
         float imageHeight = 100F;
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         float ws = (float) mc.getMainWindow().getScaledWidth();
         float hs = (float) mc.getMainWindow().getScaledHeight();
@@ -97,51 +96,46 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
-        buffer.pos(left, top + hnew, 0D).tex(0F, 100F / 256F).endVertex();
-        buffer.pos(left + wnew, top + hnew, 0D).tex(192F / 256F, 100F / 256F).endVertex();
-        buffer.pos(left + wnew, top, 0D).tex(192F / 256F, 0F).endVertex();
+        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 0F).endVertex();
+        bufferBuilder.pos(matrix, left, top + hnew, 0F).tex(0F, 100F / 256F).endVertex();
+        bufferBuilder.pos(matrix, left + wnew, top + hnew, 0F).tex(192F / 256F, 100F / 256F).endVertex();
+        bufferBuilder.pos(matrix, left + wnew, top, 0F).tex(192F / 256F, 0F).endVertex();
 
-        tessellator.draw();
-
-        RenderSystem.popMatrix();
+        bufferBuilder.finishDrawing();
+        WorldVertexBufferUploader.draw(bufferBuilder);
     }
 
-    private void drawZoom(float percent) {
-
-        RenderSystem.pushMatrix();
-
+    private void drawZoom(MatrixStack matrixStack, float percent) {
         mc.getTextureManager().bindTexture(ZOOM);
 
         int zoomWidth = 112;
         int zoomHeight = 20;
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         int width = mc.getMainWindow().getScaledWidth();
         int height = mc.getMainWindow().getScaledHeight();
 
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        buffer.pos(left, top, 0D).tex(0F, 0F).endVertex();
-        buffer.pos(left, (float) (top + zoomHeight / 2), 0D).tex(0F, 10F / 128F).endVertex();
-        buffer.pos(left + zoomWidth, (float) (top + zoomHeight / 2), 0D).tex(112F / 128F, 10F / 128F).endVertex();
-        buffer.pos(left + zoomWidth, top, 0D).tex(112F / 128F, 0F).endVertex();
+        Matrix4f matrix = matrixStack.getLast().getMatrix();
+        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 0F).endVertex();
+        bufferBuilder.pos(matrix, left, (float) (top + zoomHeight / 2), 0F).tex(0F, 10F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).tex(112F / 128F, 10F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left + zoomWidth, top, 0F).tex(112F / 128F, 0F).endVertex();
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        buffer.pos(left, top, 0D).tex(0F, 10F / 128F).endVertex();
-        buffer.pos(left, (float) (top + zoomHeight / 2), 0D).tex(0F, 20F / 128F).endVertex();
-        buffer.pos(left + percWidth, (float) (top + zoomHeight / 2), 0D).tex((112F / 128F) * percent, 20F / 128F).endVertex();
-        buffer.pos(left + percWidth, top, 0D).tex((112F / 128F) * percent, 10F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 10F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left, (float) (top + zoomHeight / 2), 0F).tex(0F, 20F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).tex((112F / 128F) * percent, 20F / 128F).endVertex();
+        bufferBuilder.pos(matrix, left + percWidth, top, 0F).tex((112F / 128F) * percent, 10F / 128F).endVertex();
 
-        tessellator.draw();
-
-        RenderSystem.popMatrix();
+        bufferBuilder.finishDrawing();
+        WorldVertexBufferUploader.draw(bufferBuilder);
     }
 
 

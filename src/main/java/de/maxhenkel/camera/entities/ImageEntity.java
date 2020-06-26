@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.entities;
 
+import com.sun.javafx.geom.Vec3d;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.net.MessageResizeFrame;
@@ -19,7 +20,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -58,7 +59,7 @@ public class ImageEntity extends Entity {
     public ImageEntity(World world, double x, double y, double z) {
         this(Main.IMAGE_ENTITY_TYPE, world);
         this.setPosition(x, y, z);
-        this.setMotion(Vec3d.ZERO);
+        this.setMotion(Vector3d.ZERO);
         this.prevPosX = x;
         this.prevPosY = y;
         this.prevPosZ = z;
@@ -72,12 +73,12 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public boolean processInitialInteract(PlayerEntity player, Hand hand) {
+    public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
         if (player.isSneaking() && player.abilities.allowEdit) {
             if (world.isRemote) {
                 openClientGui();
             }
-            return true;
+            return ActionResultType.SUCCESS;
         }
 
         ItemStack stack = player.getHeldItem(hand);
@@ -103,17 +104,17 @@ public class ImageEntity extends Entity {
         if (stack.getItem().equals(Main.IMAGE)) {
             UUID uuid = Main.IMAGE.getUUID(stack);
             if (uuid == null) {
-                return true;
+                return ActionResultType.SUCCESS;
             }
             ItemStack frameStack = stack.split(1);
             setItem(frameStack);
             setUUID(uuid);
             player.setHeldItem(hand, stack);
             playAddSound();
-            return true;
+            return ActionResultType.SUCCESS;
         }
 
-        return true;
+        return ActionResultType.SUCCESS;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -180,7 +181,7 @@ public class ImageEntity extends Entity {
                 break;
             case DOWN:
                 if (setFrameHeight(getFrameHeight() + amount)) {
-                    setImagePosition(getPosition().offset(Direction.DOWN, amount));
+                    setImagePosition(func_233580_cy_().offset(Direction.DOWN, amount));
                 }
                 break;
             case RIGHT:
@@ -188,7 +189,7 @@ public class ImageEntity extends Entity {
                 break;
             case LEFT:
                 if (setFrameWidth(getFrameWidth() + amount)) {
-                    setImagePosition(getPosition().offset(getResizeOffset(), amount));
+                    setImagePosition(func_233580_cy_().offset(getResizeOffset(), amount));
                 }
                 break;
         }
@@ -217,7 +218,7 @@ public class ImageEntity extends Entity {
     }
 
     private void updateBoundingBox() {
-        BlockPos pos = getPosition();
+        BlockPos pos = func_233580_cy_();
         Direction facing = getFacing();
         int width = getFrameWidth();
         int height = getFrameHeight();

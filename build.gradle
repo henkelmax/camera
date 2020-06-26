@@ -34,12 +34,32 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             args = ['--username', 'henkelmax']
             source sourceSets.main
+            mods {
+                mod_id {
+                    source sourceSets.main
+                }
+            }
         }
-
         server {
             workingDirectory project.file('run/server').canonicalPath
             property 'forge.logging.console.level', 'debug'
             source sourceSets.main
+            mods {
+                mod_id {
+                    source sourceSets.main
+                }
+            }
+        }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                mod_id {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
@@ -47,11 +67,11 @@ minecraft {
 dependencies {
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
     // compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}:api")
+    //compileOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}:api")
     // at runtime, use the full JEI jar
-    runtimeOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}")
 
-    compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+    //compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
 }
 
 jar {
@@ -162,3 +182,5 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+jar.finalizedBy('reobfJar')

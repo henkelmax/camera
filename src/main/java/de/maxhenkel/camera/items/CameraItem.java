@@ -51,7 +51,7 @@ public class CameraItem extends Item {
             Main.CAMERA.setActive(stack, true);
         } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
             if (consumePaper(playerIn)) {
-                worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
+                worldIn.playSound(null, playerIn.func_233580_cy_(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
                 UUID uuid = UUID.randomUUID();
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 Main.CAMERA.setActive(stack, false);

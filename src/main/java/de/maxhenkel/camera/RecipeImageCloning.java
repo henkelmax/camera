@@ -22,7 +22,7 @@ public class RecipeImageCloning extends SpecialRecipe {
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            if (ItemTools.isStackEmpty(stack)) {
+            if (stack.isEmpty()) {
                 continue;
             } else if (stack.getItem().equals(Items.PAPER)) {
                 paper = stack;

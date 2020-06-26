@@ -1,5 +1,5 @@
 package de.maxhenkel.camera.integration.waila;
-
+/*
 import de.maxhenkel.camera.entities.ImageEntity;
 import mcp.mobius.waila.api.IRegistrar;
 import mcp.mobius.waila.api.IWailaPlugin;
@@ -17,3 +17,4 @@ public class PluginCamera implements IWailaPlugin {
     }
 
 }
+*/

@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import de.maxhenkel.camera.Main;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -19,12 +20,11 @@ public class AlbumInventoryScreen extends ScreenBase<ContainerAlbumInventory> {
         ySize = 222;
     }
 
-
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
-        super.drawGuiContainerForegroundLayer(x, y);
+    protected void func_230451_b_(MatrixStack matrixStack, int x, int y) {
+        super.func_230451_b_(matrixStack, x, y);
+        field_230712_o_.func_238421_b_(matrixStack, func_231171_q_().getString(), 8F, 6F, FONT_COLOR);
+        field_230712_o_.func_238421_b_(matrixStack, playerInventory.getDisplayName().getString(), 8F, (float) (ySize - 96 + 2), FONT_COLOR);
 
-        font.drawString(getTitle().getFormattedText(), 8.0F, 6.0F, FONT_COLOR);
-        font.drawString(playerInventory.getDisplayName().getFormattedText(), 8.0F, (float) (ySize - 96 + 2), FONT_COLOR);
     }
 }
