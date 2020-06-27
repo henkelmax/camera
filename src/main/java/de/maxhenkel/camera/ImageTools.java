@@ -111,7 +111,7 @@ public class ImageTools {
 
         image = ImageTools.resize(image, newWidth, newHeight);
 
-        float factor = 0.5F;
+        float factor = Config.SERVER.IMAGE_COMPRESSION.get().floatValue();
         byte[] data;
 
         while ((data = ImageTools.compressToBytes(image, factor)).length > Config.SERVER.MAX_IMAGE_SIZE.get()) {

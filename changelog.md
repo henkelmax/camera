@@ -1,1 +1,1 @@
-- Updated to 1.16.1
+- Added config option for compression

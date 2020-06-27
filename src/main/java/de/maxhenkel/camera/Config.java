@@ -29,6 +29,7 @@ public class Config {
         public ForgeConfigSpec.IntValue IMAGE_COOLDOWN;
         public ForgeConfigSpec.ConfigValue<String> CAMERA_CONSUME_ITEM;
         public ForgeConfigSpec.IntValue MAX_IMAGE_SIZE;
+        public ForgeConfigSpec.DoubleValue IMAGE_COMPRESSION;
         public ForgeConfigSpec.BooleanValue ALLOW_IMAGE_UPLOAD;
 
         public ServerConfig(ForgeConfigSpec.Builder builder) {
@@ -43,6 +44,10 @@ public class Config {
             MAX_IMAGE_SIZE = builder
                     .comment("The maximum size of an image in bytes when transferred to the server", "Higher values mean more delay/lag between taking an image and getting it into your inventory")
                     .defineInRange("max_image_size", 200_000, 50_000, 1_000_000);
+
+            IMAGE_COMPRESSION = builder
+                    .comment("The amount of jpeg compression applied to the image", "If the image exceeds the 'max_image_size', it will get compressed anyways")
+                    .defineInRange("image_compression", 0.5D, 0.1D, 1D);
 
             ALLOW_IMAGE_UPLOAD = builder
                     .comment("If it is allowed to upload custom images")
