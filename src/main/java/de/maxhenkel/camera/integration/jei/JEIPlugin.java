@@ -1,5 +1,5 @@
 package de.maxhenkel.camera.integration.jei;
-/*
+
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.gui.CameraScreen;
@@ -25,4 +25,3 @@ public class JEIPlugin implements IModPlugin {
         registration.addGuiContainerHandler(CameraScreen.class, new NoJEIContainerHandler<>());
     }
 }
-*/

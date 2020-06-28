@@ -1,1 +1,1 @@
-- Added config option for compression
+- Fixed JEI integration
