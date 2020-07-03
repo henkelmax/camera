@@ -29,7 +29,7 @@ public class MessageRequestUploadCustomImage implements Message {
             if (CameraItem.consumePaper(player)) {
                 Main.SIMPLE_CHANNEL.reply(new MessageUploadCustomImage(uuid), context);
             } else {
-                player.sendStatusMessage(new TranslationTextComponent("message.no_consumable", Config.getConsumingStack().getDisplayName(), Config.getConsumingStack().getCount()), true);
+                player.sendStatusMessage(new TranslationTextComponent("message.no_consumable", new TranslationTextComponent(Config.getConsumingItem().getTranslationKey()), Config.SERVER.CAMERA_CONSUME_ITEM_AMOUNT.get()), true);
             }
         } else {
             player.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);

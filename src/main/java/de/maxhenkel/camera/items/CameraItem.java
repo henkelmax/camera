@@ -56,7 +56,7 @@ public class CameraItem extends Item {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", Config.getConsumingStack().getDisplayName(), Config.getConsumingStack().getCount()), true);
+                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", new TranslationTextComponent(Config.getConsumingItem().getTranslationKey()), Config.SERVER.CAMERA_CONSUME_ITEM_AMOUNT.get()), true);
             }
         } else {
             playerIn.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
@@ -88,7 +88,7 @@ public class CameraItem extends Item {
             return true;
         }
 
-        int amountNeeded = Config.getConsumingStack().getCount();
+        int amountNeeded = Config.SERVER.CAMERA_CONSUME_ITEM_AMOUNT.get();
         List<ItemStack> consumeStacks = findPaper(player);
 
         int count = 0;
@@ -124,7 +124,7 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return ItemTools.areItemsEqual(stack, Config.getConsumingStack());
+        return stack.getItem().equals(Config.getConsumingItem());
     }
 
     public boolean isActive(ItemStack stack) {

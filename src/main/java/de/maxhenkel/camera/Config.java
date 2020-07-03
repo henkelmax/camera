@@ -1,8 +1,9 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.SimpleDateFormat;
@@ -28,6 +29,7 @@ public class Config {
     public static class ServerConfig {
         public ForgeConfigSpec.IntValue IMAGE_COOLDOWN;
         public ForgeConfigSpec.ConfigValue<String> CAMERA_CONSUME_ITEM;
+        public ForgeConfigSpec.IntValue CAMERA_CONSUME_ITEM_AMOUNT;
         public ForgeConfigSpec.IntValue MAX_IMAGE_SIZE;
         public ForgeConfigSpec.DoubleValue IMAGE_COMPRESSION;
         public ForgeConfigSpec.BooleanValue ALLOW_IMAGE_UPLOAD;
@@ -35,23 +37,27 @@ public class Config {
         public ServerConfig(ForgeConfigSpec.Builder builder) {
             IMAGE_COOLDOWN = builder
                     .comment("The time in milliseconds the camera will be on cooldown after taking an image")
-                    .defineInRange("image_cooldown", 5000, 100, Integer.MAX_VALUE);
+                    .defineInRange("camera.cooldown", 5000, 100, Integer.MAX_VALUE);
 
             CAMERA_CONSUME_ITEM = builder
-                    .comment("The Item that is consumed when taking an image")
-                    .define("camera_consume_item", ItemTools.serializeItemStack(new ItemStack(Items.PAPER, 1)));
+                    .comment("The item that is consumed when taking an image")
+                    .define("camera.consumed_item.item", "minecraft:paper");
+
+            CAMERA_CONSUME_ITEM_AMOUNT = builder
+                    .comment("The amount of the item that is consumed when taking an image")
+                    .defineInRange("camera.consumed_item.amount", 1, 1, Short.MAX_VALUE);
 
             MAX_IMAGE_SIZE = builder
                     .comment("The maximum size of an image in bytes when transferred to the server", "Higher values mean more delay/lag between taking an image and getting it into your inventory")
-                    .defineInRange("max_image_size", 200_000, 50_000, 1_000_000);
+                    .defineInRange("image.max_size", 200_000, 50_000, 1_000_000);
 
             IMAGE_COMPRESSION = builder
                     .comment("The amount of jpeg compression applied to the image", "If the image exceeds the 'max_image_size', it will get compressed anyways")
-                    .defineInRange("image_compression", 0.5D, 0.1D, 1D);
+                    .defineInRange("image.compression", 0.5D, 0.1D, 1D);
 
             ALLOW_IMAGE_UPLOAD = builder
                     .comment("If it is allowed to upload custom images")
-                    .define("allow_image_upload", true);
+                    .define("image.allow_upload", true);
         }
     }
 
@@ -79,17 +85,8 @@ public class Config {
         return new SimpleDateFormat(format);
     }
 
-    private static ItemStack getItemStack(String stack) {
-        return ItemTools.deserializeItemStack(stack);
-    }
-
-    private static ItemStack cachedStack;
-
-    public static ItemStack getConsumingStack() {
-        if (cachedStack == null) {
-            cachedStack = getItemStack(SERVER.CAMERA_CONSUME_ITEM.get());
-        }
-        return cachedStack;
+    public static Item getConsumingItem() {
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(SERVER.CAMERA_CONSUME_ITEM.get()));
     }
 
     private static SimpleDateFormat cachedDateFormat;
@@ -102,7 +99,7 @@ public class Config {
     }
 
     public static void onServerConfigUpdate() {
-        cachedStack = null;
+
     }
 
     public static void onClientConfigUpdate() {

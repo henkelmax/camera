@@ -1,1 +1,1 @@
-- Fixed JEI integration
+- Updated config layout
