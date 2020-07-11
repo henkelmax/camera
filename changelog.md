@@ -1,1 +1,1 @@
-- Updated config layout
+- Added info message for filters

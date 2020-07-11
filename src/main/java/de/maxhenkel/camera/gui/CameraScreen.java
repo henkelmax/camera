@@ -6,16 +6,23 @@ import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CameraScreen extends ScreenBase {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
+    private static final int PADDING = 10;
+    private static final int BUTTON_WIDTH = 70;
+    private static final int BUTTON_HEIGHT = 20;
 
     private int index = 0;
 
@@ -42,10 +49,7 @@ public class CameraScreen extends ScreenBase {
     protected void func_231160_c_() {
         super.func_231160_c_();
         field_230710_m_.clear();
-        int padding = 10;
-        int buttonWidth = 70;
-        int buttonHeight = 20;
-        Button prev = func_230480_a_(new Button(guiLeft + padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.prev"), button -> {
+        Button prev = func_230480_a_(new Button(guiLeft + PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
@@ -53,7 +57,7 @@ public class CameraScreen extends ScreenBase {
             sendShader();
         }));
         prev.field_230693_o_ = false; //TODO fix shaders
-        Button next = func_230480_a_(new Button(guiLeft + xSize - buttonWidth - padding, guiTop + ySize / 2 - buttonHeight / 2, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.next"), button -> {
+        Button next = func_230480_a_(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
@@ -63,7 +67,7 @@ public class CameraScreen extends ScreenBase {
         next.field_230693_o_ = false; //TODO fix shaders
 
         if (Config.SERVER.ALLOW_IMAGE_UPLOAD.get()) {
-            func_230480_a_(new Button(guiLeft + xSize / 2 - buttonWidth / 2, field_230709_l_ / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload"), button -> {
+            func_230480_a_(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, field_230709_l_ / 2 + ySize / 2 - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -85,8 +89,8 @@ public class CameraScreen extends ScreenBase {
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int x, int y) {
-        super.func_230451_b_(matrixStack, x, y);
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.func_230451_b_(matrixStack, mouseX, mouseY);
 
         String title = new TranslationTextComponent("gui.camera.choosefilter").getString();
 
@@ -98,6 +102,26 @@ public class CameraScreen extends ScreenBase {
 
         int shaderWidth = field_230712_o_.getStringWidth(shaderName);
 
-        field_230712_o_.func_238421_b_(matrixStack, shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT / 2, 0xFFFFFFFF);
+        field_230712_o_.func_238421_b_(matrixStack, shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
+
+        if (isHoveringButton(mouseX, mouseY)) {
+            List<IFormattableTextComponent> list = new ArrayList<>();
+            list.add(new TranslationTextComponent("message.camera.filters_unavailable"));
+            func_238654_b_(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
+        }
+    }
+
+    private boolean isHoveringButton(int mouseX, int mouseY) {
+        if (mouseX >= guiLeft + PADDING && mouseX < guiLeft + PADDING + BUTTON_WIDTH) {
+            if (mouseY >= guiTop + ySize / 2 - BUTTON_HEIGHT / 2 && mouseY < guiTop + ySize / 2 - BUTTON_HEIGHT / 2 + BUTTON_HEIGHT) {
+                return true;
+            }
+        }
+        if (mouseX >= guiLeft + xSize - BUTTON_WIDTH - PADDING && mouseX < guiLeft + xSize - PADDING) {
+            if (mouseY >= guiTop + ySize / 2 - BUTTON_HEIGHT / 2 && mouseY < guiTop + ySize / 2 + BUTTON_HEIGHT / 2) {
+                return true;
+            }
+        }
+        return false;
     }
 }

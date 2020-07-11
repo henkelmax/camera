@@ -37,5 +37,6 @@
   "key.previous_image": "Previous Image",
   "filetype.images": "Images",
   "title.choose_image": "Choose Image",
-  "sound.camera.take_image": "Camera taking an image"
+  "sound.camera.take_image": "Camera taking an image",
+  "message.camera.filters_unavailable": "Filters are not available in this version"
 }
