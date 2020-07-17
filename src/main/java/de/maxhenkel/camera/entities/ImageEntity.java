@@ -1,6 +1,5 @@
 package de.maxhenkel.camera.entities;
 
-import com.sun.javafx.geom.Vec3d;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.net.MessageResizeFrame;
@@ -255,12 +254,12 @@ public class ImageEntity extends Entity {
 
 
     public BlockPos getCenterPosition() {
-        Vec3d center = getCenter(getBoundingBox());
+        Vector3d center = getCenter(getBoundingBox());
         return new BlockPos(center.x, center.y, center.z);
     }
 
-    public Vec3d getCenter(AxisAlignedBB aabb) {
-        return new Vec3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
+    public Vector3d getCenter(AxisAlignedBB aabb) {
+        return new Vector3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
     }
 
     @Nullable

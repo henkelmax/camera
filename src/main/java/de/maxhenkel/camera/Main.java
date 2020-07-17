@@ -35,7 +35,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -44,30 +43,17 @@ import org.lwjgl.glfw.GLFW;
 public class Main {
 
     public static final String MODID = "camera";
-
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
     public static SpecialRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING;
-
-    @ObjectHolder(MODID + ":image_frame")
     public static ImageFrameItem FRAME_ITEM;
-
-    @ObjectHolder(MODID + ":camera")
     public static CameraItem CAMERA;
-
-    @ObjectHolder(MODID + ":image")
     public static ImageItem IMAGE;
-
-    @ObjectHolder(MODID + ":album")
     public static AlbumItem ALBUM;
-
-    @ObjectHolder(MODID + ":album_inventory")
-    public static ContainerType ALBUM_INVENTORY_CONTAINER;
-
-    @ObjectHolder(MODID + ":image_frame")
+    public static ContainerType<ContainerAlbumInventory> ALBUM_INVENTORY_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
 
     @OnlyIn(Dist.CLIENT)

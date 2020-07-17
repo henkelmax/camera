@@ -1,1 +1,1 @@
-- Added info message for filters
+- Fixed crash with image frame
