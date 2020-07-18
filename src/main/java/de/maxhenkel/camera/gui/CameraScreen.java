@@ -4,7 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import de.maxhenkel.camera.*;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
+import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CameraScreen extends ScreenBase {
+public class CameraScreen extends ScreenBase<Container> {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
@@ -66,7 +68,7 @@ public class CameraScreen extends ScreenBase {
         }));
         next.field_230693_o_ = false; //TODO fix shaders
 
-        if (Config.SERVER.ALLOW_IMAGE_UPLOAD.get()) {
+        if (Main.SERVER_CONFIG.allowImageUpload.get()) {
             func_230480_a_(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, field_230709_l_ / 2 + ySize / 2 - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {

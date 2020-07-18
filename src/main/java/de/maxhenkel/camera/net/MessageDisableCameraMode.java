@@ -1,14 +1,21 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.corelib.net.Message;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageDisableCameraMode implements Message {
+public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
     public MessageDisableCameraMode() {
 
+    }
+
+    @Override
+    public Dist getExecutingSide() {
+        return Dist.DEDICATED_SERVER;
     }
 
     @Override
@@ -17,11 +24,6 @@ public class MessageDisableCameraMode implements Message {
         if (stack.getItem().equals(Main.CAMERA)) {
             Main.CAMERA.setActive(stack, false);
         }
-    }
-
-    @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
     }
 
     @Override

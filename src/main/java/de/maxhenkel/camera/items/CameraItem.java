@@ -1,11 +1,10 @@
 package de.maxhenkel.camera.items;
 
-import de.maxhenkel.camera.Config;
-import de.maxhenkel.camera.ItemTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
 import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
+import de.maxhenkel.corelib.item.ItemTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -56,7 +55,7 @@ public class CameraItem extends Item {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", new TranslationTextComponent(Config.getConsumingItem().getTranslationKey()), Config.SERVER.CAMERA_CONSUME_ITEM_AMOUNT.get()), true);
+                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable", new TranslationTextComponent(Main.SERVER_CONFIG.cameraConsumeItem.getTranslationKey()), Main.SERVER_CONFIG.cameraConsumeItemAmount.get()), true);
             }
         } else {
             playerIn.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
@@ -88,7 +87,7 @@ public class CameraItem extends Item {
             return true;
         }
 
-        int amountNeeded = Config.SERVER.CAMERA_CONSUME_ITEM_AMOUNT.get();
+        int amountNeeded = Main.SERVER_CONFIG.cameraConsumeItemAmount.get();
         List<ItemStack> consumeStacks = findPaper(player);
 
         int count = 0;
@@ -124,7 +123,7 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return stack.getItem().equals(Config.getConsumingItem());
+        return stack.getItem().equals(Main.SERVER_CONFIG.cameraConsumeItem);
     }
 
     public boolean isActive(ItemStack stack) {

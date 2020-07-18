@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.ContainerAlbumInventory;
+import de.maxhenkel.camera.gui.AlbumInventoryContainer;
 import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,7 @@ public class AlbumItem extends Item {
                     @Nullable
                     @Override
                     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-                        return new ContainerAlbumInventory(id, playerInventory, new AlbumInventory(stack));
+                        return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(stack));
                     }
 
                     @Override

@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath group: 'de.maxhenkel.forge-update', name: 'forge-update', version: '1.0.2'
+        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: '4.0.4'
     }
 }
 
@@ -18,6 +19,15 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'forge-update'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'idea'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
 
 version = mod_version
 group = mod_packagename
@@ -70,6 +80,10 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}:api")
     // at runtime, use the full JEI jar
     runtimeOnly fg.deobf("mezz.jei:jei-${mod_minecraft_version}:${jei_version}")
+
+    shadow fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:api")
+    runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}")
+    runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
     //compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
 }
@@ -147,6 +161,11 @@ repositories {
         name = "Hwyla"
         url "http://tehnut.info/maven"
     }
+    maven {
+        name = "henkelmax.public"
+        url = 'https://maven.maxhenkel.de/repository/public'
+    }
+    mavenLocal()
 }
 
 javadoc {
@@ -181,6 +200,18 @@ artifacts {
     archives deobfJar
     archives sourcesJar
     archives javadocJar
+    archives shadowJar
 }
 
 jar.finalizedBy('reobfJar')
+
+shadowJar {
+    project.configurations.shadow.setTransitive(true);
+    configurations = [project.configurations.shadow]
+    classifier = ""
+    relocate 'de.maxhenkel.corelib', "de.maxhenkel.${mod_id}.corelib"
+}
+
+reobf {
+    shadowJar {}
+}

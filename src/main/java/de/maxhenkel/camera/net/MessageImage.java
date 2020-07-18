@@ -2,15 +2,17 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.TextureCache;
+import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MessageImage implements Message {
+public class MessageImage implements Message<MessageImage> {
 
     private UUID uuid;
     private byte[] image;
@@ -28,8 +30,8 @@ public class MessageImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-
+    public Dist getExecutingSide() {
+        return Dist.CLIENT;
     }
 
     @Override

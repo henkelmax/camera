@@ -18,11 +18,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
 public class ClientEvents {
 
     private static final ResourceLocation VIEWFINDER = new ResourceLocation(Main.MODID, "textures/gui/viewfinder_overlay.png");

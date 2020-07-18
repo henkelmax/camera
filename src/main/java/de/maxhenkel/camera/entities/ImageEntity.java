@@ -341,12 +341,7 @@ public class ImageEntity extends Entity {
     }
 
     public UUID getImageUUID() {
-        Optional<UUID> uuid = dataManager.get(ID);
-        if (uuid.isPresent()) {
-            return uuid.get();
-        } else {
-            return null;
-        }
+        return dataManager.get(ID).orElse(null);
     }
 
     public void setUUID(UUID uuid) {

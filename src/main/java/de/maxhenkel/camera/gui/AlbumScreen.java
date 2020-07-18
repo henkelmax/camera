@@ -5,12 +5,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.util.InputMappings;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
 import java.util.UUID;
 
-public class AlbumScreen extends ContainerScreen {
+public class AlbumScreen extends ContainerScreen<Container> {
 
     private int index;
     private List<UUID> images;

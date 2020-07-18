@@ -1,6 +1,8 @@
 package de.maxhenkel.camera;
 
 import com.sun.javafx.application.PlatformImpl;
+import de.maxhenkel.corelib.CommonUtils;
+import de.maxhenkel.corelib.client.RenderUtils;
 import javafx.stage.FileChooser;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -30,35 +32,15 @@ public class ImageTools {
         for (int x = 0; x < nativeImage.getWidth(); x++) {
             for (int y = 0; y < nativeImage.getHeight(); y++) {
                 int rgba = nativeImage.getPixelRGBA(x, y);
-                int alpha = getAlpha(rgba);
-                int red = getRed(rgba);
-                int green = getGreen(rgba);
-                int blue = getBlue(rgba);
-                bufferedImage.setRGB(x, y, getArgb(alpha, blue, green, red));
+                int alpha = RenderUtils.getAlpha(rgba);
+                int red = RenderUtils.getRed(rgba);
+                int green = RenderUtils.getGreen(rgba);
+                int blue = RenderUtils.getBlue(rgba);
+                bufferedImage.setRGB(x, y, RenderUtils.getArgb(alpha, blue, green, red));
             }
         }
 
         return bufferedImage;
-    }
-
-    private static int getArgb(int a, int red, int green, int blue) {
-        return a << 24 | red << 16 | green << 8 | blue;
-    }
-
-    private static int getAlpha(int argb) {
-        return (argb >> 24) & 0xFF;
-    }
-
-    private static int getRed(int argb) {
-        return (argb >> 16) & 0xFF;
-    }
-
-    private static int getGreen(int argb) {
-        return (argb >> 8) & 0xFF;
-    }
-
-    private static int getBlue(int argb) {
-        return argb & 0xFF;
     }
 
     public static NativeImage toNativeImage(BufferedImage bufferedImage) {
@@ -66,11 +48,11 @@ public class ImageTools {
         for (int x = 0; x < bufferedImage.getWidth(); x++) {
             for (int y = 0; y < bufferedImage.getHeight(); y++) {
                 int rgba = bufferedImage.getRGB(x, y);
-                int alpha = getAlpha(rgba);
-                int red = getRed(rgba);
-                int green = getGreen(rgba);
-                int blue = getBlue(rgba);
-                nativeImage.setPixelRGBA(x, y, getArgb(alpha, blue, green, red));
+                int alpha = RenderUtils.getAlpha(rgba);
+                int red = RenderUtils.getRed(rgba);
+                int green = RenderUtils.getGreen(rgba);
+                int blue = RenderUtils.getBlue(rgba);
+                nativeImage.setPixelRGBA(x, y, RenderUtils.getArgb(alpha, blue, green, red));
             }
         }
         return nativeImage;
@@ -111,11 +93,11 @@ public class ImageTools {
 
         image = ImageTools.resize(image, newWidth, newHeight);
 
-        float factor = Config.SERVER.IMAGE_COMPRESSION.get().floatValue();
+        float factor = Main.SERVER_CONFIG.imageCompression.get().floatValue();
         byte[] data;
 
-        while ((data = ImageTools.compressToBytes(image, factor)).length > Config.SERVER.MAX_IMAGE_SIZE.get()) {
-            Main.LOGGER.debug("Trying to compress image: {}% {} bytes (max {})", Math.round(factor * 100F), data.length, Config.SERVER.MAX_IMAGE_SIZE.get());
+        while ((data = ImageTools.compressToBytes(image, factor)).length > Main.SERVER_CONFIG.maxImageSize.get()) {
+            Main.LOGGER.debug("Trying to compress image: {}% {} bytes (max {})", Math.round(factor * 100F), data.length, Main.SERVER_CONFIG.maxImageSize.get());
             factor -= 0.025F;
             if (factor <= 0F) {
                 throw new IOException("Image could not be compressed (too large)");
@@ -161,7 +143,7 @@ public class ImageTools {
 
     @Deprecated
     public static File getImageFileLegacy(ServerPlayerEntity playerMP, UUID uuid) {
-        File imageFolder = playerMP.server.func_240776_a_(CAMERA_IMAGES).toFile();
+        File imageFolder = CommonUtils.getWorldFolder(playerMP.getServerWorld(), CAMERA_IMAGES);
         File image = new File(imageFolder, uuid.toString() + ".jpg");
         if (!image.exists()) {
             image = new File(imageFolder, uuid.toString() + ".png");
@@ -170,7 +152,7 @@ public class ImageTools {
     }
 
     public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
-        File imageFolder = playerMP.server.func_240776_a_(CAMERA_IMAGES).toFile();
+        File imageFolder = CommonUtils.getWorldFolder(playerMP.getServerWorld(), CAMERA_IMAGES);
         return new File(imageFolder, uuid.toString() + ".jpg");
     }
 
@@ -199,7 +181,7 @@ public class ImageTools {
     public static void chooseImage(Consumer<File> onResult) {
         PlatformImpl.startup(() -> {
             FileChooser chooser = new FileChooser();
-            String lastPath = Config.CLIENT.LAST_IMAGE_PATH.get();
+            String lastPath = Main.CLIENT_CONFIG.lastImagePath.get();
             if (!lastPath.isEmpty()) {
                 File last = new File(lastPath);
                 if (last.exists()) {
@@ -213,8 +195,8 @@ public class ImageTools {
             chooser.setSelectedExtensionFilter(filter);
             File file = chooser.showOpenDialog(null);
             if (file != null && file.exists() && !file.isDirectory()) {
-                Config.CLIENT.LAST_IMAGE_PATH.set(file.getParent());
-                Config.CLIENT.LAST_IMAGE_PATH.save();
+                Main.CLIENT_CONFIG.lastImagePath.set(file.getParent());
+                Main.CLIENT_CONFIG.lastImagePath.save();
                 onResult.accept(file);
             }
         });

@@ -2,13 +2,13 @@ package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.StringTextComponent;
@@ -18,7 +18,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class ResizeFrameScreen extends ContainerScreen {
+public class ResizeFrameScreen extends ContainerScreen<Container> {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/resize_frame.png");
     private static final int PADDING = 10;
@@ -32,7 +32,7 @@ public class ResizeFrameScreen extends ContainerScreen {
     public ResizeFrameScreen(UUID uuid) {
         super(new DummyContainer(), null, new TranslationTextComponent("gui.frame.resize"));
         this.uuid = uuid;
-        visibility = Config.CLIENT.RESIZE_GUI_OPACITY.get().floatValue();
+        visibility = Main.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
         xSize = 248;
         ySize = 109;
     }
@@ -64,8 +64,8 @@ public class ResizeFrameScreen extends ContainerScreen {
             if (visibility < 0F) {
                 visibility = 1F;
             }
-            Config.CLIENT.RESIZE_GUI_OPACITY.set((double) visibility);
-            Config.CLIENT.RESIZE_GUI_OPACITY.save();
+            Main.CLIENT_CONFIG.resizeGuiOpacity.set((double) visibility);
+            Main.CLIENT_CONFIG.resizeGuiOpacity.save();
         });
         func_230480_a_(visibilityButton);
     }
@@ -129,9 +129,6 @@ public class ResizeFrameScreen extends ContainerScreen {
 
     public boolean isImagePresent() {
         AxisAlignedBB aabb = field_230706_i_.player.getBoundingBox();
-        if (aabb == null) {
-            return false;
-        }
         aabb = aabb.grow(32D);
         return field_230706_i_.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(field_230706_i_.player) <= 32F);
     }

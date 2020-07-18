@@ -1,6 +1,5 @@
 package de.maxhenkel.camera.items;
 
-import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ImageScreen;
 import de.maxhenkel.camera.items.render.ImageItemRenderer;
@@ -58,7 +57,7 @@ public class ImageItem extends Item {
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Config.getImageDateFormat().format(new Date(time))).func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).func_240699_a_(TextFormatting.GRAY));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

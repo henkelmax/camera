@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -17,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.UUID;
 
-public class ImageScreen extends ContainerScreen {
+public class ImageScreen extends ContainerScreen<Container> {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
 
@@ -33,7 +34,7 @@ public class ImageScreen extends ContainerScreen {
     @Override
     protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         func_230446_a_(matrixStack);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1F, 1F, 1F, 1F);
 
         if (imageUUID == null) {
             return;

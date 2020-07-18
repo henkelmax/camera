@@ -1,1 +1,1 @@
-- Fixed crash with image frame
+- Internal changes

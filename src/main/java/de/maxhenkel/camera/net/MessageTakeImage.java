@@ -1,12 +1,14 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTaker;
+import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
 
-public class MessageTakeImage implements Message {
+public class MessageTakeImage implements Message<MessageTakeImage> {
 
     private UUID uuid;
 
@@ -19,8 +21,8 @@ public class MessageTakeImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-
+    public Dist getExecutingSide() {
+        return Dist.CLIENT;
     }
 
     @Override
@@ -38,4 +40,5 @@ public class MessageTakeImage implements Message {
     public void toBytes(PacketBuffer buf) {
         buf.writeUniqueId(uuid);
     }
+
 }

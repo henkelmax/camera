@@ -15,7 +15,6 @@ public class AlbumInventory implements IInventory {
     private int invSize;
     private CompoundNBT inventoryTag;
 
-
     public AlbumInventory(ItemStack album) {
         this.album = album;
         this.invSize = 54;

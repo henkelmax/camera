@@ -1,9 +1,7 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Config;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -100,7 +98,7 @@ public class PacketManager {
 
     public boolean canTakeImage(UUID player) {
         if (times.containsKey(player)) {
-            if (System.currentTimeMillis() - times.get(player).longValue() < Config.SERVER.IMAGE_COOLDOWN.get()) {
+            if (System.currentTimeMillis() - times.get(player) < Main.SERVER_CONFIG.imageCooldown.get()) {
                 return false;
             } else {
                 times.put(player, System.currentTimeMillis());
@@ -111,6 +109,5 @@ public class PacketManager {
             return true;
         }
     }
-
 
 }

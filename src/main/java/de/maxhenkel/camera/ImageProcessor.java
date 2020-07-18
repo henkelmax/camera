@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public class ImageProcessor {
 
-
     public static void sendScreenshot(UUID uuid, BufferedImage image) {
         byte[] data;
         try {

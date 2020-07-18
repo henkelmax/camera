@@ -1,13 +1,15 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.TextureCache;
+import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
-public class MessageImageUnavailable implements Message {
+public class MessageImageUnavailable implements Message<MessageImageUnavailable> {
 
     private UUID imgUUID;
 
@@ -20,8 +22,8 @@ public class MessageImageUnavailable implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-
+    public Dist getExecutingSide() {
+        return Dist.CLIENT;
     }
 
     @Override

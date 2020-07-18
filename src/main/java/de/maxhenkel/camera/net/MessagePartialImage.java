@@ -1,12 +1,14 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
 
-public class MessagePartialImage implements Message {
+public class MessagePartialImage implements Message<MessagePartialImage> {
 
     private UUID imgUUID;
     private int offset;
@@ -25,13 +27,13 @@ public class MessagePartialImage implements Message {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
+    public Dist getExecutingSide() {
+        return Dist.DEDICATED_SERVER;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
-
+    public void executeServerSide(NetworkEvent.Context context) {
+        Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
     }
 
     @Override
@@ -51,4 +53,5 @@ public class MessagePartialImage implements Message {
 
         buf.writeByteArray(bytes);
     }
+
 }
