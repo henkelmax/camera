@@ -1,1 +1,1 @@
-- Internal changes
+- Fixed GUIs not showing tooltips

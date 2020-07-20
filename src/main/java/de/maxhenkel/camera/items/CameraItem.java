@@ -4,7 +4,7 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.ModSounds;
 import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
-import de.maxhenkel.corelib.item.ItemTools;
+import de.maxhenkel.corelib.item.ItemUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -96,7 +96,7 @@ public class CameraItem extends Item {
         }
         if (count >= amountNeeded) {
             for (ItemStack stack : consumeStacks) {
-                amountNeeded -= stack.getCount() - ItemTools.itemStackAmount(-amountNeeded, stack, null);
+                amountNeeded -= stack.getCount() - ItemUtils.itemStackAmount(-amountNeeded, stack, null).getCount();
             }
             return true;
         }
