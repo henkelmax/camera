@@ -1,1 +1,1 @@
-- Fixed GUIs not showing tooltips
+- Re-added HWYLA integration

@@ -1,6 +1,5 @@
 package de.maxhenkel.camera.integration.waila;
-/*
-import de.maxhenkel.camera.Config;
+
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.items.ImageItem;
@@ -28,9 +27,9 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
     @Override
     public void appendHead(List<ITextComponent> t, IEntityAccessor accessor, IPluginConfig config) {
         ITaggableList<ResourceLocation, ITextComponent> tooltip = (ITaggableList<ResourceLocation, ITextComponent>) t;
-        tooltip.setTag(OBJECT_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getEntityName(), accessor.getEntity().getDisplayName().getFormattedText())));
-        if (config.get(CONFIG_SHOW_REGISTRY)){
-            tooltip.setTag(REGISTRY_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getRegistryName(), accessor.getEntity().getType().getRegistryName().toString())));
+        tooltip.setTag(OBJECT_NAME_TAG, new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getEntityName(), accessor.getEntity().getDisplayName().getString())));
+        if (config.get(CONFIG_SHOW_REGISTRY)) {
+            tooltip.setTag(REGISTRY_NAME_TAG, new StringTextComponent(accessor.getEntity().getType().getRegistryName().toString()).func_240699_a_(TextFormatting.GRAY));
         }
     }
 
@@ -51,12 +50,12 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
         String name = Main.IMAGE.getOwner(imageItem);
 
         if (!name.isEmpty()) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).func_240699_a_(TextFormatting.GRAY));
         }
 
         long time = Main.IMAGE.getTime(imageItem);
         if (time > 0L) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Config.getImageDateFormat().format(new Date(time))).setStyle(new Style().setColor(TextFormatting.GRAY)));
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).func_240699_a_(TextFormatting.GRAY));
         }
     }
 
@@ -64,4 +63,5 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
     public void appendTail(List<ITextComponent> tooltip, IEntityAccessor accessor, IPluginConfig config) {
         tooltip.add(new StringTextComponent(String.format(Waila.CONFIG.get().getFormatting().getModName(), ModIdentification.getModInfo(accessor.getEntity()).getName())));
     }
-}*/
+
+}

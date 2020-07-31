@@ -85,7 +85,7 @@ dependencies {
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
-    //compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+    compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
 }
 
 jar {
@@ -159,7 +159,7 @@ repositories {
     }
     maven {
         name = "Hwyla"
-        url "http://tehnut.info/maven"
+        url = "https://maven.tehnut.info"
     }
     maven {
         name = "henkelmax.public"
