@@ -1,8 +1,15 @@
-# Camera mod
+# Camera Mod
 
-This mod adds a Camera and a frame for the images. 
-The Camera takes real images of your game.
+## Links
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/camera-mod)
+- [ModRepo](https://modrepo.de/minecraft/camera/overview)
+- [GitHub](https://github.com/henkelmax/camera)
+- [FAQ](https://modrepo.de/minecraft/camera/faq)
+- [Credits](https://modrepo.de/minecraft/camera/credits)
 
+---
+
+This mod adds a Camera and a frame for the images. The Camera takes real images of your game.
 
 ## Features
 
@@ -17,26 +24,21 @@ The Camera takes real images of your game.
 - Multiplayer compatible
 - Images are saved in the world folder
 
-
 ## Taking an Image
 
-Images can be taken by right-clicking a camera.
-This brings you in the viewfinder of the camera.
-Right-clicking again takes an image of the perspective you are currently seeing.
-Images are saved with the same ratio as your Minecraft window.
+Images can be taken by right-clicking a camera. This brings you in the viewfinder of the camera. Right-clicking again takes an image of the perspective you are currently seeing. Images are saved with the same ratio as your Minecraft window.
 
-![camera](https://i.imgur.com/7dTv0dB.png)
+![camera](https://i.imgur.com/BMWH1QZ.png)
 
-![camera](https://i.imgur.com/A1k2cTg.png)
+![camera](https://i.imgur.com/qmsFX95.png)
 
-![camera](https://i.imgur.com/mZcZ2ov.png)
+![camera](https://i.imgur.com/Ykj86X6.png)
 
+![camera](https://i.imgur.com/oBS0kDa.png)
 
 ## Filters
 
-The camera is able to apply filters to the image.
-By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
-
+The camera is able to apply filters to the image. By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
 
 ### Available filters
 
@@ -48,79 +50,38 @@ By sneak + right-clicking the camera a GUI opens where the filter can be chosen.
 - Blurry
 - Inverted
 
-![camera](https://i.imgur.com/R5SynsF.png)
-
 ![camera](https://i.imgur.com/BQR1N5u.png)
 
 ![camera](https://i.imgur.com/rFe59ku.png)
 
-![camera](https://media.giphy.com/media/MUlteqXcqDk2uDiyzK/giphy.gif)
-
+![camera](https://media.giphy.com/media/U1UZT1oOstxwdRCEJz/giphy.gif)
 
 ## Zooming
 
 You can zoom in and out by scrolling.
 
-![camera](https://media.giphy.com/media/8Pg7NVhLqSaAeMnrVa/giphy.gif)
-
+![camera](https://media.giphy.com/media/RKSSzCEsG8gbA6hPJ4/giphy.gif)
 
 ## Viewing an Image
 
 You can either look at the image by right-clicking the image item or by putting it in an image frame.
 
-![camera](https://i.imgur.com/BOKmRDb.png)
-
+![camera](https://i.imgur.com/tGwkhZN.png)
 
 ## The Album
 
-The album can hold up to 54 images.
-You can add images by sneak + right-clicking the album.
-You can view the contained images by right-clicking the album.
-By scrolling up and down or pressing the arrow-up/down key, you can switch the currently viewed image.
+The album can hold up to 54 images. You can add images by sneak + right-clicking the album. You can view the contained images by right-clicking the album. By scrolling up and down or pressing the arrow-up/down key, you can switch the currently viewed image.
 
-![camera](https://media.giphy.com/media/paW4B80XAyWLq8fQNL/giphy.gif)
-
+![camera](https://media1.giphy.com/media/hqxA6QgHthz8Pg94bT/giphy.gif)
 
 ## The Image Frame
 
-The image frame allows you to place your image in the world.
-Just place the image frame item on a wall.
-Sneak + right-clicking the image frame opens a GUI that allows you to resize the frame.
-Just clicking the resize buttons enlargens the frame in the given direction.
-If you sneak and click the button the frame will be downsize the frame in that direction.
-To display an image in the frame right-click it with the chosen image in hand.
-To remove it from the frame just right-click the frame again.
+The image frame allows you to place your image in the world. Just place the image frame item on a wall. Sneak + right-clicking the image frame opens a GUI that allows you to resize the frame. Just clicking the resize buttons enlarges the frame in the given direction. If you sneak and click the button the frame will be downsize the frame in that direction. To display an image in the frame right-click it with the chosen image in hand. To remove it from the frame just right-click the frame again.
 
-![camera](https://i.imgur.com/sNVZvBZ.png)
+![camera](https://i.imgur.com/L9jWoMW.png)
 
-![camera](https://i.imgur.com/MwEVCkS.png)
-
+![camera](https://i.imgur.com/T720nRH.png)
 
 ## Recipes
 
 Images can be copied by combining it with a piece of paper in the crafting table.
-
-## Config
-
-``` toml
-# The time in milliseconds the camera will be on cooldown after taking an image
-image_cooldown = 5000
-# The format the date will be displayed on the image
-image_date_format = "MM/dd/yyyy HH:mm"
-# The Item that is consumed when taking an image
-camera_consume_item = "{id:\"minecraft:paper\",Count:1b}"
-#The maximum size of an image in bytes
-#Higher values mean more delay/lag when taking an image
-#Range: 50000 ~ 1000000
-max_image_size = 200000
-```
-
-## Translations
-
-- `tr_tr` [
-oynthe](https://www.curseforge.com/members/oynthe)
-
-![camera](https://i.imgur.com/d7YTnGg.png)
-
-
-[Gallery](https://imgur.com/a/Ttdq3sD)
