@@ -1,4 +1,5 @@
-# Camera Mod
+# Camera Mod ![](http://cf.way2muchnoise.eu/full_289310_downloads.svg)
+![](http://cf.way2muchnoise.eu/versions/289310.svg)
 
 ## Links
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/camera-mod)
