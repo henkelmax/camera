@@ -1,1 +1,2 @@
-- Added chinese language
+- Re-added JEI integration
+- Update pack format

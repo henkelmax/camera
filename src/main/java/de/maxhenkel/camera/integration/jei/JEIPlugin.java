@@ -24,4 +24,5 @@ public class JEIPlugin implements IModPlugin {
         registration.addGuiContainerHandler(ResizeFrameScreen.class, new NoJEIContainerHandler<>());
         registration.addGuiContainerHandler(CameraScreen.class, new NoJEIContainerHandler<>());
     }
+
 }
