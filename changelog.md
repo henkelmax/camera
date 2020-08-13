@@ -1,1 +1,1 @@
-- Updated to 1.16.2
+- Re-added HWYLA integration
