@@ -1,1 +1,1 @@
-- Re-added HWYLA integration
+- Added chinese language
