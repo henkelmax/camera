@@ -109,7 +109,7 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
         }
 
         if (visibilityButton.func_230449_g_()) {
-            func_238654_b_(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility")), x - guiLeft, y - guiTop);
+            func_238654_b_(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").func_241878_f()), x - guiLeft, y - guiTop);
         }
     }
 

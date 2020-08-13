@@ -292,24 +292,8 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public void onStruckByLightning(LightningBoltEntity lightningBolt) {
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox() {
         return boundingBox;
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBox(Entity entityIn) {
-        return null;
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -59,7 +60,7 @@ public class ClientEvents {
             return;
         }
 
-        mc.gameSettings.thirdPersonView = 0;
+        mc.gameSettings.func_243229_a(PointOfView.FIRST_PERSON);
 
         // setShader(getShader(mc.player)); //TODO fix shaders
         drawViewFinder(event.getMatrixStack());

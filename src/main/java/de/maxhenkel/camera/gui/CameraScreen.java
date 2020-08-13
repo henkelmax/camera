@@ -1,14 +1,17 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import de.maxhenkel.camera.*;
+import de.maxhenkel.camera.ClientImageUploadManager;
+import de.maxhenkel.camera.ImageTools;
+import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -107,8 +110,8 @@ public class CameraScreen extends ScreenBase<Container> {
         field_230712_o_.func_238421_b_(matrixStack, shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
 
         if (isHoveringButton(mouseX, mouseY)) {
-            List<IFormattableTextComponent> list = new ArrayList<>();
-            list.add(new TranslationTextComponent("message.camera.filters_unavailable"));
+            List<IReorderingProcessor> list = new ArrayList<>();
+            list.add(new TranslationTextComponent("message.camera.filters_unavailable").func_241878_f());
             func_238654_b_(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
         }
     }
