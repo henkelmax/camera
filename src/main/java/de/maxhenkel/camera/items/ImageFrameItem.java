@@ -29,8 +29,12 @@ public class ImageFrameItem extends Item {
 
         World world = context.getWorld();
         ImageEntity image = Main.IMAGE_ENTITY_TYPE.create(world);
+        if (image == null) {
+            return ActionResultType.FAIL;
+        }
         image.setFacing(facing);
         image.setImagePosition(offset);
+        image.setOwner(context.getPlayer().getUniqueID());
         if (image.isValid()) {
             if (!world.isRemote) {
                 image.playPlaceSound();

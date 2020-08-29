@@ -1,2 +1,1 @@
-- Re-added JEI integration
-- Update pack format
+- Added a config option to protect image frames

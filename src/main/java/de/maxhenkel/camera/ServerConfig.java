@@ -16,6 +16,7 @@ public class ServerConfig extends ConfigBase {
     public final ForgeConfigSpec.IntValue maxImageSize;
     public final ForgeConfigSpec.DoubleValue imageCompression;
     public final ForgeConfigSpec.BooleanValue allowImageUpload;
+    public final ForgeConfigSpec.BooleanValue frameOnlyOwnerModify;
 
     public Item cameraConsumeItem;
 
@@ -39,6 +40,9 @@ public class ServerConfig extends ConfigBase {
         allowImageUpload = builder
                 .comment("If it is allowed to upload custom images")
                 .define("image.allow_upload", true);
+        frameOnlyOwnerModify = builder
+                .comment("If only the owner can modify or break the image frame")
+                .define("image_frame.only_owner_modify", false);
     }
 
     @Override

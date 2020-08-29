@@ -6,8 +6,7 @@ import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.item.*;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -37,6 +36,7 @@ public class ImageEntity extends Entity {
     private static final DataParameter<Integer> WIDTH = EntityDataManager.createKey(ImageEntity.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> HEIGHT = EntityDataManager.createKey(ImageEntity.class, DataSerializers.VARINT);
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(ImageEntity.class, DataSerializers.ITEMSTACK);
+    private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(ImageEntity.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
     private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -73,7 +73,11 @@ public class ImageEntity extends Entity {
 
     @Override
     public ActionResultType processInitialInteract(PlayerEntity player, Hand hand) {
-        if (player.isSneaking() && player.abilities.allowEdit) {
+        if (!canModify(player)) {
+            return ActionResultType.FAIL;
+        }
+
+        if (player.isSneaking()) {
             if (world.isRemote) {
                 openClientGui();
             }
@@ -107,13 +111,29 @@ public class ImageEntity extends Entity {
             }
             ItemStack frameStack = stack.split(1);
             setItem(frameStack);
-            setUUID(uuid);
+            setImageUUID(uuid);
             player.setHeldItem(hand, stack);
             playAddSound();
             return ActionResultType.SUCCESS;
         }
 
         return ActionResultType.SUCCESS;
+    }
+
+    public boolean canModify(PlayerEntity player) {
+        if (!player.abilities.allowEdit) {
+            return false;
+        }
+        if (!Main.SERVER_CONFIG.frameOnlyOwnerModify.get()) {
+            return true;
+        }
+        if (player.isCreative() && player.hasPermissionLevel(1)) {
+            return true;
+        }
+        if (!getOwner().isPresent()) {
+            return true;
+        }
+        return getOwner().get().equals(player.getUniqueID());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -123,10 +143,13 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (world.isRemote) {
+            return true;
+        }
         if (!(source.getImmediateSource() instanceof PlayerEntity)) {
             return false;
         }
-        if (!((PlayerEntity) source.getImmediateSource()).abilities.allowEdit) {
+        if (!canModify((PlayerEntity) source.getImmediateSource())) {
             return false;
         }
         if (hasImage()) {
@@ -324,16 +347,20 @@ public class ImageEntity extends Entity {
         world.playSound(null, getCenterPosition(), SoundEvents.ENTITY_ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }
 
-    public UUID getImageUUID() {
-        return dataManager.get(ID).orElse(null);
+    public Optional<UUID> getOwner() {
+        return dataManager.get(OWNER);
     }
 
-    public void setUUID(UUID uuid) {
-        if (uuid == null) {
-            dataManager.set(ID, Optional.empty());
-        } else {
-            dataManager.set(ID, Optional.of(uuid));
-        }
+    public void setOwner(UUID owner) {
+        dataManager.set(OWNER, Optional.ofNullable(owner));
+    }
+
+    public Optional<UUID> getImageUUID() {
+        return dataManager.get(ID);
+    }
+
+    public void setImageUUID(UUID uuid) {
+        dataManager.set(ID, Optional.ofNullable(uuid));
     }
 
     public int getFrameWidth() {
@@ -395,7 +422,7 @@ public class ImageEntity extends Entity {
     private ItemStack removeImage() {
         ItemStack item = getItem();
         setItem(ItemStack.EMPTY);
-        setUUID(null);
+        setImageUUID(null);
         return item;
     }
 
@@ -406,11 +433,13 @@ public class ImageEntity extends Entity {
         dataManager.register(WIDTH, 1);
         dataManager.register(HEIGHT, 1);
         dataManager.register(ITEM, ItemStack.EMPTY);
+        dataManager.register(OWNER, Optional.empty());
     }
 
     public void writeAdditional(CompoundNBT compound) {
-        if (getImageUUID() != null) {
-            UUID uuid = getImageUUID();
+        if (getImageUUID().isPresent()) {
+            //TODO replace with putuniqueId
+            UUID uuid = getImageUUID().get();
             compound.putLong("id_most", uuid.getMostSignificantBits());
             compound.putLong("id_least", uuid.getLeastSignificantBits());
         }
@@ -418,16 +447,22 @@ public class ImageEntity extends Entity {
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
         compound.put("item", getItem().write(new CompoundNBT()));
+        if (getOwner().isPresent()) {
+            compound.putUniqueId("owner", getOwner().get());
+        }
     }
 
     public void readAdditional(CompoundNBT compound) {
         if (compound.contains("id_most") && compound.contains("id_least")) {
-            setUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
+            setImageUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
         }
         setFacing(Direction.byIndex(compound.getInt("facing")));
         setFrameWidth(compound.getInt("width"));
         setFrameHeight(compound.getInt("height"));
         setItem(ItemStack.read(compound.getCompound("item")));
+        if (compound.contains("owner")) {
+            setOwner(compound.getUniqueId("owner"));
+        }
         updateBoundingBox();
     }
 }

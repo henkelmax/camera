@@ -49,7 +49,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     @Override
     public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
         int imageLight = WorldRenderer.getCombinedLight(entity.world, entity.getCenterPosition());
-        renderImage(entity.getImageUUID(), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
+        renderImage(entity.getImageUUID().orElse(null), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
         renderBoundingBox(entity, matrixStack, buffer1);
         super.render(entity, f1, f2, matrixStack, buffer1, light);
     }
