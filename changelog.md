@@ -1,1 +1,1 @@
-- Added a config option to protect image frames
+- Updated to 1.16.3
