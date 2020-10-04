@@ -1,2 +1,2 @@
-- Added Spanish translation
-- Added Argentinian Spanish translation
+- Updated mods.toml
+- Updated dependencies
