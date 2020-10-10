@@ -19,10 +19,10 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addGuiContainerHandler(ImageScreen.class, new NoJEIContainerHandler<>());
-        registration.addGuiContainerHandler(AlbumScreen.class, new NoJEIContainerHandler<>());
-        registration.addGuiContainerHandler(ResizeFrameScreen.class, new NoJEIContainerHandler<>());
-        registration.addGuiContainerHandler(CameraScreen.class, new NoJEIContainerHandler<>());
+        registration.addGuiScreenHandler(ImageScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(AlbumScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(ResizeFrameScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(CameraScreen.class, NoJEIGuiProperties::new);
     }
 
 }

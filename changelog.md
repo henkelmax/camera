@@ -1,1 +1,1 @@
-- Added album on lecterns
+- Fixed JEI search bar visible in certain GUIs
