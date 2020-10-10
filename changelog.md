@@ -1,2 +1,1 @@
-- Updated mods.toml
-- Updated dependencies
+- Added album on lecterns

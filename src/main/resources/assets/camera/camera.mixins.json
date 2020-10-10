@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "de.maxhenkel.camera.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "camera.refmap.json",
+  "minVersion": "0.8",
+  "mixins": [
+    "LecternTileEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -13,7 +13,7 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
 
     private PlayerInventory playerInventory;
 
-    public AlbumInventoryScreen(PlayerInventory playerInventory, AlbumInventoryContainer albumInventory, ITextComponent name) {
+    public AlbumInventoryScreen(AlbumInventoryContainer albumInventory, PlayerInventory playerInventory, ITextComponent name) {
         super(DEFAULT_IMAGE, albumInventory, playerInventory, name);
 
         this.playerInventory = playerInventory;
@@ -26,6 +26,5 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
         super.func_230451_b_(matrixStack, x, y);
         field_230712_o_.func_238421_b_(matrixStack, func_231171_q_().getString(), 8F, 6F, FONT_COLOR);
         field_230712_o_.func_238421_b_(matrixStack, playerInventory.getDisplayName().getString(), 8F, (float) (ySize - 96 + 2), FONT_COLOR);
-
     }
 }

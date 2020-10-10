@@ -2,8 +2,10 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.entities.ImageRenderer;
+import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.camera.gui.AlbumInventoryScreen;
 import de.maxhenkel.camera.gui.AlbumInventoryContainer;
+import de.maxhenkel.camera.gui.LecternAlbumScreen;
 import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.items.ImageFrameItem;
@@ -52,6 +54,7 @@ public class Main {
     public static ImageItem IMAGE;
     public static AlbumItem ALBUM;
     public static ContainerType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
+    public static ContainerType<AlbumContainer> ALBUM_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
 
     public static ServerConfig SERVER_CONFIG;
@@ -93,6 +96,8 @@ public class Main {
         CommonRegistry.registerMessage(SIMPLE_CHANNEL, 7, MessageResizeFrame.class);
         CommonRegistry.registerMessage(SIMPLE_CHANNEL, 8, MessageRequestUploadCustomImage.class);
         CommonRegistry.registerMessage(SIMPLE_CHANNEL, 9, MessageUploadCustomImage.class);
+        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 10, MessageAlbumPage.class);
+        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 11, MessageTakeBook.class);
     }
 
     @SubscribeEvent
@@ -104,7 +109,8 @@ public class Main {
 
         KEY_PREVIOUS = ClientRegistry.registerKeyBinding("key.previous_image", "key.categories.misc", GLFW.GLFW_KEY_UP);
 
-        ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER, (container, playerInventory, name) -> new AlbumInventoryScreen(playerInventory, container, name));
+        ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER, AlbumInventoryScreen::new);
+        ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER, LecternAlbumScreen::new);
 
         RenderingRegistry.registerEntityRenderingHandler(IMAGE_ENTITY_TYPE, ImageRenderer::new);
     }
@@ -143,6 +149,10 @@ public class Main {
         ALBUM_INVENTORY_CONTAINER = new ContainerType<>(AlbumInventoryContainer::new);
         ALBUM_INVENTORY_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album_inventory"));
         event.getRegistry().register(ALBUM_INVENTORY_CONTAINER);
+
+        ALBUM_CONTAINER = new ContainerType<>((i, playerInventory) -> new AlbumContainer(i));
+        ALBUM_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album"));
+        event.getRegistry().register(ALBUM_CONTAINER);
     }
 
     @SubscribeEvent

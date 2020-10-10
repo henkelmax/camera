@@ -4,6 +4,9 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumInventoryContainer;
 import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.LecternBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -14,10 +17,12 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -57,19 +62,35 @@ public class AlbumItem extends Item {
                 });
             }
         } else {
-            if (playerIn.world.isRemote) {
-                List<UUID> images = Main.ALBUM.getImages(stack);
-                if (!images.isEmpty()) {
-                    openClientGui(images);
-                }
-            }
+            openAlbum(playerIn, stack);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
+    public static void openAlbum(PlayerEntity player, ItemStack album) {
+        if (player.world.isRemote) {
+            List<UUID> images = Main.ALBUM.getImages(album);
+            if (!images.isEmpty()) {
+                openClientGui(images);
+            }
+        }
+    }
+
     @OnlyIn(Dist.CLIENT)
-    private void openClientGui(List<UUID> images) {
+    private static void openClientGui(List<UUID> images) {
         Minecraft.getInstance().displayGuiScreen(new AlbumScreen(images));
+    }
+
+    @Override
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
+        BlockPos blockpos = context.getPos();
+        BlockState blockstate = world.getBlockState(blockpos);
+        if (blockstate.isIn(Blocks.LECTERN)) {
+            return LecternBlock.tryPlaceBook(world, blockpos, blockstate, context.getItem()) ? ActionResultType.func_233537_a_(world.isRemote) : ActionResultType.PASS;
+        } else {
+            return ActionResultType.PASS;
+        }
     }
 
     public List<UUID> getImages(ItemStack stack) {
