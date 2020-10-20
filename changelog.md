@@ -1,1 +1,1 @@
-- Fixed JEI search bar visible in certain GUIs
+- Made recipes compatible with tags

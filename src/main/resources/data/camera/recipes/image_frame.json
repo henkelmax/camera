@@ -1,19 +1,19 @@
 {
   "type": "crafting_shaped",
   "pattern": [
-    "/S/",
-    "/L/",
-    "///"
+    "SFS",
+    "SLS",
+    "SSS"
   ],
   "key": {
-    "/": {
-      "item": "minecraft:stick"
-    },
     "S": {
-      "item": "minecraft:string"
+      "tag": "forge:rods/wooden"
+    },
+    "F": {
+      "tag": "forge:string"
     },
     "L": {
-      "item": "minecraft:leather"
+      "tag": "forge:leather"
     }
   },
   "result": {
