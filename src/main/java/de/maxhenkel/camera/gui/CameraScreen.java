@@ -11,6 +11,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CameraScreen extends ContainerScreen {
@@ -19,6 +21,8 @@ public class CameraScreen extends ContainerScreen {
     private static final int FONT_COLOR = 4210752;
 
     private int index = 0;
+
+    private Button upload;
 
     public CameraScreen(String currentShader) {
         super(new DummyContainer(), null, new TranslationTextComponent("gui.camera.title"));
@@ -62,7 +66,7 @@ public class CameraScreen extends ContainerScreen {
         }));
 
         if (Config.SERVER.ALLOW_IMAGE_UPLOAD.get()) {
-            addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
+            upload = addButton(new Button(guiLeft + xSize / 2 - buttonWidth / 2, height / 2 + ySize / 2 - buttonHeight - padding, buttonWidth, buttonHeight, new TranslationTextComponent("button.camera.upload").getFormattedText(), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -76,6 +80,7 @@ public class CameraScreen extends ContainerScreen {
                     minecraft.currentScreen = null;
                 });
             }));
+            upload.active = ImageTools.isFileChooserAvailable();
         }
     }
 
@@ -98,6 +103,12 @@ public class CameraScreen extends ContainerScreen {
         int shaderWidth = font.getStringWidth(shaderName);
 
         font.drawStringWithShadow(shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, 0xFFFFFFFF);
+
+        if (upload != null && upload.isHovered() && !ImageTools.isFileChooserAvailable()) {
+            List<String> list = new ArrayList<>();
+            list.add(new TranslationTextComponent("message.camera.no_java_fx").getUnformattedComponentText());
+            renderTooltip(list, x - guiLeft, y - guiTop);
+        }
     }
 
     @Override

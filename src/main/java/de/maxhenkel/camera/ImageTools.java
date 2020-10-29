@@ -217,4 +217,13 @@ public class ImageTools {
         });
     }
 
+    public static boolean isFileChooserAvailable() {
+        try {
+            Class.forName("javafx.stage.FileChooser");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
 }

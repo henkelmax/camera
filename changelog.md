@@ -1,1 +1,1 @@
-- Fixed camera sound description
+- Added Java FX info when trying to upload files
