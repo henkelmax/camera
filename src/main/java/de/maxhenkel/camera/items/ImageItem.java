@@ -52,12 +52,12 @@ public class ImageItem extends Item {
         String name = getOwner(stack);
 
         if (!name.isEmpty()) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).mergeStyle(TextFormatting.GRAY));
         }
 
         long time = getTime(stack);
         if (time > 0L) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).mergeStyle(TextFormatting.GRAY));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

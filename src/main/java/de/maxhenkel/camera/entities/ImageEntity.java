@@ -203,7 +203,7 @@ public class ImageEntity extends Entity {
                 break;
             case DOWN:
                 if (setFrameHeight(getFrameHeight() + amount)) {
-                    setImagePosition(func_233580_cy_().offset(Direction.DOWN, amount));
+                    setImagePosition(getPosition().offset(Direction.DOWN, amount));
                 }
                 break;
             case RIGHT:
@@ -211,7 +211,7 @@ public class ImageEntity extends Entity {
                 break;
             case LEFT:
                 if (setFrameWidth(getFrameWidth() + amount)) {
-                    setImagePosition(func_233580_cy_().offset(getResizeOffset(), amount));
+                    setImagePosition(getPosition().offset(getResizeOffset(), amount));
                 }
                 break;
         }
@@ -240,7 +240,7 @@ public class ImageEntity extends Entity {
     }
 
     private void updateBoundingBox() {
-        BlockPos pos = func_233580_cy_();
+        BlockPos pos = getPosition();
         Direction facing = getFacing();
         int width = getFrameWidth();
         int height = getFrameHeight();

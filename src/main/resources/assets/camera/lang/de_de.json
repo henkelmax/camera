@@ -38,5 +38,6 @@
   "filetype.images": "Bilder",
   "title.choose_image": "Bild auswählen",
   "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt",
-  "message.camera.filters_unavailable": "Filter sind in dieser Version nicht verfügbar"
+  "message.camera.filters_unavailable": "Filter sind in dieser Version nicht verfügbar",
+  "message.camera.no_java_fx": "Um dateien zu öffnen benötigst du eine Java Version, die Java FX enthält"
 }

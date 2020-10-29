@@ -43,26 +43,26 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     @Override
-    protected void func_231160_c_() {
-        super.func_231160_c_();
+    protected void init() {
+        super.init();
         albumContainer.addListener(listener);
 
-        if (field_230706_i_.player.isAllowEdit()) {
-            func_230480_a_(new Button(field_230708_k_ / 2 - 50, field_230709_l_ - 25, 100, 20, new TranslationTextComponent("lectern.take_book"), (button) -> {
-                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), field_230706_i_.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+        if (minecraft.player.isAllowEdit()) {
+            addButton(new Button(width / 2 - 50, height - 25, 100, 20, new TranslationTextComponent("lectern.take_book"), (button) -> {
+                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), minecraft.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
             }));
         }
     }
 
     @Override
-    public void func_231175_as__() {
-        field_230706_i_.player.closeScreen();
-        super.func_231175_as__();
+    public void closeScreen() {
+        minecraft.player.closeScreen();
+        super.closeScreen();
     }
 
     @Override
-    public void func_231164_f_() {
-        super.func_231164_f_();
+    public void onClose() {
+        super.onClose();
         albumContainer.removeListener(listener);
     }
 
@@ -79,7 +79,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void sendPageUpdate(int page) {
-        Main.SIMPLE_CHANNEL.sendTo(new MessageAlbumPage(page), field_230706_i_.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+        Main.SIMPLE_CHANNEL.sendTo(new MessageAlbumPage(page), minecraft.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     @Override
-    public boolean func_231177_au__() {
+    public boolean isPauseScreen() {
         return false;
     }
 

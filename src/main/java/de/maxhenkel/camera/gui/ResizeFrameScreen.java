@@ -38,98 +38,97 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     }
 
     @Override
-    protected void func_231160_c_() {
-        super.func_231160_c_();
+    protected void init() {
+        super.init();
 
-        field_230710_m_.clear();
-        int left = (field_230708_k_ - xSize) / 2;
-        func_230480_a_(new Button(left + PADDING, field_230709_l_ / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        buttons.clear();
+        int left = (width - xSize) / 2;
+        addButton(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.LEFT);
         }));
 
-        func_230480_a_(new Button(left + xSize - BUTTON_WIDTH - PADDING, field_230709_l_ / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(left + xSize - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.RIGHT);
         }));
 
-        func_230480_a_(new Button(field_230708_k_ / 2 - BUTTON_WIDTH / 2, guiTop + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, guiTop + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.UP);
         }));
 
-        func_230480_a_(new Button(field_230708_k_ / 2 - BUTTON_WIDTH / 2, guiTop + ySize - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, guiTop + ySize - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.DOWN);
         }));
 
-        visibilityButton = new Button(left + xSize - 20 - PADDING, guiTop + PADDING, 20, 20, new TranslationTextComponent("tooltip.visibility_short"), (button) -> {
+        visibilityButton = addButton(new Button(left + xSize - 20 - PADDING, guiTop + PADDING, 20, 20, new TranslationTextComponent("tooltip.visibility_short"), (button) -> {
             visibility -= 0.25;
             if (visibility < 0F) {
                 visibility = 1F;
             }
             Main.CLIENT_CONFIG.resizeGuiOpacity.set((double) visibility);
             Main.CLIENT_CONFIG.resizeGuiOpacity.save();
-        });
-        func_230480_a_(visibilityButton);
+        }));
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.func_231173_s_()));
+        Main.SIMPLE_CHANNEL.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         if (visibility >= 1F) {
-            func_230446_a_(matrixStack);
+            renderBackground(matrixStack);
         }
         RenderSystem.color4f(1F, 1F, 1F, visibility);
-        field_230706_i_.getTextureManager().bindTexture(CAMERA_TEXTURE);
+        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
 
-        func_238474_b_(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int x, int y) {
-        String title = new TranslationTextComponent("gui.frame.resize").getString();
-        int titleWidth = field_230712_o_.getStringWidth(title);
-        field_230712_o_.func_238421_b_(matrixStack, title, xSize / 2 - titleWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT - 1, TextFormatting.DARK_GRAY.getColor());
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        TranslationTextComponent title = new TranslationTextComponent("gui.frame.resize");
+        int titleWidth = font.getStringWidth(title.getString());
+        font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, ySize / 2 - font.FONT_HEIGHT - 1, TextFormatting.DARK_GRAY.getColor());
 
-        String description = new TranslationTextComponent("gui.frame.resize_description").getString();
-        int descriptionWidth = field_230712_o_.getStringWidth(description);
-        field_230712_o_.func_238421_b_(matrixStack, description, xSize / 2 - descriptionWidth / 2, ySize / 2 + 1, TextFormatting.GRAY.getColor());
+        TranslationTextComponent description = new TranslationTextComponent("gui.frame.resize_description");
+        int descriptionWidth = font.getStringWidth(description.getString());
+        font.func_238422_b_(matrixStack, description.func_241878_f(), xSize / 2 - descriptionWidth / 2, ySize / 2 + 1, TextFormatting.GRAY.getColor());
 
-        field_230706_i_.getTextureManager().bindTexture(CAMERA_TEXTURE);
-        if (Screen.func_231173_s_()) {
-            func_238474_b_(matrixStack, xSize / 2 - 8, PADDING + 2, 16, 109, 16, 16);
-            func_238474_b_(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
-            func_238474_b_(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
-            func_238474_b_(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
+        if (Screen.hasShiftDown()) {
+            blit(matrixStack, xSize / 2 - 8, PADDING + 2, 16, 109, 16, 16);
+            blit(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
+            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            blit(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
         } else {
-            func_238474_b_(matrixStack, xSize / 2 - 8, PADDING + 2, 0, 109, 16, 16);
-            func_238474_b_(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
-            func_238474_b_(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
-            func_238474_b_(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            blit(matrixStack, xSize / 2 - 8, PADDING + 2, 0, 109, 16, 16);
+            blit(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
+            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            blit(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
         }
 
-        if (visibilityButton.func_230449_g_()) {
-            func_238654_b_(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").func_241878_f()), x - guiLeft, y - guiTop);
+        if (visibilityButton.isHovered()) {
+            renderTooltip(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").func_241878_f()), x - guiLeft, y - guiTop);
         }
     }
 
     private long lastCheck;
 
     @Override
-    public void func_231023_e_() {
-        super.func_231023_e_();
+    public void tick() {
+        super.tick();
 
         if (System.currentTimeMillis() - lastCheck > 500L) {
             if (!isImagePresent()) {
-                field_230706_i_.player.closeScreen();
+                minecraft.player.closeScreen();
             }
             lastCheck = System.currentTimeMillis();
         }
     }
 
     public boolean isImagePresent() {
-        AxisAlignedBB aabb = field_230706_i_.player.getBoundingBox();
+        AxisAlignedBB aabb = minecraft.player.getBoundingBox();
         aabb = aabb.grow(32D);
-        return field_230706_i_.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(field_230706_i_.player) <= 32F);
+        return minecraft.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(minecraft.player) <= 32F);
     }
 }

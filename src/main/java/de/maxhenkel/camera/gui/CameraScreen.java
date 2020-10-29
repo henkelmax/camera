@@ -31,6 +31,10 @@ public class CameraScreen extends ScreenBase<Container> {
 
     private int index = 0;
 
+    private Button prev;
+    private Button next;
+    private Button upload;
+
     public CameraScreen(String currentShader) {
         super(CAMERA_TEXTURE, new DummyContainer(), null, new TranslationTextComponent("gui.camera.title"));
         xSize = 248;
@@ -51,28 +55,28 @@ public class CameraScreen extends ScreenBase<Container> {
     }
 
     @Override
-    protected void func_231160_c_() {
-        super.func_231160_c_();
-        field_230710_m_.clear();
-        Button prev = func_230480_a_(new Button(guiLeft + PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
+    protected void init() {
+        super.init();
+        buttons.clear();
+        prev = addButton(new Button(guiLeft + PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
             sendShader();
         }));
-        prev.field_230693_o_ = false; //TODO fix shaders
-        Button next = func_230480_a_(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
+        prev.active = false; //TODO fix shaders
+        next = addButton(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
             sendShader();
         }));
-        next.field_230693_o_ = false; //TODO fix shaders
+        next.active = false; //TODO fix shaders
 
         if (Main.SERVER_CONFIG.allowImageUpload.get()) {
-            func_230480_a_(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, field_230709_l_ / 2 + ySize / 2 - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
+            upload = addButton(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, height / 2 + ySize / 2 - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -83,9 +87,10 @@ public class CameraScreen extends ScreenBase<Container> {
                         playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()), playerInventory.player.getUniqueID());
                         e.printStackTrace();
                     }
-                    field_230706_i_.currentScreen = null;
+                    minecraft.currentScreen = null;
                 });
             }));
+            upload.active = ImageTools.isFileChooserAvailable();
         }
     }
 
@@ -94,39 +99,31 @@ public class CameraScreen extends ScreenBase<Container> {
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.func_230451_b_(matrixStack, mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
-        String title = new TranslationTextComponent("gui.camera.choosefilter").getString();
+        TranslationTextComponent title = new TranslationTextComponent("gui.camera.choosefilter");
 
-        int titleWidth = field_230712_o_.getStringWidth(title);
+        int titleWidth = font.getStringWidth(title.getString());
 
-        field_230712_o_.func_238421_b_(matrixStack, title, xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
+        font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
 
-        String shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index)).getString();
+        TranslationTextComponent shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index));
 
-        int shaderWidth = field_230712_o_.getStringWidth(shaderName);
+        int shaderWidth = font.getStringWidth(shaderName.getString());
 
-        field_230712_o_.func_238421_b_(matrixStack, shaderName, xSize / 2 - shaderWidth / 2, ySize / 2 - field_230712_o_.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
+        font.func_238422_b_(matrixStack, shaderName.func_241878_f(), xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
 
-        if (isHoveringButton(mouseX, mouseY)) {
+        if (prev.isHovered() || next.isHovered()) {
             List<IReorderingProcessor> list = new ArrayList<>();
             list.add(new TranslationTextComponent("message.camera.filters_unavailable").func_241878_f());
-            func_238654_b_(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
+            renderTooltip(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
+        }
+        if (upload != null && upload.isHovered() && !ImageTools.isFileChooserAvailable()) {
+            List<IReorderingProcessor> list = new ArrayList<>();
+            list.add(new TranslationTextComponent("message.camera.no_java_fx").func_241878_f());
+            renderTooltip(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
         }
     }
 
-    private boolean isHoveringButton(int mouseX, int mouseY) {
-        if (mouseX >= guiLeft + PADDING && mouseX < guiLeft + PADDING + BUTTON_WIDTH) {
-            if (mouseY >= guiTop + ySize / 2 - BUTTON_HEIGHT / 2 && mouseY < guiTop + ySize / 2 - BUTTON_HEIGHT / 2 + BUTTON_HEIGHT) {
-                return true;
-            }
-        }
-        if (mouseX >= guiLeft + xSize - BUTTON_WIDTH - PADDING && mouseX < guiLeft + xSize - PADDING) {
-            if (mouseY >= guiTop + ySize / 2 - BUTTON_HEIGHT / 2 && mouseY < guiTop + ySize / 2 + BUTTON_HEIGHT / 2) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

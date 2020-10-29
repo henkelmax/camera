@@ -32,15 +32,15 @@ public class ImageScreen extends ContainerScreen<Container> {
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        func_230446_a_(matrixStack);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        renderBackground(matrixStack);
         RenderSystem.color4f(1F, 1F, 1F, 1F);
 
         if (imageUUID == null) {
             return;
         }
 
-        drawImage(field_230706_i_, field_230708_k_, field_230709_l_, 100, imageUUID);
+        drawImage(minecraft, width, height, 100, imageUUID);
     }
 
     public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
@@ -101,7 +101,7 @@ public class ImageScreen extends ContainerScreen<Container> {
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
 
     }
 }

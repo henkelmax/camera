@@ -39,11 +39,11 @@ public class NoJEIGuiProperties implements IGuiProperties {
 
     @Override
     public int getScreenWidth() {
-        return containerScreen.field_230708_k_;
+        return containerScreen.width;
     }
 
     @Override
     public int getScreenHeight() {
-        return containerScreen.field_230709_l_;
+        return containerScreen.height;
     }
 }

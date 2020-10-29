@@ -1,1 +1,2 @@
-- Made recipes compatible with tags
+- Updated MCP mappings
+- Added Java FX info when trying to upload files

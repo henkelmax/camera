@@ -22,9 +22,10 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int x, int y) {
-        super.func_230451_b_(matrixStack, x, y);
-        field_230712_o_.func_238421_b_(matrixStack, func_231171_q_().getString(), 8F, 6F, FONT_COLOR);
-        field_230712_o_.func_238421_b_(matrixStack, playerInventory.getDisplayName().getString(), 8F, (float) (ySize - 96 + 2), FONT_COLOR);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        super.drawGuiContainerForegroundLayer(matrixStack, x, y);
+        font.func_238422_b_(matrixStack, getTitle().func_241878_f(), 8F, 6F, FONT_COLOR);
+        font.func_238422_b_(matrixStack, playerInventory.getDisplayName().func_241878_f(), 8F, (float) (ySize - 96 + 2), FONT_COLOR);
     }
+
 }

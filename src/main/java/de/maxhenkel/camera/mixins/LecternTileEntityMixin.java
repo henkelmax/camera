@@ -78,8 +78,8 @@ public abstract class LecternTileEntityMixin extends TileEntity {
         cir.setReturnValue(new AlbumContainer(id, inventory, field_214049_b));
     }
 
-    @Inject(method = "func_230337_a_", at = @At("TAIL"), cancellable = true)
-    public void func_230337_a_(BlockState state, CompoundNBT compound, CallbackInfo info) {
+    @Inject(method = "read", at = @At("TAIL"), cancellable = true)
+    public void read(BlockState state, CompoundNBT compound, CallbackInfo info) {
         pages = Main.ALBUM.getImages(book).size();
     }
 
