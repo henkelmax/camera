@@ -1,2 +1,1 @@
-- Updated MCP mappings
-- Added Java FX info when trying to upload files
+- Added russian translation
