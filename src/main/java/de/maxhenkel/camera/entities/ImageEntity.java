@@ -438,10 +438,7 @@ public class ImageEntity extends Entity {
 
     public void writeAdditional(CompoundNBT compound) {
         if (getImageUUID().isPresent()) {
-            //TODO replace with putuniqueId
-            UUID uuid = getImageUUID().get();
-            compound.putLong("id_most", uuid.getMostSignificantBits());
-            compound.putLong("id_least", uuid.getLeastSignificantBits());
+            compound.putUniqueId("image_id", getImageUUID().get());
         }
         compound.putInt("facing", getFacing().getIndex());
         compound.putInt("width", getFrameWidth());
@@ -453,8 +450,10 @@ public class ImageEntity extends Entity {
     }
 
     public void readAdditional(CompoundNBT compound) {
-        if (compound.contains("id_most") && compound.contains("id_least")) {
+        if (compound.contains("id_most") && compound.contains("id_least")) { //TODO remove
             setImageUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
+        } else {
+            setUniqueId(compound.getUniqueId("image_id"));
         }
         setFacing(Direction.byIndex(compound.getInt("facing")));
         setFrameWidth(compound.getInt("width"));
