@@ -87,11 +87,11 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         TranslationTextComponent title = new TranslationTextComponent("gui.frame.resize");
-        int titleWidth = font.getStringWidth(title.getString());
+        int titleWidth = font.getStringPropertyWidth(title);
         font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, ySize / 2 - font.FONT_HEIGHT - 1, TextFormatting.DARK_GRAY.getColor());
 
         TranslationTextComponent description = new TranslationTextComponent("gui.frame.resize_description");
-        int descriptionWidth = font.getStringWidth(description.getString());
+        int descriptionWidth = font.getStringPropertyWidth(description);
         font.func_238422_b_(matrixStack, description.func_241878_f(), xSize / 2 - descriptionWidth / 2, ySize / 2 + 1, TextFormatting.GRAY.getColor());
 
         minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);

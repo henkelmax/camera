@@ -104,13 +104,13 @@ public class CameraScreen extends ScreenBase<Container> {
 
         TranslationTextComponent title = new TranslationTextComponent("gui.camera.choosefilter");
 
-        int titleWidth = font.getStringWidth(title.getString());
+        int titleWidth = font.getStringPropertyWidth(title);
 
         font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
 
         TranslationTextComponent shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index));
 
-        int shaderWidth = font.getStringWidth(shaderName.getString());
+        int shaderWidth = font.getStringPropertyWidth(shaderName);
 
         font.func_238422_b_(matrixStack, shaderName.func_241878_f(), xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
 
