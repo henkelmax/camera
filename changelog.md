@@ -1,1 +1,3 @@
 - Re-added JEI compatibility
+- Fixed image frames disappearing
+- Fixed upgrading image frames from older versions

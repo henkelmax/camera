@@ -440,28 +440,31 @@ public class ImageEntity extends Entity {
         if (getImageUUID().isPresent()) {
             compound.putUniqueId("image_id", getImageUUID().get());
         }
+        if (getOwner().isPresent()) {
+            compound.putUniqueId("owner", getOwner().get());
+        }
         compound.putInt("facing", getFacing().getIndex());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
         compound.put("item", getItem().write(new CompoundNBT()));
-        if (getOwner().isPresent()) {
-            compound.putUniqueId("owner", getOwner().get());
-        }
     }
 
     public void readAdditional(CompoundNBT compound) {
         if (compound.contains("id_most") && compound.contains("id_least")) { //TODO remove
             setImageUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
-        } else {
-            setUniqueId(compound.getUniqueId("image_id"));
+        } else if (compound.contains("image_id")) {
+            setImageUUID(compound.getUniqueId("image_id"));
+        }
+        if (compound.contains("owner_most") && compound.contains("owner_least")) { //TODO remove
+            setOwner(new UUID(compound.getLong("owner_most"), compound.getLong("owner_least")));
+        } else if (compound.contains("owner")) {
+            setOwner(compound.getUniqueId("owner"));
         }
         setFacing(Direction.byIndex(compound.getInt("facing")));
         setFrameWidth(compound.getInt("width"));
         setFrameHeight(compound.getInt("height"));
         setItem(ItemStack.read(compound.getCompound("item")));
-        if (compound.contains("owner")) {
-            setOwner(compound.getUniqueId("owner"));
-        }
+
         updateBoundingBox();
     }
 }
