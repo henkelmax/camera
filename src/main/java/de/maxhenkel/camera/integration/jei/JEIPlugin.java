@@ -1,10 +1,7 @@
 package de.maxhenkel.camera.integration.jei;
 
 import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.AlbumScreen;
-import de.maxhenkel.camera.gui.CameraScreen;
-import de.maxhenkel.camera.gui.ImageScreen;
-import de.maxhenkel.camera.gui.ResizeFrameScreen;
+import de.maxhenkel.camera.gui.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +18,7 @@ public class JEIPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiScreenHandler(ImageScreen.class, NoJEIGuiProperties::new);
         registration.addGuiScreenHandler(AlbumScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(LecternAlbumScreen.class, NoJEIGuiProperties::new);
         registration.addGuiScreenHandler(ResizeFrameScreen.class, NoJEIGuiProperties::new);
         registration.addGuiScreenHandler(CameraScreen.class, NoJEIGuiProperties::new);
     }

@@ -1,1 +1,1 @@
-- Fixed font rendering
+- Re-added JEI compatibility
