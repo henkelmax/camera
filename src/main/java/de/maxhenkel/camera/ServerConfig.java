@@ -1,12 +1,11 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
+import de.maxhenkel.corelib.tag.TagUtils;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.ITag;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class ServerConfig extends ConfigBase {
 
@@ -18,7 +17,7 @@ public class ServerConfig extends ConfigBase {
     public final ForgeConfigSpec.BooleanValue allowImageUpload;
     public final ForgeConfigSpec.BooleanValue frameOnlyOwnerModify;
 
-    public Item cameraConsumeItem;
+    public ITag<Item> cameraConsumeItem;
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -26,8 +25,8 @@ public class ServerConfig extends ConfigBase {
                 .comment("The time in milliseconds the camera will be on cooldown after taking an image")
                 .defineInRange("camera.cooldown", 5000, 100, Integer.MAX_VALUE);
         cameraConsumeItemSpec = builder
-                .comment("The item that is consumed when taking an image")
-                .define("camera.consumed_item.item", "minecraft:paper");
+                .comment("The item that is consumed when taking an image", "If it starts with '#' it is a tag")
+                .define("camera.consumed_item.item", "#camera:image_paper");
         cameraConsumeItemAmount = builder
                 .comment("The amount of the item that is consumed when taking an image")
                 .defineInRange("camera.consumed_item.amount", 1, 1, Short.MAX_VALUE);
@@ -48,9 +47,10 @@ public class ServerConfig extends ConfigBase {
     @Override
     public void onReload(ModConfig.ModConfigEvent event) {
         super.onReload(event);
-        cameraConsumeItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(cameraConsumeItemSpec.get()));
+        cameraConsumeItem = TagUtils.getItem(cameraConsumeItemSpec.get());
         if (cameraConsumeItem == null) {
-            cameraConsumeItem = Items.PAPER;
+            Main.LOGGER.error("Can't read config value 'camera.consumed_item.item'. Defaulting to '#camera:image_paper'.");
+            cameraConsumeItem = Main.IMAGE_PAPER;
         }
     }
 

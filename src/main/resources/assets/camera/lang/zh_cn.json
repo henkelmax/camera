@@ -4,7 +4,7 @@
     "item.camera.image": "相片",
     "item.camera.image_frame": "相框",
     "item.camera.album": "相册",
-    "message.no_consumable": "背包中没有足够的 %s (需要 %s 张)",
+    "message.no_consumable": "背包中没有足够的",
     "message.image_cooldown": "相机还在冷却中",
     "message.upload_error": "相片上传错误：%s",
     "tooltip.image_time": "摄制时间 %s",

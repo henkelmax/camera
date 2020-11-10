@@ -20,6 +20,8 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,6 +58,7 @@ public class Main {
     public static ContainerType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
     public static ContainerType<AlbumContainer> ALBUM_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
+    public static ITag<Item> IMAGE_PAPER = ItemTags.makeWrapperTag(new ResourceLocation(Main.MODID, "image_paper").toString());
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;

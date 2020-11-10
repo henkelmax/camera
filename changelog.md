@@ -1,3 +1,3 @@
-- Re-added JEI compatibility
-- Fixed image frames disappearing
-- Fixed upgrading image frames from older versions
+- Added tag support to camera consumable config option
+- Added a tag called image_paper
+- Added JEI support for image cloning recipe

@@ -3,7 +3,7 @@
   "item.camera.image": "Fotoğraf",
   "item.camera.image_frame": "Fotoğraf Çerçevesi",
   "item.camera.album": "Albüm",
-  "message.no_consumable": "Hayır veya envanterde yeteri kadar %s yok (%s gerekli)",
+  "message.no_consumable": "Hayır veya envanterde yeteri kadar yok",
   "message.image_cooldown": "Kamera soğumada",
   "tooltip.image_time": "Şu saatte çekildi: %s",
   "tooltip.image_owner": "Çeken: %s",

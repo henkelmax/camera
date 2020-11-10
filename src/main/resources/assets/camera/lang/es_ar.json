@@ -4,7 +4,7 @@
   "item.camera.image": "Imagen",
   "item.camera.image_frame": "Marco de imagen",
   "item.camera.album": "Álbum",
-  "message.no_consumable": "No hay o no hay suficiente %s en el inventario (se necesita %s)",
+  "message.no_consumable": "No hay o no hay suficiente en el inventario",
   "message.image_cooldown": "La cámara está en enfriamiento",
   "message.upload_error": "Error de carga de imagen: %s",
   "tooltip.image_time": "Tomada el %s",

@@ -4,7 +4,7 @@
   "item.camera.image": "Bild",
   "item.camera.image_frame": "Bilderrahmen",
   "item.camera.album": "Album",
-  "message.no_consumable": "Kein oder nicht genug %s im Inventar (%s benötigt)",
+  "message.no_consumable": "Kein oder nicht genug material im Inventar",
   "message.image_cooldown": "Kamera ist im cooldown",
   "message.upload_error": "Bild uploadfehler: %s",
   "tooltip.image_time": "Am %s gemacht",

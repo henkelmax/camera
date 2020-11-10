@@ -24,7 +24,7 @@ public class RecipeImageCloning extends SpecialRecipe {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack.isEmpty()) {
                 continue;
-            } else if (stack.getItem().equals(Items.PAPER)) {
+            } else if (stack.getItem().isIn(Main.IMAGE_PAPER)) {
                 paper = stack;
             } else if (stack.getItem().equals(Main.IMAGE)) {
                 image = stack;

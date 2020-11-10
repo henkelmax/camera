@@ -35,7 +35,7 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
             if (CameraItem.consumePaper(player)) {
                 Main.SIMPLE_CHANNEL.reply(new MessageUploadCustomImage(uuid), context);
             } else {
-                player.sendStatusMessage(new TranslationTextComponent("message.no_consumable", new TranslationTextComponent(Main.SERVER_CONFIG.cameraConsumeItem.getTranslationKey()), Main.SERVER_CONFIG.cameraConsumeItemAmount.get()), true);
+                player.sendStatusMessage(new TranslationTextComponent("message.no_consumable"), true);
             }
         } else {
             player.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);

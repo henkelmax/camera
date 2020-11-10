@@ -4,7 +4,7 @@
   "item.camera.image": "Image",
   "item.camera.image_frame": "Image Frame",
   "item.camera.album": "Album",
-  "message.no_consumable": "No or not enough %s in inventory (%s needed)",
+  "message.no_consumable": "No or not enough material in inventory",
   "message.image_cooldown": "Camera is on cooldown",
   "message.upload_error": "Image upload error: %s",
   "tooltip.image_time": "Taken on %s",

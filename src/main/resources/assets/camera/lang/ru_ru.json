@@ -4,7 +4,7 @@
   "item.camera.image": "Фото",
   "item.camera.image_frame": "Рамка для фото",
   "item.camera.album": "Альбом",
-  "message.no_consumable": "Нет или недостаточно %s в инвентаре (необходимо %s)",
+  "message.no_consumable": "Нет или недостаточно в инвентаре",
   "message.image_cooldown": "Камера перезаряжается",
   "message.upload_error": "Ошибка загрузки фото: %s",
   "tooltip.image_time": "Сделано %s",
