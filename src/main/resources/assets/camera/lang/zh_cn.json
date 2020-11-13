@@ -13,7 +13,7 @@
     "button.camera.prev": "上一个",
     "button.camera.next": "下一个",
     "button.camera.upload": "上传",
-    "gui.camera.choosefilter": "选择一种滤镜",
+    "gui.camera.choose_filter": "选择一种滤镜",
     "gui.camera.title": "相机",
     "gui.frame.resize": "调整相框大小",
     "gui.frame.resize_description": "按住 Shift 键以缩小",
@@ -37,6 +37,5 @@
     "key.previous_image": "上一张相片",
     "filetype.images": "相片",
     "title.choose_image": "选择相片",
-    "sound.camera.take_image": "相机拍摄了一张相片",
-    "message.camera.filters_unavailable": "这个版本没有该滤镜"
+    "sound.camera.take_image": "相机拍摄了一张相片"
   }

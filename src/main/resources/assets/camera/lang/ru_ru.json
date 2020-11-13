@@ -13,7 +13,7 @@
   "button.camera.prev": "Предыдущий",
   "button.camera.next": "Следующий",
   "button.camera.upload": "Выложить",
-  "gui.camera.choosefilter": "Выберите фильтр",
+  "gui.camera.choose_filter": "Выберите фильтр",
   "gui.camera.title": "Камера",
   "gui.frame.resize": "Изменение размера рамки",
   "gui.frame.resize_description": "Зажмите SHIFT чтобы сократить",
@@ -38,6 +38,5 @@
   "filetype.images": "Фото",
   "title.choose_image": "Выберите фото",
   "sound.camera.take_image": "Камера делает снимок",
-  "message.camera.filters_unavailable": "Фильтры недоступны в этой версии",
   "message.camera.no_java_fx": "Чтобы выкладывать файлы, вам нужна версия Java, включающая в себя Java FX"
 }

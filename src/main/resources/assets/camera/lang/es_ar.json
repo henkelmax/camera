@@ -13,7 +13,7 @@
   "button.camera.prev": "Anterior",
   "button.camera.next": "Siguiente",
   "button.camera.upload": "Subir",
-  "gui.camera.choosefilter": "Elegir un filtro",
+  "gui.camera.choose_filter": "Elegir un filtro",
   "gui.camera.title": "Cámara",
   "gui.frame.resize": "Redimensionar marco",
   "gui.frame.resize_description": "Mantener SHIFT para achicar",
@@ -37,6 +37,5 @@
   "key.previous_image": "Imagen anterior",
   "filetype.images": "Imagenes",
   "title.choose_image": "Elegir imagen",
-  "sound.camera.take_image": "Cámara tomando una imagen",
-  "message.camera.filters_unavailable": "Los filtros no están disponibles en esta versión"
+  "sound.camera.take_image": "Cámara tomando una imagen"
 }

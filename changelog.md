@@ -1,3 +1,1 @@
-- Added tag support to camera consumable config option
-- Added a tag called image_paper
-- Added JEI support for image cloning recipe
+- Updated camera screen

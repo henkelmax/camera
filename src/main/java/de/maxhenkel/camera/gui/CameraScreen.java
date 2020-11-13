@@ -12,8 +12,13 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -31,8 +36,6 @@ public class CameraScreen extends ScreenBase<Container> {
 
     private int index = 0;
 
-    private Button prev;
-    private Button next;
     private Button upload;
 
     public CameraScreen(String currentShader) {
@@ -58,25 +61,27 @@ public class CameraScreen extends ScreenBase<Container> {
     protected void init() {
         super.init();
         buttons.clear();
-        prev = addButton(new Button(guiLeft + PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
-            index--;
+        addButton(new Button(guiLeft + PADDING, guiTop + PADDING + font.FONT_HEIGHT + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
+            //TODO fix shaders
+            /*index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
-            sendShader();
+            sendShader();*/
+            showBugMessage();
         }));
-        prev.active = false; //TODO fix shaders
-        next = addButton(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + ySize / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
-            index++;
+        addButton(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + PADDING + font.FONT_HEIGHT + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
+            //TODO fix shaders
+            /*index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
-            sendShader();
+            sendShader();*/
+            showBugMessage();
         }));
-        next.active = false; //TODO fix shaders
 
         if (Main.SERVER_CONFIG.allowImageUpload.get()) {
-            upload = addButton(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, height / 2 + ySize / 2 - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
+            upload = addButton(new Button(guiLeft + xSize / 2 - BUTTON_WIDTH / 2, guiTop + ySize - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -102,28 +107,35 @@ public class CameraScreen extends ScreenBase<Container> {
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
-        TranslationTextComponent title = new TranslationTextComponent("gui.camera.choosefilter");
-
-        int titleWidth = font.getStringPropertyWidth(title);
-
-        font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, 10, FONT_COLOR);
+        TranslationTextComponent chooseFilter = new TranslationTextComponent("gui.camera.choose_filter");
+        int chooseFilterWidth = font.getStringPropertyWidth(chooseFilter);
+        font.func_238422_b_(matrixStack, chooseFilter.func_241878_f(), xSize / 2 - chooseFilterWidth / 2, 10, FONT_COLOR);
 
         TranslationTextComponent shaderName = new TranslationTextComponent("shader." + Shaders.SHADER_LIST.get(index));
-
         int shaderWidth = font.getStringPropertyWidth(shaderName);
+        font.func_238422_b_(matrixStack, shaderName.func_241878_f(), xSize / 2 - shaderWidth / 2, PADDING + font.FONT_HEIGHT + PADDING + BUTTON_HEIGHT / 2 - font.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
 
-        font.func_238422_b_(matrixStack, shaderName.func_241878_f(), xSize / 2 - shaderWidth / 2, ySize / 2 - font.FONT_HEIGHT / 2, TextFormatting.WHITE.getColor());
+        TranslationTextComponent uploadImage = new TranslationTextComponent("gui.camera.upload_image");
+        int uploadImageWidth = font.getStringPropertyWidth(uploadImage);
+        font.func_238422_b_(matrixStack, uploadImage.func_241878_f(), xSize / 2 - uploadImageWidth / 2, ySize - PADDING - BUTTON_HEIGHT - PADDING - font.FONT_HEIGHT, FONT_COLOR);
 
-        if (prev.isHovered() || next.isHovered()) {
-            List<IReorderingProcessor> list = new ArrayList<>();
-            list.add(new TranslationTextComponent("message.camera.filters_unavailable").func_241878_f());
-            renderTooltip(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
-        }
         if (upload != null && upload.isHovered() && !ImageTools.isFileChooserAvailable()) {
             List<IReorderingProcessor> list = new ArrayList<>();
             list.add(new TranslationTextComponent("message.camera.no_java_fx").func_241878_f());
             renderTooltip(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
         }
+    }
+
+    private void showBugMessage() {
+        minecraft.displayGuiScreen(null);
+        minecraft.player.sendMessage(
+                new StringTextComponent("Due to a Minecraft bug, filters do not work.\nPlease upvote this issue to get it fixed! ")
+                        .append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("MC-194289")).modifyStyle(style -> style
+                                .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bugs.mojang.com/browse/MC-194289"))
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("https://bugs.mojang.com/browse/MC-194289"))))
+                                .mergeStyle(TextFormatting.GREEN)
+                        )
+                , Util.DUMMY_UUID);
     }
 
 }

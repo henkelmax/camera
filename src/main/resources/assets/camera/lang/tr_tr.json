@@ -9,7 +9,7 @@
   "tooltip.image_owner": "Çeken: %s",
   "button.camera.prev": "Önceki",
   "button.camera.next": "Sonraki",
-  "gui.camera.choosefilter": "Filtre Seçin",
+  "gui.camera.choose_filter": "Filtre Seçin",
   "gui.camera.title": "Kamera",
   "gui.frame.resize": "Çerçeveyi Yeniden Boyutlandır",
   "gui.album.title": "Albüm",

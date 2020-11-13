@@ -13,7 +13,8 @@
   "button.camera.prev": "Zurück",
   "button.camera.next": "Weiter",
   "button.camera.upload": "Hochladen",
-  "gui.camera.choosefilter": "Wähle einen Filter aus",
+  "gui.camera.choose_filter": "Wähle einen Filter aus",
+  "gui.camera.upload_image": "Lade ein Bild hoch",
   "gui.camera.title": "Kamera",
   "gui.frame.resize": "Rahmengröße anpassen",
   "gui.frame.resize_description": "SHIFT zum verkleinern",
@@ -38,6 +39,5 @@
   "filetype.images": "Bilder",
   "title.choose_image": "Bild auswählen",
   "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt",
-  "message.camera.filters_unavailable": "Filter sind in dieser Version nicht verfügbar",
   "message.camera.no_java_fx": "Um dateien zu öffnen benötigst du eine Java Version, die Java FX enthält"
 }
