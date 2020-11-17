@@ -130,9 +130,9 @@ public class CameraScreen extends ScreenBase<Container> {
         minecraft.displayGuiScreen(null);
         minecraft.player.sendMessage(
                 new StringTextComponent("Due to a Minecraft bug, filters do not work.\nPlease upvote this issue to get it fixed! ")
-                        .append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("MC-194289")).modifyStyle(style -> style
-                                .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bugs.mojang.com/browse/MC-194289"))
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("https://bugs.mojang.com/browse/MC-194289"))))
+                        .append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("MC-194675")).modifyStyle(style -> style
+                                .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bugs.mojang.com/browse/MC-194675"))
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("https://bugs.mojang.com/browse/MC-194675"))))
                                 .mergeStyle(TextFormatting.GREEN)
                         )
                 , Util.DUMMY_UUID);
