@@ -1,5 +1,4 @@
-# Camera Mod ![](http://cf.way2muchnoise.eu/full_289310_downloads.svg)
-![](http://cf.way2muchnoise.eu/versions/289310.svg)
+# Camera Mod ![](http://cf.way2muchnoise.eu/full_289310_downloads.svg) ![](http://cf.way2muchnoise.eu/versions/289310.svg)
 
 ## Links
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/camera-mod)
@@ -20,14 +19,17 @@ This mod adds a Camera and a frame for the images. The Camera takes real images 
 - Custom images can be uploaded
 - Image Frames can be resized up to 8 x 8 blocks
 - Date and photographer name are stored with the image item
-- The Camera consumes a piece of paper for every taken image
+- The Camera consumes a piece of paper for every taken image (Configurable)
 - The Camera has multiple filters that can be applied
 - Multiplayer compatible
 - Images are saved in the world folder
 
 ## Taking an Image
 
-Images can be taken by right-clicking a camera. This brings you in the viewfinder of the camera. Right-clicking again takes an image of the perspective you are currently seeing. Images are saved with the same ratio as your Minecraft window.
+Images can be taken by right-clicking a camera. 
+This brings you to the viewfinder of the camera. 
+Right-clicking again takes an image of the perspective you are currently seeing.
+Images are saved with the same ratio as your Minecraft window.
 
 ![camera](https://i.imgur.com/BMWH1QZ.png)
 
