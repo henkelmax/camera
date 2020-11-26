@@ -37,6 +37,5 @@
   "key.previous_image": "Предыдущее фото",
   "filetype.images": "Фото",
   "title.choose_image": "Выберите фото",
-  "sound.camera.take_image": "Камера делает снимок",
-  "message.camera.no_java_fx": "Чтобы выкладывать файлы, вам нужна версия Java, включающая в себя Java FX"
+  "sound.camera.take_image": "Камера делает снимок"
 }

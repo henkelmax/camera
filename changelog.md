@@ -1,1 +1,1 @@
-- Updated camera screen
+- Use native file dialog to upload images

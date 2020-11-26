@@ -10,7 +10,6 @@ import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
@@ -22,8 +21,6 @@ import net.minecraft.util.text.event.HoverEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class CameraScreen extends ScreenBase<Container> {
@@ -95,8 +92,13 @@ public class CameraScreen extends ScreenBase<Container> {
                     minecraft.currentScreen = null;
                 });
             }));
-            upload.active = ImageTools.isFileChooserAvailable();
         }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        upload.active = !ImageTools.isFileChooserOpen();
     }
 
     private void sendShader() {
@@ -118,12 +120,6 @@ public class CameraScreen extends ScreenBase<Container> {
         TranslationTextComponent uploadImage = new TranslationTextComponent("gui.camera.upload_image");
         int uploadImageWidth = font.getStringPropertyWidth(uploadImage);
         font.func_238422_b_(matrixStack, uploadImage.func_241878_f(), xSize / 2 - uploadImageWidth / 2, ySize - PADDING - BUTTON_HEIGHT - PADDING - font.FONT_HEIGHT, FONT_COLOR);
-
-        if (upload != null && upload.isHovered() && !ImageTools.isFileChooserAvailable()) {
-            List<IReorderingProcessor> list = new ArrayList<>();
-            list.add(new TranslationTextComponent("message.camera.no_java_fx").func_241878_f());
-            renderTooltip(matrixStack, list, mouseX - guiLeft, mouseY - guiTop);
-        }
     }
 
     private void showBugMessage() {
