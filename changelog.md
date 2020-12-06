@@ -1,1 +1,1 @@
-- Use native file dialog to upload images
+- Fixed image frame outline not displayed correctly

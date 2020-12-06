@@ -14,15 +14,12 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import org.lwjgl.opengl.GL11;
 
@@ -176,20 +173,16 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     }
 
     private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        if (getEntityLookingAt() != entity) {
+        if (!(mc.objectMouseOver instanceof EntityRayTraceResult) || ((EntityRayTraceResult) mc.objectMouseOver).getEntity() != entity) {
             return;
         }
         if (mc.gameSettings.hideGUI) {
             return;
         }
         matrixStack.push();
-        renderBoundingBox(matrixStack, buffer, entity);
-        matrixStack.pop();
-    }
-
-    private static void renderBoundingBox(MatrixStack matrixStack, IRenderTypeBuffer buffer, Entity entity) {
         AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
         WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.getLines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
+        matrixStack.pop();
     }
 
     public static void rotate(Direction facing, MatrixStack matrixStack) {
@@ -215,37 +208,6 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     @Override
     public ResourceLocation getEntityTexture(ImageEntity entity) {
         return EMPTY_IMAGE;
-    }
-
-    public static Entity getEntityLookingAt() {
-        Minecraft mc = Minecraft.getInstance();
-        Entity entity = mc.getRenderViewEntity();
-        if (entity == null) {
-            return null;
-        }
-        if (mc.world == null) {
-            return null;
-        }
-        double reachDistance = mc.playerController.getBlockReachDistance();
-
-        Vector3d eyePosition = entity.getEyePosition(mc.getRenderPartialTicks());
-        double reachDistanceSquared = reachDistance * reachDistance;
-        Vector3d lookVec = entity.getLook(1.0F);
-        Vector3d lookVecReach = eyePosition.add(lookVec.x * reachDistance, lookVec.y * reachDistance, lookVec.z * reachDistance);
-        AxisAlignedBB extendedBoundingBox = entity.getBoundingBox().expand(lookVec.scale(reachDistance)).grow(1.0D, 1.0D, 1.0D);
-        EntityRayTraceResult result = ProjectileHelper.rayTraceEntities(entity, eyePosition, lookVecReach, extendedBoundingBox, (entity1) -> true, reachDistanceSquared);
-        if (result == null) {
-            return null;
-        }
-        double squareDistance = eyePosition.squareDistanceTo(result.getHitVec());
-        if (squareDistance > 9.0D) {
-            return null;
-        }
-        if (squareDistance >= reachDistanceSquared) {
-            return null;
-        }
-
-        return result.getEntity();
     }
 
 }
