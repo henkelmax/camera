@@ -15,6 +15,8 @@ This mod adds a Camera and a frame for the images. The Camera takes real images 
 
 - Images can be displayed by right-clicking the image
 - Images can be put into image frames
+- Images can be put into albums
+- Images can be put into lecterns
 - Images can be copied
 - Custom images can be uploaded
 - Image Frames can be resized up to 8 x 8 blocks
