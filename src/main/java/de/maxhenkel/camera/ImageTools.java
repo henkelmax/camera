@@ -173,7 +173,7 @@ public class ImageTools {
         BufferedImage bufferedImage = ImageIO.read(fis);
 
         if (bufferedImage == null) {
-            throw new IOException("BufferedImage is null");
+            throw new IOException("Failed to read image");
         }
 
         return bufferedImage;

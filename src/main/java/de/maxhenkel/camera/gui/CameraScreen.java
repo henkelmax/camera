@@ -86,7 +86,7 @@ public class CameraScreen extends ScreenBase<Container> {
                         ClientImageUploadManager.addImage(uuid, image);
                         Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
-                        playerInventory.player.sendMessage(new TranslationTextComponent("message.upload_error", e.getMessage()), playerInventory.player.getUniqueID());
+                        minecraft.player.sendStatusMessage(new TranslationTextComponent("message.upload_error", e.getMessage()), true);
                         e.printStackTrace();
                     }
                     minecraft.currentScreen = null;
