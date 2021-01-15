@@ -1,1 +1,1 @@
-- Fixed image frame outline not displayed correctly
+- Updated to 1.16.5
