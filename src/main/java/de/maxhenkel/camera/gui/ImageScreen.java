@@ -2,6 +2,7 @@ package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
@@ -16,18 +17,20 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ImageScreen extends ContainerScreen<Container> {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
 
-    private UUID imageUUID;
+    @Nullable
+    private UUID imageID;
 
     public ImageScreen(ItemStack image) {
         super(new DummyContainer(), null, new TranslationTextComponent("gui.image.title"));
 
-        imageUUID = Main.IMAGE.getUUID(image);
+        imageID = ImageData.getImageID(image);
     }
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
@@ -36,11 +39,11 @@ public class ImageScreen extends ContainerScreen<Container> {
         renderBackground(matrixStack);
         RenderSystem.color4f(1F, 1F, 1F, 1F);
 
-        if (imageUUID == null) {
+        if (imageID == null) {
             return;
         }
 
-        drawImage(minecraft, width, height, 100, imageUUID);
+        drawImage(minecraft, width, height, 100, imageID);
     }
 
     public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {

@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.integration.jei;
 
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.RecipeImageCloning;
 import mezz.jei.api.constants.VanillaTypes;
@@ -10,7 +11,6 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICustomCraftingC
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ImageCopyExtension<T extends RecipeImageCloning> implements ICustomCraftingCategoryExtension {
@@ -26,9 +26,7 @@ public class ImageCopyExtension<T extends RecipeImageCloning> implements ICustom
         IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
 
         ItemStack image = new ItemStack(Main.IMAGE);
-        Main.IMAGE.setUUID(image, new UUID(0L, 0L));
-        Main.IMAGE.setTime(image, System.currentTimeMillis());
-        Main.IMAGE.setOwner(image, "Steve");
+        ImageData.dummy().addToImage(image);
 
         ItemStack out = image.copy();
 

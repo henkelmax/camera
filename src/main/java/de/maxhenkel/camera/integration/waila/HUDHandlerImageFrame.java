@@ -1,17 +1,19 @@
 package de.maxhenkel.camera.integration.waila;
 
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
-import de.maxhenkel.camera.items.ImageItem;
 import mcp.mobius.waila.Waila;
 import mcp.mobius.waila.api.IEntityAccessor;
 import mcp.mobius.waila.api.IEntityComponentProvider;
 import mcp.mobius.waila.api.IPluginConfig;
 import mcp.mobius.waila.api.ITaggableList;
 import mcp.mobius.waila.utils.ModIdentification;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Date;
 import java.util.List;
@@ -40,22 +42,16 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
         }
         ImageEntity image = (ImageEntity) accessor.getEntity();
 
-        ItemStack imageItem = image.getItem();
-
-        if (!(imageItem.getItem() instanceof ImageItem)) {
+        ImageData imageData = ImageData.fromStack(image.getItem());
+        if (imageData == null) {
             tooltip.add(new TranslationTextComponent("tooltip.image_frame_empty"));
             return;
         }
-
-        String name = Main.IMAGE.getOwner(imageItem);
-
-        if (!name.isEmpty()) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).mergeStyle(TextFormatting.GRAY));
+        if (!imageData.getOwner().isEmpty()) {
+            tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + imageData.getOwner()).mergeStyle(TextFormatting.GRAY));
         }
-
-        long time = Main.IMAGE.getTime(imageItem);
-        if (time > 0L) {
-            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).mergeStyle(TextFormatting.GRAY));
+        if (imageData.getTime() > 0L) {
+            tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(imageData.getTime()))).mergeStyle(TextFormatting.GRAY));
         }
     }
 

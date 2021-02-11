@@ -5,6 +5,7 @@ import de.maxhenkel.camera.ModSounds;
 import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
 import de.maxhenkel.corelib.item.ItemUtils;
+import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,7 +19,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +50,9 @@ public class CameraItem extends Item {
             Main.CAMERA.setActive(stack, true);
         } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
             if (consumePaper(playerIn)) {
-                worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1.0F, 1.0F);
+                worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
-                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeImage(uuid), ((ServerPlayerEntity) playerIn).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+                NetUtils.sendTo(Main.SIMPLE_CHANNEL, (ServerPlayerEntity) playerIn, new MessageTakeImage(uuid));
                 Main.CAMERA.setActive(stack, false);
             } else {
                 playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable"), true);

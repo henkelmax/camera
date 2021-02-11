@@ -16,6 +16,8 @@ public class ServerConfig extends ConfigBase {
     public final ForgeConfigSpec.DoubleValue imageCompression;
     public final ForgeConfigSpec.BooleanValue allowImageUpload;
     public final ForgeConfigSpec.BooleanValue frameOnlyOwnerModify;
+    public final ForgeConfigSpec.BooleanValue advancedImageData;
+    public final ForgeConfigSpec.IntValue advancedDataMaxEntities;
 
     public ITag<Item> cameraConsumeItem;
 
@@ -42,6 +44,12 @@ public class ServerConfig extends ConfigBase {
         frameOnlyOwnerModify = builder
                 .comment("If only the owner can modify or break the image frame")
                 .define("image_frame.only_owner_modify", false);
+        advancedImageData = builder
+                .comment("If the image items should store additional data", "This isn't used by the mod itself", "Only enable this if you know what you are doing")
+                .define("advanced_data.enable", false);
+        advancedDataMaxEntities = builder
+                .comment("The amount of entities that should be stored")
+                .defineInRange("advanced_data.max_entities", 16, 1, 128);
     }
 
     @Override

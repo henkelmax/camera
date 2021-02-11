@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.net;
 
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,44 +19,42 @@ public class PacketManager {
 
     private Map<UUID, BufferedImage> imageCache;
 
-    private Map<UUID, Long> times;
+    private Map<UUID, Long> cooldowns;
 
     public PacketManager() {
         this.clientDataMap = new HashMap<>();
         this.imageCache = new HashMap<>();
-        this.times = new HashMap<>();
+        this.cooldowns = new HashMap<>();
     }
 
-    public void addBytes(ServerPlayerEntity playerMP, UUID imgUUID, int offset, int length, byte[] bytes) {
+    public void addBytes(ServerPlayerEntity playerMP, UUID imagegID, int offset, int length, byte[] bytes) {
         byte[] data;
-        if (!clientDataMap.containsKey(imgUUID)) {
+        if (!clientDataMap.containsKey(imagegID)) {
             data = new byte[length];
         } else {
-            data = clientDataMap.get(imgUUID);
+            data = clientDataMap.get(imagegID);
         }
 
         System.arraycopy(bytes, 0, data, offset, bytes.length);
 
-        clientDataMap.put(imgUUID, data);
+        clientDataMap.put(imagegID, data);
 
         if (offset + bytes.length >= data.length) {
             try {
-                BufferedImage image = completeImage(imgUUID);
+                BufferedImage image = completeImage(imagegID);
                 if (image == null) {
                     throw new IOException("Image incomplete");
                 }
-                imageCache.put(imgUUID, image);
+                imageCache.put(imagegID, image);
 
                 new Thread(() -> {
                     try {
-                        ImageTools.saveImage(playerMP, imgUUID, image);
+                        ImageTools.saveImage(playerMP, imagegID, image);
 
                         playerMP.getServer().deferTask(() -> {
                             ItemStack stack = new ItemStack(Main.IMAGE);
-                            Main.IMAGE.setUUID(stack, imgUUID);
-                            Main.IMAGE.setTime(stack, System.currentTimeMillis());
-                            Main.IMAGE.setOwner(stack, playerMP.getName().getUnformattedComponentText());
-
+                            ImageData imageData = ImageData.create(playerMP, imagegID);
+                            imageData.addToImage(stack);
                             if (!playerMP.addItemStackToInventory(stack)) {
                                 InventoryHelper.spawnItemStack(playerMP.world, playerMP.getPosX(), playerMP.getPosY(), playerMP.getPosZ(), stack);
                             }
@@ -97,15 +96,15 @@ public class PacketManager {
     }
 
     public boolean canTakeImage(UUID player) {
-        if (times.containsKey(player)) {
-            if (System.currentTimeMillis() - times.get(player) < Main.SERVER_CONFIG.imageCooldown.get()) {
+        if (cooldowns.containsKey(player)) {
+            if (System.currentTimeMillis() - cooldowns.get(player) < Main.SERVER_CONFIG.imageCooldown.get()) {
                 return false;
             } else {
-                times.put(player, System.currentTimeMillis());
+                cooldowns.put(player, System.currentTimeMillis());
                 return true;
             }
         } else {
-            times.put(player, System.currentTimeMillis());
+            cooldowns.put(player, System.currentTimeMillis());
             return true;
         }
     }

@@ -1,6 +1,7 @@
 package de.maxhenkel.camera.items.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -18,7 +19,7 @@ public class ImageItemRenderer extends ItemStackTileEntityRenderer {
         if (!Main.CLIENT_CONFIG.renderImageItem.get()) {
             return;
         }
-        UUID uuid = Main.IMAGE.getUUID(itemStack);
+        UUID uuid = ImageData.getImageID(itemStack);
         if (uuid == null) {
             uuid = ImageRenderer.DEFAULT_IMAGE_UUID;
         }

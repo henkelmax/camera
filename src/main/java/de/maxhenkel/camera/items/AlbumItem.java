@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.items;
 
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumInventoryContainer;
 import de.maxhenkel.camera.gui.AlbumScreen;
@@ -98,7 +99,7 @@ public class AlbumItem extends Item {
         IInventory inventory = new AlbumInventory(stack);
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack s = inventory.getStackInSlot(i);
-            UUID uuid = Main.IMAGE.getUUID(s);
+            UUID uuid = ImageData.getImageID(s);
             if (uuid == null) {
                 continue;
             }

@@ -1,5 +1,6 @@
 package de.maxhenkel.camera.entities;
 
+import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.net.MessageResizeFrame;
@@ -104,14 +105,11 @@ public class ImageEntity extends Entity {
             }
         }
 
-        if (stack.getItem().equals(Main.IMAGE)) {
-            UUID uuid = Main.IMAGE.getUUID(stack);
-            if (uuid == null) {
-                return ActionResultType.SUCCESS;
-            }
+        UUID imageID = ImageData.getImageID(stack);
+        if (imageID != null) {
             ItemStack frameStack = stack.split(1);
             setItem(frameStack);
-            setImageUUID(uuid);
+            setImageUUID(imageID);
             player.setHeldItem(hand, stack);
             playAddSound();
             return ActionResultType.SUCCESS;
