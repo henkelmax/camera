@@ -43,11 +43,11 @@ public class ImageProcessor {
         }
     }
 
-    public static void sendScreenshodThreaded(UUID uuid, BufferedImage image) {
+    public static void sendScreenshotThreaded(UUID uuid, BufferedImage image) {
         new Thread(() -> sendScreenshot(uuid, image), "ProcessImageThread").start();
     }
 
-    public static void sendScreenshodThreaded(UUID uuid, NativeImage image) {
+    public static void sendScreenshotThreaded(UUID uuid, NativeImage image) {
         new Thread(() -> sendScreenshot(uuid, ImageTools.fromNativeImage(image)), "ProcessImageThread").start();
     }
 

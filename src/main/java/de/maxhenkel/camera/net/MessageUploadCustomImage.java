@@ -35,7 +35,7 @@ public class MessageUploadCustomImage implements Message<MessageUploadCustomImag
             return;
         }
 
-        ImageProcessor.sendScreenshodThreaded(uuid, image);
+        ImageProcessor.sendScreenshotThreaded(uuid, image);
     }
 
     @Override

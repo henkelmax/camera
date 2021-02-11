@@ -47,7 +47,7 @@ public class ImageTaker {
         mc.gameSettings.hideGUI = hide;
         takeScreenshot = false;
 
-        ImageProcessor.sendScreenshodThreaded(uuid, image);
+        ImageProcessor.sendScreenshotThreaded(uuid, image);
     }
 
 }
