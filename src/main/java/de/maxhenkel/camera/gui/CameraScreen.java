@@ -11,13 +11,8 @@ import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -54,27 +49,24 @@ public class CameraScreen extends ScreenBase<Container> {
         }
     }
 
+    // https://github.com/MinecraftForge/MinecraftForge/commit/007cd42ec6eed0e023c1324525cd44484ee0e79c
     @Override
     protected void init() {
         super.init();
         buttons.clear();
         addButton(new Button(guiLeft + PADDING, guiTop + PADDING + font.FONT_HEIGHT + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.prev"), button -> {
-            //TODO fix shaders
-            /*index--;
+            index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
-            sendShader();*/
-            showBugMessage();
+            sendShader();
         }));
         addButton(new Button(guiLeft + xSize - BUTTON_WIDTH - PADDING, guiTop + PADDING + font.FONT_HEIGHT + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslationTextComponent("button.camera.next"), button -> {
-            //TODO fix shaders
-            /*index++;
+            index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
-            sendShader();*/
-            showBugMessage();
+            sendShader();
         }));
 
         if (Main.SERVER_CONFIG.allowImageUpload.get()) {
@@ -120,18 +112,6 @@ public class CameraScreen extends ScreenBase<Container> {
         TranslationTextComponent uploadImage = new TranslationTextComponent("gui.camera.upload_image");
         int uploadImageWidth = font.getStringPropertyWidth(uploadImage);
         font.func_238422_b_(matrixStack, uploadImage.func_241878_f(), xSize / 2 - uploadImageWidth / 2, ySize - PADDING - BUTTON_HEIGHT - PADDING - font.FONT_HEIGHT, FONT_COLOR);
-    }
-
-    private void showBugMessage() {
-        minecraft.displayGuiScreen(null);
-        minecraft.player.sendMessage(
-                new StringTextComponent("Due to a Minecraft bug, filters do not work.\nPlease upvote this issue to get it fixed! ")
-                        .append(TextComponentUtils.wrapWithSquareBrackets(new StringTextComponent("MC-194675")).modifyStyle(style -> style
-                                .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bugs.mojang.com/browse/MC-194675"))
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("https://bugs.mojang.com/browse/MC-194675"))))
-                                .mergeStyle(TextFormatting.GREEN)
-                        )
-                , Util.DUMMY_UUID);
     }
 
 }

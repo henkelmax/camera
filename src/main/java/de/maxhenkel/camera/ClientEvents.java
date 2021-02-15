@@ -62,7 +62,7 @@ public class ClientEvents {
 
         mc.gameSettings.setPointOfView(PointOfView.FIRST_PERSON);
 
-        // setShader(getShader(mc.player)); //TODO fix shaders
+        setShader(getShader(mc.player));
         drawViewFinder(event.getMatrixStack());
         drawZoom(event.getMatrixStack(), getFOVPercentage());
     }

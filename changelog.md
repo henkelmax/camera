@@ -1,1 +1,1 @@
-- Added additional data to image
+- Re-added filters
