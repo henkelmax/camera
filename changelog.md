@@ -1,1 +1,1 @@
-- Re-added filters
+- Increased entity view angle

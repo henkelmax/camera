@@ -105,7 +105,7 @@ public class ImageData {
         Vector3d lookVecToEntity = entityVec.subtract(playerVec).normalize();
         Vector3d lookVec = player.getLookVec().normalize();
 
-        if (angle(lookVecToEntity, lookVec) > 30D) {
+        if (angle(lookVecToEntity, lookVec) > 90D) {
             return false;
         }
 
