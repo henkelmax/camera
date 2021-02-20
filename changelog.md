@@ -1,1 +1,1 @@
-- Increased entity view angle
+- Fixed image ratio of larger images

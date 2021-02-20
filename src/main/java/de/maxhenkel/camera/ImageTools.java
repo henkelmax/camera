@@ -87,7 +87,7 @@ public class ImageTools {
                 newHeight = ((int) (((float) MAX_IMAGE_SIZE) * ratio));
                 newWidth = MAX_IMAGE_SIZE;
             } else {
-                newWidth = ((int) (((float) MAX_IMAGE_SIZE) * ratio));
+                newWidth = ((int) (((float) MAX_IMAGE_SIZE) / ratio));
                 newHeight = MAX_IMAGE_SIZE;
             }
         }
