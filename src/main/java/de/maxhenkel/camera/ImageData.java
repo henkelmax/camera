@@ -89,7 +89,7 @@ public class ImageData {
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
             data.biome = player.world.getBiome(player.getPosition()).getRegistryName();
-            data.entities = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::getDistance)).map(livingEntity -> livingEntity.getType().getRegistryName()).limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            data.entities = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::getDistance)).map(livingEntity -> livingEntity.getType().getRegistryName()).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 
         return data;
