@@ -3,6 +3,7 @@ package de.maxhenkel.camera.entities;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
+import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -78,44 +79,44 @@ public class ImageEntity extends Entity {
             return ActionResultType.FAIL;
         }
 
-        if (player.isSneaking()) {
+        if (player.isSneaking() && canModify(player)) {
             if (world.isRemote) {
                 openClientGui();
             }
             return ActionResultType.SUCCESS;
         }
 
-        ItemStack stack = player.getHeldItem(hand);
+        ItemStack heldItem = player.getHeldItem(hand);
 
         if (hasImage()) {
-            if (stack.isEmpty()) {
+            if (heldItem.isEmpty()) {
                 ItemStack containedItem = removeImage();
-                if (!world.isRemote) {
-                    player.setHeldItem(hand, containedItem);
-                    playRemoveSound();
-                }
+                player.setHeldItem(hand, containedItem);
+                playRemoveSound();
             } else {
                 ItemStack image = removeImage();
-                if (!world.isRemote) {
-                    playRemoveSound();
-                    if (!player.addItemStackToInventory(image)) {
-                        dropItem(image);
-                    }
+                playRemoveSound();
+                if (!player.addItemStackToInventory(image)) {
+                    dropItem(image);
                 }
             }
-        }
-
-        UUID imageID = ImageData.getImageID(stack);
-        if (imageID != null) {
-            ItemStack frameStack = stack.split(1);
-            setItem(frameStack);
-            setImageUUID(imageID);
-            player.setHeldItem(hand, stack);
-            playAddSound();
             return ActionResultType.SUCCESS;
         }
 
-        return ActionResultType.SUCCESS;
+        if (!(heldItem.getItem() instanceof ImageItem)) {
+            return ActionResultType.PASS;
+        }
+        UUID imageID = ImageData.getImageID(heldItem);
+        if (imageID == null) {
+            return ActionResultType.PASS;
+        }
+
+        ItemStack frameStack = heldItem.split(1);
+        setItem(frameStack);
+        setImageUUID(imageID);
+        playAddSound();
+
+        return ActionResultType.func_233537_a_(world.isRemote);
     }
 
     public boolean canModify(PlayerEntity player) {
