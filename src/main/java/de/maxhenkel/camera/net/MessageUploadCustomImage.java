@@ -40,13 +40,13 @@ public class MessageUploadCustomImage implements Message<MessageUploadCustomImag
 
     @Override
     public MessageUploadCustomImage fromBytes(PacketBuffer buf) {
-        uuid = buf.readUniqueId();
+        uuid = buf.readUUID();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(uuid);
+        buf.writeUUID(uuid);
     }
 
 }

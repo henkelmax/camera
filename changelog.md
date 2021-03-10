@@ -1,1 +1,1 @@
-- Fixed image ratio of larger images
+- Updated to official mappings

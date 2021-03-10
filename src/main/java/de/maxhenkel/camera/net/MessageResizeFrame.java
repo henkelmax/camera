@@ -33,9 +33,9 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        if (context.getSender().world instanceof ServerWorld && context.getSender().abilities.allowEdit) {
-            ServerWorld world = (ServerWorld) context.getSender().world;
-            Entity entity = world.getEntityByUuid(uuid);
+        if (context.getSender().level instanceof ServerWorld && context.getSender().abilities.mayBuild) {
+            ServerWorld world = (ServerWorld) context.getSender().level;
+            Entity entity = world.getEntity(uuid);
             if (entity instanceof ImageEntity) {
                 ImageEntity image = (ImageEntity) entity;
                 image.resize(direction, larger);
@@ -45,7 +45,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
     @Override
     public MessageResizeFrame fromBytes(PacketBuffer buf) {
-        uuid = buf.readUniqueId();
+        uuid = buf.readUUID();
         direction = Direction.values()[buf.readInt()];
         larger = buf.readBoolean();
         return this;
@@ -53,7 +53,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(uuid);
+        buf.writeUUID(uuid);
         buf.writeInt(direction.ordinal());
         buf.writeBoolean(larger);
     }

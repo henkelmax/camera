@@ -13,40 +13,40 @@ import net.minecraft.world.World;
 public class ImageFrameItem extends Item {
 
     public ImageFrameItem() {
-        super(new Properties().group(ItemGroup.DECORATIONS));
+        super(new Properties().tab(ItemGroup.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "image_frame"));
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        BlockPos pos = context.getPos();
-        Direction facing = context.getFace();
-        BlockPos offset = pos.offset(facing);
+    public ActionResultType useOn(ItemUseContext context) {
+        BlockPos pos = context.getClickedPos();
+        Direction facing = context.getClickedFace();
+        BlockPos offset = pos.relative(facing);
         PlayerEntity player = context.getPlayer();
-        if (player != null && !canPlace(player, facing, context.getItem(), offset)) {
+        if (player != null && !canPlace(player, facing, context.getItemInHand(), offset)) {
             return ActionResultType.FAIL;
         }
 
-        World world = context.getWorld();
+        World world = context.getLevel();
         ImageEntity image = Main.IMAGE_ENTITY_TYPE.create(world);
         if (image == null) {
             return ActionResultType.FAIL;
         }
         image.setFacing(facing);
         image.setImagePosition(offset);
-        image.setOwner(context.getPlayer().getUniqueID());
+        image.setOwner(context.getPlayer().getUUID());
         if (image.isValid()) {
-            if (!world.isRemote) {
+            if (!world.isClientSide) {
                 image.playPlaceSound();
-                world.addEntity(image);
+                world.addFreshEntity(image);
             }
-            context.getItem().shrink(1);
+            context.getItemInHand().shrink(1);
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.FAIL;
     }
 
     protected boolean canPlace(PlayerEntity player, Direction facing, ItemStack stack, BlockPos pos) {
-        return !facing.getAxis().isVertical() && player.canPlayerEdit(pos, facing, stack);
+        return !facing.getAxis().isVertical() && player.mayUseItemAt(pos, facing, stack);
     }
 }

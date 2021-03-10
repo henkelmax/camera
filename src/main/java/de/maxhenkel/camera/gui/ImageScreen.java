@@ -35,7 +35,7 @@ public class ImageScreen extends ContainerScreen<Container> {
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         renderBackground(matrixStack);
         RenderSystem.color4f(1F, 1F, 1F, 1F);
 
@@ -56,16 +56,16 @@ public class ImageScreen extends ContainerScreen<Container> {
 
 
         if (location == null) {
-            minecraft.getTextureManager().bindTexture(DEFAULT_IMAGE);
+            minecraft.getTextureManager().bind(DEFAULT_IMAGE);
         } else {
-            minecraft.getTextureManager().bindTexture(location);
+            minecraft.getTextureManager().bind(location);
             NativeImage image = TextureCache.instance().getNativeImage(uuid);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }
 
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuilder();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
         float scale = 0.8F;
@@ -93,18 +93,18 @@ public class ImageScreen extends ContainerScreen<Container> {
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        buffer.pos(left, top, zLevel).tex(0F, 0F).endVertex();
-        buffer.pos(left, top + hnew, zLevel).tex(0F, 1F).endVertex();
-        buffer.pos(left + wnew, top + hnew, zLevel).tex(1F, 1F).endVertex();
-        buffer.pos(left + wnew, top, zLevel).tex(1F, 0F).endVertex();
+        buffer.vertex(left, top, zLevel).uv(0F, 0F).endVertex();
+        buffer.vertex(left, top + hnew, zLevel).uv(0F, 1F).endVertex();
+        buffer.vertex(left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
+        buffer.vertex(left + wnew, top, zLevel).uv(1F, 0F).endVertex();
 
-        tessellator.draw();
+        tessellator.end();
 
         RenderSystem.popMatrix();
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
 
     }
 }

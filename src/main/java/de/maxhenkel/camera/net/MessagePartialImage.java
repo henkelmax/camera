@@ -38,7 +38,7 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
 
     @Override
     public MessagePartialImage fromBytes(PacketBuffer buf) {
-        imgUUID = buf.readUniqueId();
+        imgUUID = buf.readUUID();
         offset = buf.readInt();
         length = buf.readInt();
         bytes = buf.readByteArray();
@@ -47,7 +47,7 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(imgUUID);
+        buf.writeUUID(imgUUID);
         buf.writeInt(offset);
         buf.writeInt(length);
 

@@ -22,12 +22,12 @@ public class ImageTaker {
     public static void takeScreenshot(UUID id) {
         Minecraft mc = Minecraft.getInstance();
 
-        hide = mc.gameSettings.hideGUI;
-        mc.gameSettings.hideGUI = true;
+        hide = mc.options.hideGui;
+        mc.options.hideGui = true;
 
         takeScreenshot = true;
         uuid = id;
-        mc.displayGuiScreen(null);
+        mc.setScreen(null);
     }
 
     @SubscribeEvent
@@ -42,9 +42,9 @@ public class ImageTaker {
 
         Minecraft mc = Minecraft.getInstance();
 
-        NativeImage image = ScreenShotHelper.createScreenshot(mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight(), mc.getFramebuffer());
+        NativeImage image = ScreenShotHelper.takeScreenshot(mc.getWindow().getWidth(), mc.getWindow().getHeight(), mc.getMainRenderTarget());
 
-        mc.gameSettings.hideGUI = hide;
+        mc.options.hideGui = hide;
         takeScreenshot = false;
 
         ImageProcessor.sendScreenshotThreaded(uuid, image);

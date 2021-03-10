@@ -85,11 +85,11 @@ public class ImageData {
         ImageData data = new ImageData();
         data.id = imageID;
         data.time = System.currentTimeMillis();
-        data.owner = player.getName().getUnformattedComponentText();
+        data.owner = player.getName().getContents();
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
-            data.biome = player.world.getBiome(player.getPosition()).getRegistryName();
-            data.entities = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::getDistance)).map(livingEntity -> livingEntity.getType().getRegistryName()).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            data.biome = player.level.getBiome(player.blockPosition()).getRegistryName();
+            data.entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(livingEntity -> livingEntity.getType().getRegistryName()).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 
         return data;
@@ -99,21 +99,21 @@ public class ImageData {
         if (player == entity) {
             return false;
         }
-        Vector3d playerVec = new Vector3d(player.getPosX(), player.getPosYEye(), player.getPosZ());
-        Vector3d entityVec = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
+        Vector3d playerVec = new Vector3d(player.getX(), player.getEyeY(), player.getZ());
+        Vector3d entityVec = new Vector3d(entity.getX(), entity.getEyeY(), entity.getZ());
 
         Vector3d lookVecToEntity = entityVec.subtract(playerVec).normalize();
-        Vector3d lookVec = player.getLookVec().normalize();
+        Vector3d lookVec = player.getLookAngle().normalize();
 
         if (angle(lookVecToEntity, lookVec) > 90D) {
             return false;
         }
 
-        return player.world.rayTraceBlocks(new RayTraceContext(playerVec, entityVec, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player)).getType() == RayTraceResult.Type.MISS;
+        return player.level.clip(new RayTraceContext(playerVec, entityVec, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player)).getType() == RayTraceResult.Type.MISS;
     }
 
     private static double angle(Vector3d vec1, Vector3d vec2) {
-        return Math.toDegrees(Math.acos(vec1.dotProduct(vec2) / (vec1.length() * vec2.length())));
+        return Math.toDegrees(Math.acos(vec1.dot(vec2) / (vec1.length() * vec2.length())));
     }
 
     public static ImageData dummy() {
@@ -235,7 +235,7 @@ public class ImageData {
         ListNBT entities = compound.getList("entities", Constants.NBT.TAG_STRING);
         List<ResourceLocation> list = new ArrayList<>();
         for (INBT e : entities) {
-            list.add(new ResourceLocation(e.getString()));
+            list.add(new ResourceLocation(e.getAsString()));
         }
 
         return list;

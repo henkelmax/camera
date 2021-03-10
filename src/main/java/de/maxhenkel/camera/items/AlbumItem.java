@@ -39,15 +39,15 @@ import java.util.UUID;
 public class AlbumItem extends Item {
 
     public AlbumItem() {
-        super(new Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
+        super(new Properties().stacksTo(1).tab(ItemGroup.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "album"));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getHeldItem(handIn);
-        if (playerIn.isSneaking()) {
-            if (!playerIn.world.isRemote && playerIn instanceof ServerPlayerEntity) {
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack stack = playerIn.getItemInHand(handIn);
+        if (playerIn.isShiftKeyDown()) {
+            if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayerEntity) {
                 NetworkHooks.openGui((ServerPlayerEntity) playerIn, new INamedContainerProvider() {
 
                     @Nullable
@@ -58,7 +58,7 @@ public class AlbumItem extends Item {
 
                     @Override
                     public ITextComponent getDisplayName() {
-                        return new TranslationTextComponent(AlbumItem.this.getTranslationKey());
+                        return new TranslationTextComponent(AlbumItem.this.getDescriptionId());
                     }
                 });
             }
@@ -69,7 +69,7 @@ public class AlbumItem extends Item {
     }
 
     public static void openAlbum(PlayerEntity player, ItemStack album) {
-        if (player.world.isRemote) {
+        if (player.level.isClientSide) {
             List<UUID> images = Main.ALBUM.getImages(album);
             if (!images.isEmpty()) {
                 openClientGui(images);
@@ -79,16 +79,16 @@ public class AlbumItem extends Item {
 
     @OnlyIn(Dist.CLIENT)
     private static void openClientGui(List<UUID> images) {
-        Minecraft.getInstance().displayGuiScreen(new AlbumScreen(images));
+        Minecraft.getInstance().setScreen(new AlbumScreen(images));
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        World world = context.getWorld();
-        BlockPos blockpos = context.getPos();
+    public ActionResultType useOn(ItemUseContext context) {
+        World world = context.getLevel();
+        BlockPos blockpos = context.getClickedPos();
         BlockState blockstate = world.getBlockState(blockpos);
-        if (blockstate.isIn(Blocks.LECTERN)) {
-            return LecternBlock.tryPlaceBook(world, blockpos, blockstate, context.getItem()) ? ActionResultType.func_233537_a_(world.isRemote) : ActionResultType.PASS;
+        if (blockstate.is(Blocks.LECTERN)) {
+            return LecternBlock.tryPlaceBook(world, blockpos, blockstate, context.getItemInHand()) ? ActionResultType.sidedSuccess(world.isClientSide) : ActionResultType.PASS;
         } else {
             return ActionResultType.PASS;
         }
@@ -97,8 +97,8 @@ public class AlbumItem extends Item {
     public List<UUID> getImages(ItemStack stack) {
         List<UUID> images = new ArrayList<>();
         IInventory inventory = new AlbumInventory(stack);
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack s = inventory.getStackInSlot(i);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack s = inventory.getItem(i);
             UUID uuid = ImageData.getImageID(s);
             if (uuid == null) {
                 continue;

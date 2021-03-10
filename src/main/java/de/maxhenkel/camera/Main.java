@@ -58,7 +58,7 @@ public class Main {
     public static ContainerType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
     public static ContainerType<AlbumContainer> ALBUM_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
-    public static ITag<Item> IMAGE_PAPER = ItemTags.makeWrapperTag(new ResourceLocation(Main.MODID, "image_paper").toString());
+    public static ITag<Item> IMAGE_PAPER = ItemTags.bind(new ResourceLocation(Main.MODID, "image_paper").toString());
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;
@@ -141,7 +141,7 @@ public class Main {
             builder.setTrackingRange(256)
                     .setUpdateInterval(20)
                     .setShouldReceiveVelocityUpdates(false)
-                    .size(1F, 1F)
+                    .sized(1F, 1F)
                     .setCustomClientFactory((spawnEntity, world) -> new ImageEntity(world));
         });
         event.getRegistry().register(IMAGE_ENTITY_TYPE);

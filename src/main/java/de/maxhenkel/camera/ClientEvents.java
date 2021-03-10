@@ -60,7 +60,7 @@ public class ClientEvents {
             return;
         }
 
-        mc.gameSettings.setPointOfView(PointOfView.FIRST_PERSON);
+        mc.options.setCameraType(PointOfView.FIRST_PERSON);
 
         setShader(getShader(mc.player));
         drawViewFinder(event.getMatrixStack());
@@ -68,15 +68,15 @@ public class ClientEvents {
     }
 
     private void drawViewFinder(MatrixStack matrixStack) {
-        mc.getTextureManager().bindTexture(VIEWFINDER);
+        mc.getTextureManager().bind(VIEWFINDER);
         float imageWidth = 192F;
         float imageHeight = 100F;
 
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuilder();
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        float ws = (float) mc.getMainWindow().getScaledWidth();
-        float hs = (float) mc.getMainWindow().getScaledHeight();
+        float ws = (float) mc.getWindow().getGuiScaledWidth();
+        float hs = (float) mc.getWindow().getGuiScaledHeight();
 
         float rs = ws / hs;
         float ri = imageWidth / imageHeight;
@@ -95,46 +95,46 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
-        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 0F).endVertex();
-        bufferBuilder.pos(matrix, left, top + hnew, 0F).tex(0F, 100F / 256F).endVertex();
-        bufferBuilder.pos(matrix, left + wnew, top + hnew, 0F).tex(192F / 256F, 100F / 256F).endVertex();
-        bufferBuilder.pos(matrix, left + wnew, top, 0F).tex(192F / 256F, 0F).endVertex();
+        Matrix4f matrix = matrixStack.last().pose();
+        bufferBuilder.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
+        bufferBuilder.vertex(matrix, left, top + hnew, 0F).uv(0F, 100F / 256F).endVertex();
+        bufferBuilder.vertex(matrix, left + wnew, top + hnew, 0F).uv(192F / 256F, 100F / 256F).endVertex();
+        bufferBuilder.vertex(matrix, left + wnew, top, 0F).uv(192F / 256F, 0F).endVertex();
 
-        bufferBuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferBuilder);
+        bufferBuilder.end();
+        WorldVertexBufferUploader.end(bufferBuilder);
     }
 
     private void drawZoom(MatrixStack matrixStack, float percent) {
-        mc.getTextureManager().bindTexture(ZOOM);
+        mc.getTextureManager().bind(ZOOM);
 
         int zoomWidth = 112;
         int zoomHeight = 20;
 
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuilder();
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-        int width = mc.getMainWindow().getScaledWidth();
-        int height = mc.getMainWindow().getScaledHeight();
+        int width = mc.getWindow().getGuiScaledWidth();
+        int height = mc.getWindow().getGuiScaledHeight();
 
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        Matrix4f matrix = matrixStack.getLast().getMatrix();
-        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 0F).endVertex();
-        bufferBuilder.pos(matrix, left, (float) (top + zoomHeight / 2), 0F).tex(0F, 10F / 128F).endVertex();
-        bufferBuilder.pos(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).tex(112F / 128F, 10F / 128F).endVertex();
-        bufferBuilder.pos(matrix, left + zoomWidth, top, 0F).tex(112F / 128F, 0F).endVertex();
+        Matrix4f matrix = matrixStack.last().pose();
+        bufferBuilder.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
+        bufferBuilder.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 10F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).uv(112F / 128F, 10F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left + zoomWidth, top, 0F).uv(112F / 128F, 0F).endVertex();
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        bufferBuilder.pos(matrix, left, top, 0F).tex(0F, 10F / 128F).endVertex();
-        bufferBuilder.pos(matrix, left, (float) (top + zoomHeight / 2), 0F).tex(0F, 20F / 128F).endVertex();
-        bufferBuilder.pos(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).tex((112F / 128F) * percent, 20F / 128F).endVertex();
-        bufferBuilder.pos(matrix, left + percWidth, top, 0F).tex((112F / 128F) * percent, 10F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left, top, 0F).uv(0F, 10F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 20F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).uv((112F / 128F) * percent, 20F / 128F).endVertex();
+        bufferBuilder.vertex(matrix, left + percWidth, top, 0F).uv((112F / 128F) * percent, 10F / 128F).endVertex();
 
-        bufferBuilder.finishDrawing();
-        WorldVertexBufferUploader.draw(bufferBuilder);
+        bufferBuilder.end();
+        WorldVertexBufferUploader.end(bufferBuilder);
     }
 
 
@@ -156,7 +156,7 @@ public class ClientEvents {
     }
 
     private ResourceLocation getShader(PlayerEntity player) {
-        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandItem();
         if (!stack.getItem().equals(Main.CAMERA)) {
             return null;
         }
@@ -167,11 +167,11 @@ public class ClientEvents {
     private void setShader(ResourceLocation shader) {
         if (shader == null) {
             if (currentShader != null) {
-                mc.gameRenderer.stopUseShader();
+                mc.gameRenderer.shutdownEffect();
             }
         } else if (!shader.equals(currentShader)) {
             try {
-                mc.gameRenderer.loadShader(shader);
+                mc.gameRenderer.loadEffect(shader);
             } catch (Exception e) {
             }
         }
@@ -185,9 +185,9 @@ public class ClientEvents {
             return;
         }
         for (Hand hand : Hand.values()) {
-            ItemStack stack = player.getHeldItem(hand);
+            ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof CameraItem && Main.CAMERA.isActive(stack)) {
-                player.setActiveHand(hand);
+                player.startUsingItem(hand);
             }
         }
 
@@ -203,7 +203,7 @@ public class ClientEvents {
             return;
         }
 
-        event.getPlayer().resetActiveHand();
+        event.getPlayer().stopUsingItem();
     }
 
     @SubscribeEvent
@@ -233,7 +233,7 @@ public class ClientEvents {
         /*
             To trigger the rendering of the chunks that were outside of the FOV
         */
-        mc.player.setPosition(mc.player.getPosX(), mc.player.getPosY() + 0.000000001D, mc.player.getPosZ());
+        mc.player.setPos(mc.player.getX(), mc.player.getY() + 0.000000001D, mc.player.getZ());
 
         event.setFOV(fov);
     }
@@ -247,7 +247,7 @@ public class ClientEvents {
             return null;
         }
         for (Hand hand : Hand.values()) {
-            ItemStack stack = mc.player.getHeldItem(hand);
+            ItemStack stack = mc.player.getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
                 return stack;
             }

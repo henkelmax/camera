@@ -37,7 +37,7 @@ public class TextureCache {
         CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
-        Minecraft.getInstance().getRenderManager().textureManager.loadTexture(resourceLocation, cameraTextureObject);
+        Minecraft.getInstance().getEntityRenderDispatcher().textureManager.register(resourceLocation, cameraTextureObject);
     }
 
     public ResourceLocation getImage(UUID uuid) {
@@ -70,7 +70,7 @@ public class TextureCache {
         if (checkImage(uuid, cameraTextureObject)) {
             return null;
         }
-        return cameraTextureObject.getTextureData();
+        return cameraTextureObject.getPixels();
     }
 
     public class CameraTextureObject extends DynamicTexture {

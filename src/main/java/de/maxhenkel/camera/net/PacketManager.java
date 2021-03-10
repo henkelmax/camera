@@ -51,12 +51,12 @@ public class PacketManager {
                     try {
                         ImageTools.saveImage(playerMP, imagegID, image);
 
-                        playerMP.getServer().deferTask(() -> {
+                        playerMP.getServer().submitAsync(() -> {
                             ItemStack stack = new ItemStack(Main.IMAGE);
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);
-                            if (!playerMP.addItemStackToInventory(stack)) {
-                                InventoryHelper.spawnItemStack(playerMP.world, playerMP.getPosX(), playerMP.getPosY(), playerMP.getPosZ(), stack);
+                            if (!playerMP.addItem(stack)) {
+                                InventoryHelper.dropItemStack(playerMP.level, playerMP.getX(), playerMP.getY(), playerMP.getZ(), stack);
                             }
                         });
                     } catch (IOException e) {

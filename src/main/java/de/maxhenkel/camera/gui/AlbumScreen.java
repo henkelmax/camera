@@ -34,7 +34,7 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
 
     }
 
@@ -83,7 +83,7 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     }
 
     protected void playPageTurnSound() {
-        minecraft.player.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.MASTER, 1F, minecraft.world.rand.nextFloat() * 0.1F + 0.9F);
+        minecraft.player.playNotifySound(SoundEvents.BOOK_PAGE_TURN, SoundCategory.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F);
     }
 
     private boolean wasNextDown;
@@ -92,8 +92,8 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     @Override
     public void tick() {
         super.tick();
-        boolean isNextDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_NEXT.getKey().getKeyCode());
-        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.getMainWindow().getHandle(), Main.KEY_PREVIOUS.getKey().getKeyCode());
+        boolean isNextDown = InputMappings.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_NEXT.getKey().getValue());
+        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_PREVIOUS.getKey().getValue());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {
@@ -102,7 +102,7 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
 
     }
 

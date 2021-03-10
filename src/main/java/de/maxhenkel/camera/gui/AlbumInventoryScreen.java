@@ -17,15 +17,15 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
         super(DEFAULT_IMAGE, albumInventory, playerInventory, name);
 
         this.playerInventory = playerInventory;
-        xSize = 176;
-        ySize = 222;
+        imageWidth = 176;
+        imageHeight = 222;
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        super.drawGuiContainerForegroundLayer(matrixStack, x, y);
-        font.func_238422_b_(matrixStack, getTitle().func_241878_f(), 8F, 6F, FONT_COLOR);
-        font.func_238422_b_(matrixStack, playerInventory.getDisplayName().func_241878_f(), 8F, (float) (ySize - 96 + 2), FONT_COLOR);
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+        super.renderLabels(matrixStack, x, y);
+        font.draw(matrixStack, getTitle().getVisualOrderText(), 8F, 6F, FONT_COLOR);
+        font.draw(matrixStack, playerInventory.getDisplayName().getVisualOrderText(), 8F, (float) (imageHeight - 96 + 2), FONT_COLOR);
     }
 
 }

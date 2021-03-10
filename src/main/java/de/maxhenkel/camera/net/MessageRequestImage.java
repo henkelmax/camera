@@ -40,13 +40,13 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
 
     @Override
     public MessageRequestImage fromBytes(PacketBuffer buf) {
-        imgUUID = buf.readUniqueId();
+        imgUUID = buf.readUUID();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(imgUUID);
+        buf.writeUUID(imgUUID);
     }
 
 }

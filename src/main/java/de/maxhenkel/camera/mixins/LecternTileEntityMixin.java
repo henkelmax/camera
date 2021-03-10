@@ -34,13 +34,13 @@ public abstract class LecternTileEntityMixin extends TileEntity {
     private int page;
 
     @Shadow
-    private int pages;
+    private int pageCount;
 
     @Shadow
-    private IInventory inventory;
+    private IInventory bookAccess;
 
     @Shadow
-    IIntArray field_214049_b;
+    IIntArray dataAccess;
 
     public LecternTileEntityMixin(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -51,9 +51,9 @@ public abstract class LecternTileEntityMixin extends TileEntity {
         cir.setReturnValue(!book.isEmpty());
     }
 
-    @Inject(method = "ensureResolved", at = @At("HEAD"), cancellable = true)
-    public void ensureResolved(ItemStack stack, @Nullable PlayerEntity player, CallbackInfoReturnable<ItemStack> cir) {
-        if (world instanceof ServerWorld && stack.getItem() instanceof AlbumItem) {
+    @Inject(method = "resolveBook", at = @At("HEAD"), cancellable = true)
+    public void resolveBook(ItemStack stack, @Nullable PlayerEntity player, CallbackInfoReturnable<ItemStack> cir) {
+        if (level instanceof ServerWorld && stack.getItem() instanceof AlbumItem) {
             cir.setReturnValue(stack);
         }
     }
@@ -64,10 +64,10 @@ public abstract class LecternTileEntityMixin extends TileEntity {
             return;
         }
         info.cancel();
-        book = ensureResolved(stack, player);
+        book = resolveBook(stack, player);
         page = 0;
-        pages = Main.ALBUM.getImages(book).size();
-        markDirty();
+        pageCount = Main.ALBUM.getImages(book).size();
+        setChanged();
     }
 
     @Inject(method = "createMenu", at = @At("HEAD"), cancellable = true)
@@ -75,15 +75,15 @@ public abstract class LecternTileEntityMixin extends TileEntity {
         if (!(book.getItem() instanceof AlbumItem)) {
             return;
         }
-        cir.setReturnValue(new AlbumContainer(id, inventory, field_214049_b));
+        cir.setReturnValue(new AlbumContainer(id, bookAccess, dataAccess));
     }
 
-    @Inject(method = "read", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "load", at = @At("TAIL"), cancellable = true)
     public void read(BlockState state, CompoundNBT compound, CallbackInfo info) {
-        pages = Main.ALBUM.getImages(book).size();
+        pageCount = Main.ALBUM.getImages(book).size();
     }
 
     @Shadow
-    public abstract ItemStack ensureResolved(ItemStack stack, @Nullable PlayerEntity player);
+    public abstract ItemStack resolveBook(ItemStack stack, @Nullable PlayerEntity player);
 
 }

@@ -17,17 +17,17 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getHeldItemMainhand().getItem().equals(Main.CAMERA)) {
+        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA)) {
             return;
         }
 
-        disableCamera(event.player.inventory.getCurrentItem());
+        disableCamera(event.player.inventory.getSelected());
 
-        for (ItemStack stack : event.player.inventory.mainInventory) {
+        for (ItemStack stack : event.player.inventory.items) {
             disableCamera(stack);
         }
 
-        for (ItemStack stack : event.player.inventory.offHandInventory) {
+        for (ItemStack stack : event.player.inventory.offhand) {
             disableCamera(stack);
         }
     }
@@ -35,7 +35,7 @@ public class ServerEvents {
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         PlayerEntity player = event.getPlayer();
-        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandItem();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             event.setUseBlock(Event.Result.DENY);
             event.setCanceled(true);
@@ -58,7 +58,7 @@ public class ServerEvents {
     }
 
     public void handleLeftClick(PlayerInteractEvent event) {
-        ItemStack stack = event.getPlayer().getHeldItemMainhand();
+        ItemStack stack = event.getPlayer().getMainHandItem();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             if (event.isCancelable()) {
                 event.setCanceled(true);
@@ -69,13 +69,13 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onHit(LivingAttackEvent event) {
-        Entity source = event.getSource().getImmediateSource();
+        Entity source = event.getSource().getDirectEntity();
         if (!(source instanceof PlayerEntity)) {
             return;
         }
         PlayerEntity player = (PlayerEntity) source;
 
-        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandItem();
         if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
             event.setCanceled(true);
         }

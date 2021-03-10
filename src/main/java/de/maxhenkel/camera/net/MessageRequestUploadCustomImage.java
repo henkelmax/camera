@@ -31,26 +31,26 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayerEntity player = context.getSender();
-        if (Main.PACKET_MANAGER.canTakeImage(player.getUniqueID())) {
+        if (Main.PACKET_MANAGER.canTakeImage(player.getUUID())) {
             if (CameraItem.consumePaper(player)) {
                 Main.SIMPLE_CHANNEL.reply(new MessageUploadCustomImage(uuid), context);
             } else {
-                player.sendStatusMessage(new TranslationTextComponent("message.no_consumable"), true);
+                player.displayClientMessage(new TranslationTextComponent("message.no_consumable"), true);
             }
         } else {
-            player.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
+            player.displayClientMessage(new TranslationTextComponent("message.image_cooldown"), true);
         }
     }
 
     @Override
     public MessageRequestUploadCustomImage fromBytes(PacketBuffer buf) {
-        uuid = buf.readUniqueId();
+        uuid = buf.readUUID();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(uuid);
+        buf.writeUUID(uuid);
     }
 
 }

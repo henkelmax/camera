@@ -20,11 +20,11 @@ public class RecipeImageCloning extends SpecialRecipe {
         ItemStack paper = null;
         ItemStack image = null;
 
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.isEmpty()) {
                 continue;
-            } else if (stack.getItem().isIn(Main.IMAGE_PAPER)) {
+            } else if (stack.getItem().is(Main.IMAGE_PAPER)) {
                 paper = stack;
             } else if (stack.getItem().equals(Main.IMAGE)) {
                 image = stack;
@@ -37,9 +37,9 @@ public class RecipeImageCloning extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+    public ItemStack assemble(CraftingInventory inv) {
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.getItem().equals(Main.IMAGE)) {
                 return stack.copy();
             }
@@ -56,8 +56,8 @@ public class RecipeImageCloning extends SpecialRecipe {
     @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
         NonNullList<ItemStack> items = NonNullList.create();
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack stack = inv.getItem(i);
             if (stack.getItem().equals(Main.IMAGE)) {
                 items.add(stack.copy());
             } else {
@@ -68,12 +68,12 @@ public class RecipeImageCloning extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width >= 2 && height >= 2;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return new ItemStack(Main.IMAGE);
     }
 }

@@ -45,14 +45,14 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     @Override
     public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
-        int imageLight = WorldRenderer.getCombinedLight(entity.world, entity.getCenterPosition());
+        int imageLight = WorldRenderer.getLightColor(entity.level, entity.getCenterPosition());
         renderImage(entity.getImageUUID().orElse(null), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
         renderBoundingBox(entity, matrixStack, buffer1);
         super.render(entity, f1, f2, matrixStack, buffer1, light);
     }
 
     public static void renderImage(UUID imageUUID, Direction facing, float width, float height, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
-        matrixStack.push();
+        matrixStack.pushPose();
 
         float imageRatio = 1F;
         boolean stretch = true;
@@ -144,69 +144,69 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light);
         vertex(builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light);
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     private static void vertex(IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v, int light) {
-        MatrixStack.Entry entry = matrixStack.getLast();
-        Matrix4f matrix4f = entry.getMatrix();
-        Matrix3f matrix3f = entry.getNormal();
-        builder.pos(matrix4f, x, y, z)
+        MatrixStack.Entry entry = matrixStack.last();
+        Matrix4f matrix4f = entry.pose();
+        Matrix3f matrix3f = entry.normal();
+        builder.vertex(matrix4f, x, y, z)
                 .color(255, 255, 255, 255)
-                .tex(u, v)
-                .overlay(OverlayTexture.NO_OVERLAY)
-                .lightmap(light)
+                .uv(u, v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .uv2(light)
                 .normal(matrix3f, 0F, 0F, -1F)
                 .endVertex();
     }
 
     private static RenderType getRenderType(ResourceLocation resourceLocation) {
         RenderType.State state = RenderType.State
-                .getBuilder()
-                .texture(new RenderState.TextureState(resourceLocation, false, false))
-                .diffuseLighting(new RenderState.DiffuseLightingState(false))
-                .lightmap(new RenderState.LightmapState(true))
-                .overlay(new RenderState.OverlayState(true))
-                .cull(new RenderState.CullState(true))
-                .build(true);
-        return RenderType.makeType("entity_cutout", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, false, state);
+                .builder()
+                .setTextureState(new RenderState.TextureState(resourceLocation, false, false))
+                .setDiffuseLightingState(new RenderState.DiffuseLightingState(false))
+                .setLightmapState(new RenderState.LightmapState(true))
+                .setOverlayState(new RenderState.OverlayState(true))
+                .setCullState(new RenderState.CullState(true))
+                .createCompositeState(true);
+        return RenderType.create("entity_cutout", DefaultVertexFormats.NEW_ENTITY, GL11.GL_QUADS, 256, true, false, state);
     }
 
     private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        if (!(mc.objectMouseOver instanceof EntityRayTraceResult) || ((EntityRayTraceResult) mc.objectMouseOver).getEntity() != entity) {
+        if (!(mc.hitResult instanceof EntityRayTraceResult) || ((EntityRayTraceResult) mc.hitResult).getEntity() != entity) {
             return;
         }
-        if (mc.gameSettings.hideGUI) {
+        if (mc.options.hideGui) {
             return;
         }
-        matrixStack.push();
-        AxisAlignedBB axisalignedbb = entity.getBoundingBox().offset(-entity.getPosX(), -entity.getPosY(), -entity.getPosZ());
-        WorldRenderer.drawBoundingBox(matrixStack, buffer.getBuffer(RenderType.getLines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
-        matrixStack.pop();
+        matrixStack.pushPose();
+        AxisAlignedBB axisalignedbb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
+        WorldRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
+        matrixStack.popPose();
     }
 
     public static void rotate(Direction facing, MatrixStack matrixStack) {
         switch (facing) {
             case NORTH:
                 matrixStack.translate(1D, 0D, 1D);
-                matrixStack.rotate(Vector3f.YP.rotationDegrees(180F));
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(180F));
                 break;
             case SOUTH:
                 break;
             case EAST:
                 matrixStack.translate(0D, 0D, 1D);
-                matrixStack.rotate(Vector3f.YP.rotationDegrees(90F));
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(90F));
                 break;
             case WEST:
                 matrixStack.translate(1D, 0D, 0D);
-                matrixStack.rotate(Vector3f.YP.rotationDegrees(270F));
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(270F));
                 break;
         }
     }
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(ImageEntity entity) {
+    public ResourceLocation getTextureLocation(ImageEntity entity) {
         return EMPTY_IMAGE;
     }
 

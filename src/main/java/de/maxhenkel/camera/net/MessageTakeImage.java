@@ -32,13 +32,13 @@ public class MessageTakeImage implements Message<MessageTakeImage> {
 
     @Override
     public MessageTakeImage fromBytes(PacketBuffer buf) {
-        uuid = buf.readUniqueId();
+        uuid = buf.readUUID();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(uuid);
+        buf.writeUUID(uuid);
     }
 
 }

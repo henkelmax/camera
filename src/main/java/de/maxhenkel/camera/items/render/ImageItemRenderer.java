@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ImageItemRenderer extends ItemStackTileEntityRenderer {
 
     @Override
-    public void func_239207_a_(ItemStack itemStack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public void renderByItem(ItemStack itemStack, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
         if (!Main.CLIENT_CONFIG.renderImageItem.get()) {
             return;
         }

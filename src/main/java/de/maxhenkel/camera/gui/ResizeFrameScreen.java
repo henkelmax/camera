@@ -33,8 +33,8 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
         super(new DummyContainer(), null, new TranslationTextComponent("gui.frame.resize"));
         this.uuid = uuid;
         visibility = Main.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
-        xSize = 248;
-        ySize = 109;
+        imageWidth = 248;
+        imageHeight = 109;
     }
 
     @Override
@@ -42,24 +42,24 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
         super.init();
 
         buttons.clear();
-        int left = (width - xSize) / 2;
+        int left = (width - imageWidth) / 2;
         addButton(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.LEFT);
         }));
 
-        addButton(new Button(left + xSize - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.RIGHT);
         }));
 
-        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, guiTop + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.UP);
         }));
 
-        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, guiTop + ySize - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.DOWN);
         }));
 
-        visibilityButton = addButton(new Button(left + xSize - 20 - PADDING, guiTop + PADDING, 20, 20, new TranslationTextComponent("tooltip.visibility_short"), (button) -> {
+        visibilityButton = addButton(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, new TranslationTextComponent("tooltip.visibility_short"), (button) -> {
             visibility -= 0.25;
             if (visibility < 0F) {
                 visibility = 1F;
@@ -74,41 +74,41 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         if (visibility >= 1F) {
             renderBackground(matrixStack);
         }
         RenderSystem.color4f(1F, 1F, 1F, visibility);
-        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
+        minecraft.getTextureManager().bind(CAMERA_TEXTURE);
 
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
         TranslationTextComponent title = new TranslationTextComponent("gui.frame.resize");
-        int titleWidth = font.getStringPropertyWidth(title);
-        font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2 - titleWidth / 2, ySize / 2 - font.FONT_HEIGHT - 1, TextFormatting.DARK_GRAY.getColor());
+        int titleWidth = font.width(title);
+        font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, TextFormatting.DARK_GRAY.getColor());
 
         TranslationTextComponent description = new TranslationTextComponent("gui.frame.resize_description");
-        int descriptionWidth = font.getStringPropertyWidth(description);
-        font.func_238422_b_(matrixStack, description.func_241878_f(), xSize / 2 - descriptionWidth / 2, ySize / 2 + 1, TextFormatting.GRAY.getColor());
+        int descriptionWidth = font.width(description);
+        font.draw(matrixStack, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, TextFormatting.GRAY.getColor());
 
-        minecraft.getTextureManager().bindTexture(CAMERA_TEXTURE);
+        minecraft.getTextureManager().bind(CAMERA_TEXTURE);
         if (Screen.hasShiftDown()) {
-            blit(matrixStack, xSize / 2 - 8, PADDING + 2, 16, 109, 16, 16);
-            blit(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
-            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
-            blit(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            blit(matrixStack, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16);
+            blit(matrixStack, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
+            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            blit(matrixStack, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
         } else {
-            blit(matrixStack, xSize / 2 - 8, PADDING + 2, 0, 109, 16, 16);
-            blit(matrixStack, xSize / 2 - 8, ySize - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
-            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
-            blit(matrixStack, xSize - PADDING - BUTTON_WIDTH / 2 - 8, ySize / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            blit(matrixStack, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16);
+            blit(matrixStack, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
+            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            blit(matrixStack, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
         }
 
         if (visibilityButton.isHovered()) {
-            renderTooltip(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").func_241878_f()), x - guiLeft, y - guiTop);
+            renderTooltip(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
         }
     }
 
@@ -120,7 +120,7 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
 
         if (System.currentTimeMillis() - lastCheck > 500L) {
             if (!isImagePresent()) {
-                minecraft.player.closeScreen();
+                minecraft.player.closeContainer();
             }
             lastCheck = System.currentTimeMillis();
         }
@@ -128,7 +128,7 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
 
     public boolean isImagePresent() {
         AxisAlignedBB aabb = minecraft.player.getBoundingBox();
-        aabb = aabb.grow(32D);
-        return minecraft.world.getEntitiesWithinAABB(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUniqueID().equals(uuid) && image.getDistance(minecraft.player) <= 32F);
+        aabb = aabb.inflate(32D);
+        return minecraft.level.getEntitiesOfClass(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUUID().equals(uuid) && image.distanceTo(minecraft.player) <= 32F);
     }
 }

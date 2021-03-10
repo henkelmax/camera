@@ -12,7 +12,7 @@ public class AlbumSlot extends Slot {
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
+    public boolean mayPlace(ItemStack stack) {
         return stack.getItem() instanceof ImageItem;
     }
 }

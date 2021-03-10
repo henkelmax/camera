@@ -27,16 +27,16 @@ import java.util.UUID;
 public class CameraItem extends Item {
 
     public CameraItem() {
-        super(new Item.Properties().maxStackSize(1).group(ItemGroup.DECORATIONS));
+        super(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "camera"));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getHeldItem(handIn);
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack stack = playerIn.getItemInHand(handIn);
 
-        if (playerIn.isSneaking() && !isActive(stack)) {
-            if (worldIn.isRemote) {
+        if (playerIn.isShiftKeyDown() && !isActive(stack)) {
+            if (worldIn.isClientSide) {
                 openClientGui(getShader(stack));
             }
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -48,24 +48,24 @@ public class CameraItem extends Item {
 
         if (!isActive(stack)) {
             Main.CAMERA.setActive(stack, true);
-        } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUniqueID())) {
+        } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUUID())) {
             if (consumePaper(playerIn)) {
-                worldIn.playSound(null, playerIn.getPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1F, 1F);
+                worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
                 NetUtils.sendTo(Main.SIMPLE_CHANNEL, (ServerPlayerEntity) playerIn, new MessageTakeImage(uuid));
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.sendStatusMessage(new TranslationTextComponent("message.no_consumable"), true);
+                playerIn.displayClientMessage(new TranslationTextComponent("message.no_consumable"), true);
             }
         } else {
-            playerIn.sendStatusMessage(new TranslationTextComponent("message.image_cooldown"), true);
+            playerIn.displayClientMessage(new TranslationTextComponent("message.image_cooldown"), true);
         }
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui(String currentShader) {
-        Minecraft.getInstance().displayGuiScreen(new CameraScreen(currentShader));
+        Minecraft.getInstance().setScreen(new CameraScreen(currentShader));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
+    public UseAction getUseAnimation(ItemStack stack) {
         if (isActive(stack)) {
             return UseAction.BOW;
         } else {
@@ -83,7 +83,7 @@ public class CameraItem extends Item {
     }
 
     public static boolean consumePaper(PlayerEntity player) {
-        if (player.abilities.isCreativeMode) {
+        if (player.abilities.instabuild) {
             return true;
         }
 
@@ -106,14 +106,14 @@ public class CameraItem extends Item {
 
     private static List<ItemStack> findPaper(PlayerEntity player) {
         List<ItemStack> items = new ArrayList<>();
-        if (isPaper(player.getHeldItem(Hand.MAIN_HAND))) {
-            items.add(player.getHeldItem(Hand.MAIN_HAND));
+        if (isPaper(player.getItemInHand(Hand.MAIN_HAND))) {
+            items.add(player.getItemInHand(Hand.MAIN_HAND));
         }
-        if (isPaper(player.getHeldItem(Hand.OFF_HAND))) {
-            items.add(player.getHeldItem(Hand.OFF_HAND));
+        if (isPaper(player.getItemInHand(Hand.OFF_HAND))) {
+            items.add(player.getItemInHand(Hand.OFF_HAND));
         }
-        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            ItemStack itemstack = player.inventory.getStackInSlot(i);
+        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
+            ItemStack itemstack = player.inventory.getItem(i);
 
             if (isPaper(itemstack)) {
                 items.add(itemstack);
@@ -123,7 +123,7 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return stack.getItem().isIn(Main.SERVER_CONFIG.cameraConsumeItem);
+        return stack.getItem().is(Main.SERVER_CONFIG.cameraConsumeItem);
     }
 
     public boolean isActive(ItemStack stack) {

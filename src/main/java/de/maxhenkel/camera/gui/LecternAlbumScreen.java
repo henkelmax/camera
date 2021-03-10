@@ -17,15 +17,18 @@ public class LecternAlbumScreen extends AlbumScreen {
 
     private final AlbumContainer albumContainer;
     private final IContainerListener listener = new IContainerListener() {
-        public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList) {
+        @Override
+        public void refreshContainer(Container containerToSend, NonNullList<ItemStack> itemsList) {
             updateContents();
         }
 
-        public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
+        @Override
+        public void slotChanged(Container containerToSend, int slotInd, ItemStack stack) {
             updateContents();
         }
 
-        public void sendWindowProperty(Container containerIn, int varToUpdate, int newValue) {
+        @Override
+        public void setContainerData(Container containerIn, int varToUpdate, int newValue) {
             if (varToUpdate == 0) {
                 updatePage();
             }
@@ -38,32 +41,26 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     @Override
-    public AlbumContainer getContainer() {
+    public AlbumContainer getMenu() {
         return this.albumContainer;
     }
 
     @Override
     protected void init() {
         super.init();
-        albumContainer.addListener(listener);
+        albumContainer.addSlotListener(listener);
 
-        if (minecraft.player.isAllowEdit()) {
+        if (minecraft.player.mayBuild()) {
             addButton(new Button(width / 2 - 50, height - 25, 100, 20, new TranslationTextComponent("lectern.take_book"), (button) -> {
-                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), minecraft.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+                Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), minecraft.getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
             }));
         }
     }
 
     @Override
-    public void closeScreen() {
-        minecraft.player.closeScreen();
-        super.closeScreen();
-    }
-
-    @Override
     public void onClose() {
         super.onClose();
-        albumContainer.removeListener(listener);
+        albumContainer.removeSlotListener(listener);
     }
 
     @Override
@@ -79,7 +76,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void sendPageUpdate(int page) {
-        Main.SIMPLE_CHANNEL.sendTo(new MessageAlbumPage(page), minecraft.getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+        Main.SIMPLE_CHANNEL.sendTo(new MessageAlbumPage(page), minecraft.getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
     }
 
     @Override

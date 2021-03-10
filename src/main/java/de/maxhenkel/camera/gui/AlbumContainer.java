@@ -21,32 +21,33 @@ public class AlbumContainer extends Container {
 
     public AlbumContainer(int id, IInventory inventory, IIntArray intArray) {
         super(Main.ALBUM_CONTAINER, id);
-        assertInventorySize(inventory, 1);
-        assertIntArraySize(intArray, 1);
+        checkContainerSize(inventory, 1);
+        checkContainerDataCount(intArray, 1);
         this.inventory = inventory;
         this.intArray = intArray;
         addSlot(new Slot(inventory, 0, Integer.MIN_VALUE, Integer.MIN_VALUE) {
-            public void onSlotChanged() {
-                super.onSlotChanged();
-                onCraftMatrixChanged(inventory);
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                slotsChanged(inventory);
             }
         });
-        trackIntArray(intArray);
+        addDataSlots(intArray);
     }
 
     @Override
-    public void updateProgressBar(int id, int data) {
-        super.updateProgressBar(id, data);
-        detectAndSendChanges();
+    public void setData(int id, int data) {
+        super.setData(id, data);
+        broadcastChanges();
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
-        return inventory.isUsableByPlayer(player);
+    public boolean stillValid(PlayerEntity player) {
+        return inventory.stillValid(player);
     }
 
     public ItemStack getAlbum() {
-        return inventory.getStackInSlot(0);
+        return inventory.getItem(0);
     }
 
     public int getPage() {
@@ -54,17 +55,17 @@ public class AlbumContainer extends Container {
     }
 
     public void setPage(int page) {
-        updateProgressBar(0, page);
+        setData(0, page);
     }
 
     public void takeBook(PlayerEntity player) {
-        if (!player.isAllowEdit()) {
+        if (!player.mayBuild()) {
             return;
         }
-        ItemStack itemstack = inventory.removeStackFromSlot(0);
-        inventory.markDirty();
-        if (!player.inventory.addItemStackToInventory(itemstack)) {
-            player.dropItem(itemstack, false);
+        ItemStack itemstack = inventory.removeItemNoUpdate(0);
+        inventory.setChanged();
+        if (!player.inventory.add(itemstack)) {
+            player.drop(itemstack, false);
         }
     }
 }

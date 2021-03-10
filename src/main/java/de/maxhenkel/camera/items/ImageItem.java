@@ -27,14 +27,14 @@ import java.util.List;
 public class ImageItem extends Item {
 
     public ImageItem() {
-        super(new Item.Properties().maxStackSize(1).setISTER(() -> ImageItemRenderer::new));
+        super(new Item.Properties().stacksTo(1).setISTER(() -> ImageItemRenderer::new));
         setRegistryName(new ResourceLocation(Main.MODID, "image"));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getHeldItem(handIn);
-        if (playerIn.world.isRemote) {
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack stack = playerIn.getItemInHand(handIn);
+        if (playerIn.level.isClientSide) {
             openClientGui(stack);
         }
 
@@ -43,23 +43,23 @@ public class ImageItem extends Item {
 
     @OnlyIn(Dist.CLIENT)
     private void openClientGui(ItemStack stack) {
-        Minecraft.getInstance().displayGuiScreen(new ImageScreen(stack));
+        Minecraft.getInstance().setScreen(new ImageScreen(stack));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         ImageData data = ImageData.fromStack(stack);
         if (data != null) {
             String name = data.getOwner();
             if (!name.isEmpty()) {
-                tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).mergeStyle(TextFormatting.GRAY));
+                tooltip.add(new TranslationTextComponent("tooltip.image_owner", TextFormatting.DARK_GRAY + name).withStyle(TextFormatting.GRAY));
             }
             long time = data.getTime();
             if (time > 0L) {
-                tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).mergeStyle(TextFormatting.GRAY));
+                tooltip.add(new TranslationTextComponent("tooltip.image_time", TextFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).withStyle(TextFormatting.GRAY));
             }
         }
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 
 

@@ -25,8 +25,8 @@ public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        if (context.getSender().openContainer instanceof AlbumContainer) {
-            AlbumContainer container = (AlbumContainer) context.getSender().openContainer;
+        if (context.getSender().containerMenu instanceof AlbumContainer) {
+            AlbumContainer container = (AlbumContainer) context.getSender().containerMenu;
             container.setPage(page);
         }
     }

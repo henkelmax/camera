@@ -18,7 +18,7 @@ public class AlbumInventory implements IInventory {
     public AlbumInventory(ItemStack album) {
         this.album = album;
         this.invSize = 54;
-        this.items = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+        this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 
         CompoundNBT c = album.getOrCreateTag();
 
@@ -29,40 +29,40 @@ public class AlbumInventory implements IInventory {
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return invSize;
     }
 
     @Override
-    public ItemStack getStackInSlot(int index) {
+    public ItemStack getItem(int index) {
         return items.get(index);
     }
 
     @Override
-    public ItemStack decrStackSize(int index, int count) {
-        ItemStack itemstack = ItemStackHelper.getAndSplit(items, index, count);
-        markDirty();
+    public ItemStack removeItem(int index, int count) {
+        ItemStack itemstack = ItemStackHelper.removeItem(items, index, count);
+        setChanged();
         return itemstack;
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove(items, index);
+    public ItemStack removeItemNoUpdate(int index) {
+        return ItemStackHelper.takeItem(items, index);
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public void setItem(int index, ItemStack stack) {
         items.set(index, stack);
-        markDirty();
+        setChanged();
     }
 
     @Override
-    public int getInventoryStackLimit() {
+    public int getMaxStackSize() {
         return 64;
     }
 
     @Override
-    public void markDirty() {
+    public void setChanged() {
         if (inventoryTag == null) {
             CompoundNBT tag = album.getOrCreateTag();
             tag.put("Images", inventoryTag = new CompoundNBT());
@@ -72,14 +72,14 @@ public class AlbumInventory implements IInventory {
     }
 
     @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
+    public boolean canPlaceItem(int index, ItemStack stack) {
         return !(stack.getItem() instanceof ImageItem);
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         items.clear();
-        markDirty();
+        setChanged();
     }
 
     @Override
@@ -88,9 +88,9 @@ public class AlbumInventory implements IInventory {
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
+    public boolean stillValid(PlayerEntity player) {
         for (Hand hand : Hand.values()) {
-            if (player.getHeldItem(hand).equals(album)) {
+            if (player.getItemInHand(hand).equals(album)) {
                 return true;
             }
         }

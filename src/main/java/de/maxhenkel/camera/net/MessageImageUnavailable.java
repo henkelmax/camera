@@ -33,12 +33,12 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
 
     @Override
     public MessageImageUnavailable fromBytes(PacketBuffer buf) {
-        imgUUID = buf.readUniqueId();
+        imgUUID = buf.readUUID();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(imgUUID);
+        buf.writeUUID(imgUUID);
     }
 }

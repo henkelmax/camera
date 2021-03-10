@@ -38,7 +38,7 @@ public class MessageImage implements Message<MessageImage> {
     public void executeClientSide(NetworkEvent.Context context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
-            Minecraft.getInstance().deferTask(() -> TextureCache.instance().addImage(uuid, img));
+            Minecraft.getInstance().submitAsync(() -> TextureCache.instance().addImage(uuid, img));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,14 +46,14 @@ public class MessageImage implements Message<MessageImage> {
 
     @Override
     public MessageImage fromBytes(PacketBuffer buf) {
-        uuid = buf.readUniqueId();
+        uuid = buf.readUUID();
         image = buf.readByteArray();
         return this;
     }
 
     @Override
     public void toBytes(PacketBuffer buf) {
-        buf.writeUniqueId(uuid);
+        buf.writeUUID(uuid);
 
         buf.writeByteArray(image);
     }
