@@ -1,10 +1,11 @@
 package de.maxhenkel.camera;
 
-import com.sun.javafx.application.PlatformImpl;
-import javafx.stage.FileChooser;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -193,37 +194,56 @@ public class ImageTools {
         return bufferedImage;
     }
 
+    private static boolean chooserOpen;
+
     public static void chooseImage(Consumer<File> onResult) {
-        PlatformImpl.startup(() -> {
-            FileChooser chooser = new FileChooser();
+        if (chooserOpen) {
+            return;
+        }
+        new Thread(() -> {
+            chooserOpen = true;
+            File dir = new File(System.getProperty("user.home"));
             String lastPath = Config.CLIENT.LAST_IMAGE_PATH.get();
             if (!lastPath.isEmpty()) {
                 File last = new File(lastPath);
                 if (last.exists()) {
-                    chooser.setInitialDirectory(last);
+                    dir = last;
                 }
             }
-            chooser.setTitle(new TranslationTextComponent("title.choose_image").getFormattedText());
-            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(new TranslationTextComponent("filetype.images").getFormattedText(), "*.png", "*.jpg", "*.jpeg");
-            chooser.getExtensionFilters().clear();
-            chooser.getExtensionFilters().add(filter);
-            chooser.setSelectedExtensionFilter(filter);
-            File file = chooser.showOpenDialog(null);
-            if (file != null && file.exists() && !file.isDirectory()) {
-                Config.CLIENT.LAST_IMAGE_PATH.set(file.getParent());
-                Config.CLIENT.LAST_IMAGE_PATH.save();
-                onResult.accept(file);
+            MemoryStack stack = MemoryStack.stackPush();
+
+            PointerBuffer filters = stack.mallocPointer(6);
+            filters.put(stack.UTF8("*.png"));
+            filters.put(stack.UTF8("*.jpg"));
+            filters.put(stack.UTF8("*.jpeg"));
+
+            filters.flip();
+
+            String path = TinyFileDialogs.tinyfd_openFileDialog(
+                    new TranslationTextComponent("title.choose_image").getString(),
+                    dir.getAbsolutePath() + File.separator,
+                    filters,
+                    new TranslationTextComponent("filetype.images").getString(),
+                    false
+            );
+
+            if (path == null) {
+                chooserOpen = false;
+                return;
             }
-        });
+
+            File image = new File(path);
+            if (image.exists() && !image.isDirectory()) {
+                Config.CLIENT.LAST_IMAGE_PATH.set(image.getParent());
+                Config.CLIENT.LAST_IMAGE_PATH.save();
+                onResult.accept(image);
+            }
+            chooserOpen = false;
+        }).start();
     }
 
-    public static boolean isFileChooserAvailable() {
-        try {
-            Class.forName("javafx.stage.FileChooser");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+    public static boolean isFileChooserOpen() {
+        return chooserOpen;
     }
 
 }

@@ -1,1 +1,1 @@
-- Added Java FX info when trying to upload files
+- Use native file dialog to upload images

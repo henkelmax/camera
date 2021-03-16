@@ -37,6 +37,5 @@
   "key.previous_image": "Vorheriges Bild",
   "filetype.images": "Bilder",
   "title.choose_image": "Bild auswählen",
-  "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt",
-  "message.camera.no_java_fx": "Um dateien zu öffnen benötigst du eine Java Version, die Java FX enthält"
+  "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt"
 }

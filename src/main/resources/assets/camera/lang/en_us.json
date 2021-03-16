@@ -37,6 +37,5 @@
   "key.previous_image": "Previous Image",
   "filetype.images": "Images",
   "title.choose_image": "Choose Image",
-  "sound.camera.take_image": "Camera taking an image",
-  "message.camera.no_java_fx": "You need a Java version that includes Java FX to upload files"
+  "sound.camera.take_image": "Camera taking an image"
 }
