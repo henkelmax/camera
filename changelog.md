@@ -1,1 +1,1 @@
-- Updated to official mappings
+- Added brazilian portuguese translation
