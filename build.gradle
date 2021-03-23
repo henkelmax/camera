@@ -48,7 +48,7 @@ minecraft {
             args = ['--username', 'henkelmax']
             source sourceSets.main
             mods {
-                mod_id {
+                camera {
                     source sourceSets.main
                 }
             }
@@ -58,7 +58,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             source sourceSets.main
             mods {
-                mod_id {
+                camera {
                     source sourceSets.main
                 }
             }
@@ -69,7 +69,7 @@ minecraft {
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/')
 
             mods {
-                mod_id {
+                camera {
                     source sourceSets.main
                 }
             }
@@ -92,6 +92,8 @@ dependencies {
     compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }
 
 jar {
@@ -195,7 +197,7 @@ javadoc {
 }
 
 task deobfJar(type: Jar) {
-    classifier = 'deobf'
+    classifier 'deobf'
     from sourceSets.main.output
     manifest {
         attributes(["Specification-Title"     : mod_name,
@@ -209,12 +211,12 @@ task deobfJar(type: Jar) {
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
+    classifier 'sources'
     from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    classifier 'javadoc'
     from javadoc.getDestinationDir()
 }
 
@@ -230,7 +232,7 @@ jar.finalizedBy('reobfJar')
 shadowJar {
     project.configurations.shadow.setTransitive(true);
     configurations = [project.configurations.shadow]
-    classifier = ""
+    classifier ''
     relocate 'de.maxhenkel.corelib', "de.maxhenkel.${mod_id}.corelib"
 }
 

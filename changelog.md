@@ -1,1 +1,1 @@
-- Added brazilian portuguese translation
+- Fixed mixins not working
