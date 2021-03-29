@@ -1,1 +1,1 @@
-- Fixed mixins not working
+- Added JEI recipe for image
