@@ -104,7 +104,9 @@ jar {
                     "Implementation-Title"    : mod_name,
                     "Implementation-Version"  : mod_version,
                     "Implementation-Vendor"   : mod_vendor,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "MixinConnector"          : "de.maxhenkel.camera.MixinConnector"
+        ])
     }
 }
 
@@ -206,7 +208,9 @@ task deobfJar(type: Jar) {
                     "Implementation-Title"    : mod_name,
                     "Implementation-Version"  : mod_version,
                     "Implementation-Vendor"   : mod_vendor,
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "MixinConnector"          : "de.maxhenkel.camera.MixinConnector"
+        ])
     }
 }
 

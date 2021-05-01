@@ -1,1 +1,1 @@
-- Added JEI recipe for image
+- Fixed mixin connector
