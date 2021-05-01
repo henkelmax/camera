@@ -96,6 +96,10 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }
 
+mixin {
+    add sourceSets.main, "camera.refmap.json"
+}
+
 jar {
     manifest {
         attributes(["Specification-Title"     : mod_name,
