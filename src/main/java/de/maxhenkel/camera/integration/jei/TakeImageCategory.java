@@ -36,7 +36,7 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public List<ITextComponent> getTooltipStrings(ItemStack recipe, double mouseX, double mouseY) {
-        return Collections.singletonList(new TranslationTextComponent("jei.tooltip.take_image", recipe.getCount(), recipe.getHoverName()));
+        return Collections.singletonList(new TranslationTextComponent("jei.camera.tooltip.take_image", recipe.getCount(), recipe.getHoverName()));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public String getTitle() {
-        return new TranslationTextComponent("jei.easy_villagers.take_image").getString();
+        return new TranslationTextComponent("jei.camera.take_image").getString();
     }
 
     @Override

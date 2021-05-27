@@ -1,1 +1,1 @@
-- Fixed crash on startup
+- Added ukrainian translation

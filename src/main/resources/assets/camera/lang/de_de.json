@@ -39,6 +39,6 @@
   "filetype.images": "Bilder",
   "title.choose_image": "Bild auswählen",
   "sound.camera.take_image": "Eine Kamera, die ein Bild aufnimmt",
-  "jei.easy_villagers.take_image": "Bilder aufnehmen",
-  "jei.tooltip.take_image": "Konsumiert %sx %s aus dem Inventar, wenn ein Bild aufgenommen wird"
+  "jei.camera.take_image": "Bilder aufnehmen",
+  "jei.camera.tooltip.take_image": "Konsumiert %sx %s aus dem Inventar, wenn ein Bild aufgenommen wird"
 }
