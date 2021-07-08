@@ -1,1 +1,1 @@
-- Added ukrainian translation
+- Fixed camera not working in off hand

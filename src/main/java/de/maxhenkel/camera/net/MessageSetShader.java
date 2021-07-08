@@ -4,6 +4,7 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -26,9 +27,11 @@ public class MessageSetShader implements Message<MessageSetShader> {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        ItemStack stack = context.getSender().getMainHandItem();
-        if (stack.getItem().equals(Main.CAMERA)) {
-            Main.CAMERA.setShader(stack, shader);
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = context.getSender().getItemInHand(hand);
+            if (stack.getItem().equals(Main.CAMERA)) {
+                Main.CAMERA.setShader(stack, shader);
+            }
         }
     }
 

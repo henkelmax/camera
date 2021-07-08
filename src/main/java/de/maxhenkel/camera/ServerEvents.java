@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -17,7 +18,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA)) {
+        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA) || event.player.getOffhandItem().getItem().equals(Main.CAMERA)) {
             return;
         }
 
@@ -35,10 +36,13 @@ public class ServerEvents {
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         PlayerEntity player = event.getPlayer();
-        ItemStack stack = player.getMainHandItem();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
-            event.setUseBlock(Event.Result.DENY);
-            event.setCanceled(true);
+        for (Hand hand : Hand.values()) {
+            ItemStack item = player.getItemInHand(hand);
+            if (item.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(item)) {
+                event.setUseBlock(Event.Result.DENY);
+                event.setCanceled(true);
+                break;
+            }
         }
     }
 
@@ -58,13 +62,17 @@ public class ServerEvents {
     }
 
     public void handleLeftClick(PlayerInteractEvent event) {
-        ItemStack stack = event.getPlayer().getMainHandItem();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
-            if (event.isCancelable()) {
-                event.setCanceled(true);
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = event.getPlayer().getItemInHand(hand);
+            if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+                if (event.isCancelable()) {
+                    event.setCanceled(true);
+                }
+                event.setCancellationResult(ActionResultType.PASS);
+                break;
             }
-            event.setCancellationResult(ActionResultType.PASS);
         }
+
     }
 
     @SubscribeEvent
@@ -74,10 +82,12 @@ public class ServerEvents {
             return;
         }
         PlayerEntity player = (PlayerEntity) source;
-
-        ItemStack stack = player.getMainHandItem();
-        if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
-            event.setCanceled(true);
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+                event.setCanceled(true);
+                break;
+            }
         }
     }
 

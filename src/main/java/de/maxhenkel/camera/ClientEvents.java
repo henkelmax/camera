@@ -156,12 +156,14 @@ public class ClientEvents {
     }
 
     private ResourceLocation getShader(PlayerEntity player) {
-        ItemStack stack = player.getMainHandItem();
-        if (!stack.getItem().equals(Main.CAMERA)) {
-            return null;
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (!stack.getItem().equals(Main.CAMERA)) {
+                continue;
+            }
+            return Shaders.getShader(Main.CAMERA.getShader(stack));
         }
-
-        return Shaders.getShader(Main.CAMERA.getShader(stack));
+        return null;
     }
 
     private void setShader(ResourceLocation shader) {
