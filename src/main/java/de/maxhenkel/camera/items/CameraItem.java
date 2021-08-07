@@ -7,16 +7,20 @@ import de.maxhenkel.camera.net.MessageTakeImage;
 import de.maxhenkel.corelib.item.ItemUtils;
 import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.*;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,40 +31,40 @@ import java.util.UUID;
 public class CameraItem extends Item {
 
     public CameraItem() {
-        super(new Item.Properties().stacksTo(1).tab(ItemGroup.TAB_DECORATIONS));
+        super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "camera"));
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
 
         if (playerIn.isShiftKeyDown() && !isActive(stack)) {
             if (worldIn.isClientSide) {
                 openClientGui(getShader(stack));
             }
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
 
-        if (!(playerIn instanceof ServerPlayerEntity)) {
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        if (!(playerIn instanceof ServerPlayer)) {
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
 
         if (!isActive(stack)) {
             Main.CAMERA.setActive(stack, true);
         } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUUID())) {
             if (consumePaper(playerIn)) {
-                worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE, SoundCategory.AMBIENT, 1F, 1F);
+                worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE, SoundSource.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
-                NetUtils.sendTo(Main.SIMPLE_CHANNEL, (ServerPlayerEntity) playerIn, new MessageTakeImage(uuid));
+                NetUtils.sendTo(Main.SIMPLE_CHANNEL, (ServerPlayer) playerIn, new MessageTakeImage(uuid));
                 Main.CAMERA.setActive(stack, false);
             } else {
-                playerIn.displayClientMessage(new TranslationTextComponent("message.no_consumable"), true);
+                playerIn.displayClientMessage(new TranslatableComponent("message.no_consumable"), true);
             }
         } else {
-            playerIn.displayClientMessage(new TranslationTextComponent("message.image_cooldown"), true);
+            playerIn.displayClientMessage(new TranslatableComponent("message.image_cooldown"), true);
         }
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -74,16 +78,16 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
+    public UseAnim getUseAnimation(ItemStack stack) {
         if (isActive(stack)) {
-            return UseAction.BOW;
+            return UseAnim.BOW;
         } else {
-            return UseAction.NONE;
+            return UseAnim.NONE;
         }
     }
 
-    public static boolean consumePaper(PlayerEntity player) {
-        if (player.abilities.instabuild) {
+    public static boolean consumePaper(Player player) {
+        if (player.getAbilities().instabuild) {
             return true;
         }
 
@@ -104,16 +108,16 @@ public class CameraItem extends Item {
         return false;
     }
 
-    private static List<ItemStack> findPaper(PlayerEntity player) {
+    private static List<ItemStack> findPaper(Player player) {
         List<ItemStack> items = new ArrayList<>();
-        if (isPaper(player.getItemInHand(Hand.MAIN_HAND))) {
-            items.add(player.getItemInHand(Hand.MAIN_HAND));
+        if (isPaper(player.getItemInHand(InteractionHand.MAIN_HAND))) {
+            items.add(player.getItemInHand(InteractionHand.MAIN_HAND));
         }
-        if (isPaper(player.getItemInHand(Hand.OFF_HAND))) {
-            items.add(player.getItemInHand(Hand.OFF_HAND));
+        if (isPaper(player.getItemInHand(InteractionHand.OFF_HAND))) {
+            items.add(player.getItemInHand(InteractionHand.OFF_HAND));
         }
-        for (int i = 0; i < player.inventory.getContainerSize(); i++) {
-            ItemStack itemstack = player.inventory.getItem(i);
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack itemstack = player.getInventory().getItem(i);
 
             if (isPaper(itemstack)) {
                 items.add(itemstack);
@@ -123,11 +127,11 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return stack.getItem().is(Main.SERVER_CONFIG.cameraConsumeItem);
+        return Main.SERVER_CONFIG.cameraConsumeItem.contains(stack.getItem());
     }
 
     public boolean isActive(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateTag();
+        CompoundTag compound = stack.getOrCreateTag();
         if (!compound.contains("active")) {
             compound.putBoolean("active", false);
         }
@@ -139,7 +143,7 @@ public class CameraItem extends Item {
     }
 
     public String getShader(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateTag();
+        CompoundTag compound = stack.getOrCreateTag();
         if (!compound.contains("shader")) {
             return null;
         }

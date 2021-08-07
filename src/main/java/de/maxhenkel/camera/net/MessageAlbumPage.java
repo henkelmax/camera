@@ -2,9 +2,9 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
@@ -32,13 +32,13 @@ public class MessageAlbumPage implements Message<MessageAlbumPage> {
     }
 
     @Override
-    public MessageAlbumPage fromBytes(PacketBuffer buf) {
+    public MessageAlbumPage fromBytes(FriendlyByteBuf buf) {
         page = buf.readInt();
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(page);
     }
 

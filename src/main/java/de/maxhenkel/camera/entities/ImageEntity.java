@@ -1,31 +1,37 @@
 package de.maxhenkel.camera.entities;
 
+import com.mojang.math.Vector3d;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -33,34 +39,33 @@ import java.util.UUID;
 
 public class ImageEntity extends Entity {
 
-    private static final DataParameter<Optional<UUID>> ID = EntityDataManager.defineId(ImageEntity.class, DataSerializers.OPTIONAL_UUID);
-    private static final DataParameter<Direction> FACING = EntityDataManager.defineId(ImageEntity.class, DataSerializers.DIRECTION);
-    private static final DataParameter<Integer> WIDTH = EntityDataManager.defineId(ImageEntity.class, DataSerializers.INT);
-    private static final DataParameter<Integer> HEIGHT = EntityDataManager.defineId(ImageEntity.class, DataSerializers.INT);
-    private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(ImageEntity.class, DataSerializers.ITEM_STACK);
-    private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.defineId(ImageEntity.class, DataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Optional<UUID>> ID = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Direction> FACING = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.DIRECTION);
+    private static final EntityDataAccessor<Integer> WIDTH = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> HEIGHT = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.ITEM_STACK);
+    private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
-    private static final AxisAlignedBB NULL_AABB = new AxisAlignedBB(0D, 0D, 0D, 0D, 0D, 0D);
+    private static final AABB NULL_AABB = new AABB(0D, 0D, 0D, 0D, 0D, 0D);
 
     private static final double THICKNESS = 1D / 16D;
     private static final int MAX_WIDTH = 8;
     private static final int MAX_HEIGHT = 8;
 
-    private AxisAlignedBB boundingBox;
 
-    public ImageEntity(EntityType type, World world) {
+    public ImageEntity(EntityType type, Level world) {
         super(type, world);
-        boundingBox = NULL_AABB;
+        setBoundingBox(NULL_AABB);
     }
 
-    public ImageEntity(World world) {
+    public ImageEntity(Level world) {
         this(Main.IMAGE_ENTITY_TYPE, world);
     }
 
-    public ImageEntity(World world, double x, double y, double z) {
+    public ImageEntity(Level world, double x, double y, double z) {
         this(Main.IMAGE_ENTITY_TYPE, world);
         this.setPos(x, y, z);
-        this.setDeltaMovement(Vector3d.ZERO);
+        this.setDeltaMovement(Vec3.ZERO);
         this.xo = x;
         this.yo = y;
         this.zo = z;
@@ -74,16 +79,16 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public ActionResultType interact(PlayerEntity player, Hand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand) {
         if (!canModify(player)) {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (player.isShiftKeyDown() && canModify(player)) {
             if (level.isClientSide) {
                 openClientGui();
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         ItemStack heldItem = player.getItemInHand(hand);
@@ -100,15 +105,15 @@ public class ImageEntity extends Entity {
                     dropItem(image);
                 }
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (!(heldItem.getItem() instanceof ImageItem)) {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
         UUID imageID = ImageData.getImageID(heldItem);
         if (imageID == null) {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
 
         ItemStack frameStack = heldItem.split(1);
@@ -116,11 +121,11 @@ public class ImageEntity extends Entity {
         setImageUUID(imageID);
         playAddSound();
 
-        return ActionResultType.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    public boolean canModify(PlayerEntity player) {
-        if (!player.abilities.mayBuild) {
+    public boolean canModify(Player player) {
+        if (!player.getAbilities().mayBuild) {
             return false;
         }
         if (!Main.SERVER_CONFIG.frameOnlyOwnerModify.get()) {
@@ -145,10 +150,10 @@ public class ImageEntity extends Entity {
         if (level.isClientSide) {
             return true;
         }
-        if (!(source.getDirectEntity() instanceof PlayerEntity)) {
+        if (!(source.getDirectEntity() instanceof Player)) {
             return false;
         }
-        if (!canModify((PlayerEntity) source.getDirectEntity())) {
+        if (!canModify((Player) source.getDirectEntity())) {
             return false;
         }
         if (hasImage()) {
@@ -181,9 +186,9 @@ public class ImageEntity extends Entity {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
-            if (player.abilities.instabuild) {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            if (player.getAbilities().instabuild) {
                 return;
             }
         }
@@ -231,7 +236,7 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) {
+    public ItemStack getPickedResult(HitResult target) {
         if (hasImage()) {
             return getItem().copy();
         }
@@ -239,38 +244,40 @@ public class ImageEntity extends Entity {
     }
 
     private void updateBoundingBox() {
-        BlockPos pos = blockPosition();
         Direction facing = getFacing();
-        int width = getFrameWidth();
-        int height = getFrameHeight();
 
         if (facing.getAxis().isHorizontal()) {
-            xRot = 0.0F;
-            yRot = facing.get2DDataValue() * 90F;
+            setXRot(0F);
+            setYRot(facing.get2DDataValue() * 90F);
         } else {
-            xRot = -90F * facing.getAxisDirection().getStep();
-            yRot = 0.0F;
+            setXRot(-90F * facing.getAxisDirection().getStep());
+            setYRot(0F);
         }
 
-        xRotO = xRot;
-        yRotO = yRot;
+        xRotO = getXRot();
+        yRotO = getYRot();
 
-        boundingBox = calculateBoundingBox(pos, facing, width, height);
+        setBoundingBox(makeBoundingBox());
     }
 
-    private AxisAlignedBB calculateBoundingBox(BlockPos pos, Direction facing, double width, double height) {
+    @Override
+    protected AABB makeBoundingBox() {
+        return calculateBoundingBox(blockPosition(), getFacing(), getFrameWidth(), getFrameHeight());
+    }
+
+    private AABB calculateBoundingBox(BlockPos pos, Direction facing, double width, double height) {
         switch (facing) {
             case UP:
             case DOWN:
             case NORTH:
             default:
-                return new AxisAlignedBB(pos.getX() + 1D, pos.getY(), pos.getZ() + 1D - THICKNESS, pos.getX() - width + 1D, pos.getY() + height, pos.getZ() + 1D);
+                return new AABB(pos.getX() + 1D, pos.getY(), pos.getZ() + 1D - THICKNESS, pos.getX() - width + 1D, pos.getY() + height, pos.getZ() + 1D);
             case SOUTH:
-                return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + width, pos.getY() + height, pos.getZ() + THICKNESS);
+                return new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + width, pos.getY() + height, pos.getZ() + THICKNESS);
             case WEST:
-                return new AxisAlignedBB(pos.getX() + 1D - THICKNESS, pos.getY(), pos.getZ(), pos.getX() + 1D, pos.getY() + height, pos.getZ() + width);
+                return new AABB(pos.getX() + 1D - THICKNESS, pos.getY(), pos.getZ(), pos.getX() + 1D, pos.getY() + height, pos.getZ() + width);
             case EAST:
-                return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ() + 1D, pos.getX() + THICKNESS, pos.getY() + height, pos.getZ() - width + 1D);
+                return new AABB(pos.getX(), pos.getY(), pos.getZ() + 1D, pos.getX() + THICKNESS, pos.getY() + height, pos.getZ() - width + 1D);
         }
     }
 
@@ -280,7 +287,7 @@ public class ImageEntity extends Entity {
         return new BlockPos(center.x, center.y, center.z);
     }
 
-    public Vector3d getCenter(AxisAlignedBB aabb) {
+    public Vector3d getCenter(AABB aabb) {
         return new Vector3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
     }
 
@@ -298,9 +305,9 @@ public class ImageEntity extends Entity {
     }
 
     public void removeFrame(Entity source) {
-        if (!removed && !level.isClientSide) {
+        if (!isRemoved() && !level.isClientSide) {
             onBroken(source);
-            remove();
+            kill();
         }
     }
 
@@ -313,37 +320,32 @@ public class ImageEntity extends Entity {
         return false;
     }
 
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return boundingBox;
-    }
-
     @OnlyIn(Dist.CLIENT)
     @Override
-    public AxisAlignedBB getBoundingBoxForCulling() {
+    public AABB getBoundingBoxForCulling() {
         return getBoundingBox();
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket() {
+    public Packet<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
     public boolean isPickable() {
-        return !removed;
+        return !isRemoved();
     }
 
     public void playPlaceSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.PAINTING_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, getCenterPosition(), SoundEvents.PAINTING_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public void playAddSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public void playRemoveSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public Optional<UUID> getOwner() {
@@ -401,7 +403,7 @@ public class ImageEntity extends Entity {
     }
 
     public void setImagePosition(BlockPos position) {
-        moveTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, yRot, xRot);
+        moveTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, getYRot(), getXRot());
         updateBoundingBox();
     }
 
@@ -436,7 +438,7 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundNBT compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         if (getImageUUID().isPresent()) {
             compound.putUUID("image_id", getImageUUID().get());
         }
@@ -446,19 +448,15 @@ public class ImageEntity extends Entity {
         compound.putInt("facing", getFacing().get3DDataValue());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
-        compound.put("item", getItem().save(new CompoundNBT()));
+        compound.put("item", getItem().save(new CompoundTag()));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundNBT compound) {
-        if (compound.contains("id_most") && compound.contains("id_least")) { //TODO remove
-            setImageUUID(new UUID(compound.getLong("id_most"), compound.getLong("id_least")));
-        } else if (compound.contains("image_id")) {
+    public void readAdditionalSaveData(CompoundTag compound) {
+        if (compound.contains("image_id")) {
             setImageUUID(compound.getUUID("image_id"));
         }
-        if (compound.contains("owner_most") && compound.contains("owner_least")) { //TODO remove
-            setOwner(new UUID(compound.getLong("owner_most"), compound.getLong("owner_least")));
-        } else if (compound.contains("owner")) {
+        if (compound.contains("owner")) {
             setOwner(compound.getUUID("owner"));
         }
         setFacing(Direction.from3DDataValue(compound.getInt("facing")));

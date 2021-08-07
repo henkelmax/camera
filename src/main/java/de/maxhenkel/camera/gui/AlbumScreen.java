@@ -1,53 +1,56 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.Main;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AlbumScreen extends ContainerScreen<AlbumContainer> {
+public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
 
     protected int index;
     protected List<UUID> images;
 
-    public AlbumScreen(AlbumContainer screenContainer, PlayerInventory inv, ITextComponent titleIn, List<UUID> images) {
+    public AlbumScreen(AlbumContainer screenContainer, Inventory inv, Component titleIn, List<UUID> images) {
         super(screenContainer, inv, titleIn);
         this.images = images;
     }
 
-    public AlbumScreen(AlbumContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public AlbumScreen(AlbumContainer screenContainer, Inventory inv, Component titleIn) {
         this(screenContainer, inv, titleIn, new ArrayList<>());
     }
 
     public AlbumScreen(List<UUID> images) {
-        this(new AlbumContainer(-1), null, new TranslationTextComponent("gui.album.title"), images);
+        this(new AlbumContainer(-1), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.album.title"), images);
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
 
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
-        RenderSystem.color4f(1F, 1F, 1F, 1F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (images.isEmpty()) {
             return;
         }
         UUID uuid = images.get(index);
-        ImageScreen.drawImage(minecraft, width, height, 100, uuid);
+        ImageScreen.drawImage(matrixStack, minecraft, width, height, 100, uuid);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
@@ -83,17 +86,17 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     }
 
     protected void playPageTurnSound() {
-        minecraft.player.playNotifySound(SoundEvents.BOOK_PAGE_TURN, SoundCategory.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F);
+        minecraft.player.playNotifySound(SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F);
     }
 
     private boolean wasNextDown;
     private boolean wasPreviousDown;
 
     @Override
-    public void tick() {
-        super.tick();
-        boolean isNextDown = InputMappings.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_NEXT.getKey().getValue());
-        boolean isPreviousDown = InputMappings.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_PREVIOUS.getKey().getValue());
+    public void containerTick() {
+        super.containerTick();
+        boolean isNextDown = InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_NEXT.getKey().getValue());
+        boolean isPreviousDown = InputConstants.isKeyDown(minecraft.getWindow().getWindow(), Main.KEY_PREVIOUS.getKey().getValue());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {
@@ -102,7 +105,7 @@ public class AlbumScreen extends ContainerScreen<AlbumContainer> {
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(PoseStack matrixStack, int x, int y) {
 
     }
 

@@ -2,7 +2,7 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.text.SimpleDateFormat;
 
@@ -30,7 +30,7 @@ public class ClientConfig extends ConfigBase {
     }
 
     @Override
-    public void onReload(ModConfig.ModConfigEvent event) {
+    public void onReload(ModConfigEvent event) {
         super.onReload(event);
         imageDateFormat = new SimpleDateFormat(imageDateFormatSpec.get());
     }

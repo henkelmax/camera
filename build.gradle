@@ -1,29 +1,27 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         maven { url = 'https://maven.maxhenkel.de/repository/public' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-        classpath group: 'de.maxhenkel.forge-update', name: 'forge-update', version: '1.0.2'
-        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: '4.0.4'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.18', changing: true
+        classpath group: 'de.maxhenkel.forge-update', name: 'forge-update', version: '1.0.4'
+//        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
 plugins {
     // https://github.com/matthewprenger/CurseGradle
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'forge-update'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'idea'
-apply plugin: 'org.spongepowered.mixin'
+//apply plugin: 'org.spongepowered.mixin'
 
 idea {
     module {
@@ -36,7 +34,7 @@ version = mod_version
 group = mod_packagename
 archivesBaseName = mod_id
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
     mappings channel: 'official', version: mod_minecraft_version
@@ -82,23 +80,23 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}")
 
     shadow fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:api")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
-    compile fg.deobf("mcp.mobius.waila:Hwyla:${hwyla_version}")
+    implementation fg.deobf("curse.maven:jade-324717:${jade_id}")
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+//    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }
 
-mixin {
+/*mixin {
     add sourceSets.main, "camera.refmap.json"
-}
+}*/
 
 jar {
     manifest {
@@ -115,11 +113,7 @@ jar {
 }
 
 processResources {
-    inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.toml'
-
+    filesMatching("**/*.toml") {
         expand 'mod_id': mod_id,
                 'mod_version': mod_version,
                 'mod_vendor': mod_vendor,
@@ -127,9 +121,6 @@ processResources {
                 'mod_forge_version': mod_forge_version,
                 'mod_loader_version': mod_loader_version,
                 'mod_minecraft_version': mod_minecraft_version
-    }
-    from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.toml'
     }
 }
 
@@ -148,6 +139,8 @@ curseforge {
         changelog = file('changelog.md')
         releaseType = curse_release_type
         addGameVersion mod_minecraft_version
+        addGameVersion 'Forge'
+        addGameVersion 'Java 16'
         mainArtifact(jar) {
             displayName = "[${mod_minecraft_version}] ${mod_name} ${mod_version}"
         }
@@ -179,6 +172,7 @@ forgeUpdate {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
@@ -188,14 +182,15 @@ repositories {
         url = "https://modmaven.k-4u.nl"
     }
     maven {
-        name = "Hwyla"
-        url = "https://maven.tehnut.info"
-    }
-    maven {
         name = "henkelmax.public"
         url = 'https://maven.maxhenkel.de/repository/public'
     }
-    mavenLocal()
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 javadoc {
@@ -246,4 +241,18 @@ shadowJar {
 
 reobf {
     shadowJar {}
+}
+
+sourceSets {
+    main {
+        java {
+            exclude 'de/maxhenkel/camera/integration/jei/**'
+            exclude 'de/maxhenkel/camera/mixins/**'
+            exclude 'de/maxhenkel/camera/MixinConnector.java'
+        }
+        resources {
+            exclude 'assets/camera/camera.mixins.json'
+            exclude 'META-INF/MANIFEST.MF'
+        }
+    }
 }

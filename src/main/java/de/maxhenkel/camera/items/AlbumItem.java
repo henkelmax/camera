@@ -5,31 +5,27 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumInventoryContainer;
 import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LecternBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.*;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -39,36 +35,36 @@ import java.util.UUID;
 public class AlbumItem extends Item {
 
     public AlbumItem() {
-        super(new Properties().stacksTo(1).tab(ItemGroup.TAB_DECORATIONS));
+        super(new Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "album"));
     }
 
     @Override
-    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
-            if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayerEntity) {
-                NetworkHooks.openGui((ServerPlayerEntity) playerIn, new INamedContainerProvider() {
+            if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayer) {
+                NetworkHooks.openGui((ServerPlayer) playerIn, new MenuProvider() {
 
                     @Nullable
                     @Override
-                    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                    public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                         return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(stack));
                     }
 
                     @Override
-                    public ITextComponent getDisplayName() {
-                        return new TranslationTextComponent(AlbumItem.this.getDescriptionId());
+                    public Component getDisplayName() {
+                        return new TranslatableComponent(AlbumItem.this.getDescriptionId());
                     }
                 });
             }
         } else {
             openAlbum(playerIn, stack);
         }
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
-    public static void openAlbum(PlayerEntity player, ItemStack album) {
+    public static void openAlbum(Player player, ItemStack album) {
         if (player.level.isClientSide) {
             List<UUID> images = Main.ALBUM.getImages(album);
             if (!images.isEmpty()) {
@@ -83,20 +79,20 @@ public class AlbumItem extends Item {
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
-        World world = context.getLevel();
+    public InteractionResult useOn(UseOnContext context) {
+        Level world = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
         BlockState blockstate = world.getBlockState(blockpos);
         if (blockstate.is(Blocks.LECTERN)) {
-            return LecternBlock.tryPlaceBook(world, blockpos, blockstate, context.getItemInHand()) ? ActionResultType.sidedSuccess(world.isClientSide) : ActionResultType.PASS;
+            return LecternBlock.tryPlaceBook(context.getPlayer(), world, blockpos, blockstate, context.getItemInHand()) ? InteractionResult.sidedSuccess(world.isClientSide) : InteractionResult.PASS;
         } else {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
     }
 
     public List<UUID> getImages(ItemStack stack) {
         List<UUID> images = new ArrayList<>();
-        IInventory inventory = new AlbumInventory(stack);
+        Container inventory = new AlbumInventory(stack);
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack s = inventory.getItem(i);
             UUID uuid = ImageData.getImageID(s);

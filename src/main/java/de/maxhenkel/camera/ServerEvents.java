@@ -1,10 +1,10 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -22,21 +22,21 @@ public class ServerEvents {
             return;
         }
 
-        disableCamera(event.player.inventory.getSelected());
+        disableCamera(event.player.getInventory().getSelected());
 
-        for (ItemStack stack : event.player.inventory.items) {
+        for (ItemStack stack : event.player.getInventory().items) {
             disableCamera(stack);
         }
 
-        for (ItemStack stack : event.player.inventory.offhand) {
+        for (ItemStack stack : event.player.getInventory().offhand) {
             disableCamera(stack);
         }
     }
 
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-        PlayerEntity player = event.getPlayer();
-        for (Hand hand : Hand.values()) {
+        Player player = event.getPlayer();
+        for (InteractionHand hand : InteractionHand.values()) {
             ItemStack item = player.getItemInHand(hand);
             if (item.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(item)) {
                 event.setUseBlock(Event.Result.DENY);
@@ -62,13 +62,13 @@ public class ServerEvents {
     }
 
     public void handleLeftClick(PlayerInteractEvent event) {
-        for (Hand hand : Hand.values()) {
+        for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = event.getPlayer().getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
                 if (event.isCancelable()) {
                     event.setCanceled(true);
                 }
-                event.setCancellationResult(ActionResultType.PASS);
+                event.setCancellationResult(InteractionResult.PASS);
                 break;
             }
         }
@@ -78,11 +78,11 @@ public class ServerEvents {
     @SubscribeEvent
     public void onHit(LivingAttackEvent event) {
         Entity source = event.getSource().getDirectEntity();
-        if (!(source instanceof PlayerEntity)) {
+        if (!(source instanceof Player)) {
             return;
         }
-        PlayerEntity player = (PlayerEntity) source;
-        for (Hand hand : Hand.values()) {
+        Player player = (Player) source;
+        for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
                 event.setCanceled(true);

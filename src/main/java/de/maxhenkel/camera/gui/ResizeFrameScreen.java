@@ -1,24 +1,26 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 import java.util.UUID;
 
-public class ResizeFrameScreen extends ContainerScreen<Container> {
+public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
     private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/resize_frame.png");
     private static final int PADDING = 10;
@@ -30,7 +32,7 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     private Button visibilityButton;
 
     public ResizeFrameScreen(UUID uuid) {
-        super(new DummyContainer(), null, new TranslationTextComponent("gui.frame.resize"));
+        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.frame.resize"));
         this.uuid = uuid;
         visibility = Main.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
         imageWidth = 248;
@@ -40,26 +42,25 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     @Override
     protected void init() {
         super.init();
-
-        buttons.clear();
+        clearWidgets();
         int left = (width - imageWidth) / 2;
-        addButton(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addRenderableWidget(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.LEFT);
         }));
 
-        addButton(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addRenderableWidget(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.RIGHT);
         }));
 
-        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.UP);
         }));
 
-        addButton(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(""), (button) -> {
+        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.DOWN);
         }));
 
-        visibilityButton = addButton(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, new TranslationTextComponent("tooltip.visibility_short"), (button) -> {
+        visibilityButton = addRenderableWidget(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, new TranslatableComponent("tooltip.visibility_short"), (button) -> {
             visibility -= 0.25;
             if (visibility < 0F) {
                 visibility = 1F;
@@ -74,27 +75,30 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
         if (visibility >= 1F) {
             renderBackground(matrixStack);
         }
-        RenderSystem.color4f(1F, 1F, 1F, visibility);
-        minecraft.getTextureManager().bind(CAMERA_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
+        RenderSystem.setShaderTexture(0, CAMERA_TEXTURE);
 
         blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
-        TranslationTextComponent title = new TranslationTextComponent("gui.frame.resize");
+    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+        TranslatableComponent title = new TranslatableComponent("gui.frame.resize");
         int titleWidth = font.width(title);
-        font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, TextFormatting.DARK_GRAY.getColor());
+        font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor());
 
-        TranslationTextComponent description = new TranslationTextComponent("gui.frame.resize_description");
+        TranslatableComponent description = new TranslatableComponent("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
-        font.draw(matrixStack, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, TextFormatting.GRAY.getColor());
+        font.draw(matrixStack, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor());
 
-        minecraft.getTextureManager().bind(CAMERA_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
+        RenderSystem.setShaderTexture(0, CAMERA_TEXTURE);
         if (Screen.hasShiftDown()) {
             blit(matrixStack, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16);
             blit(matrixStack, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
@@ -108,15 +112,15 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
         }
 
         if (visibilityButton.isHovered()) {
-            renderTooltip(matrixStack, Arrays.asList(new TranslationTextComponent("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
+            renderTooltip(matrixStack, Arrays.asList(new TranslatableComponent("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
         }
     }
 
     private long lastCheck;
 
     @Override
-    public void tick() {
-        super.tick();
+    public void containerTick() {
+        super.containerTick();
 
         if (System.currentTimeMillis() - lastCheck > 500L) {
             if (!isImagePresent()) {
@@ -127,7 +131,7 @@ public class ResizeFrameScreen extends ContainerScreen<Container> {
     }
 
     public boolean isImagePresent() {
-        AxisAlignedBB aabb = minecraft.player.getBoundingBox();
+        AABB aabb = minecraft.player.getBoundingBox();
         aabb = aabb.inflate(32D);
         return minecraft.level.getEntitiesOfClass(ImageEntity.class, aabb).stream().anyMatch(image -> image.getUUID().equals(uuid) && image.distanceTo(minecraft.player) <= 32F);
     }

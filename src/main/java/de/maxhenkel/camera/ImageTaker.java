@@ -1,8 +1,8 @@
 package de.maxhenkel.camera;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.client.Screenshot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
@@ -42,7 +42,7 @@ public class ImageTaker {
 
         Minecraft mc = Minecraft.getInstance();
 
-        NativeImage image = ScreenShotHelper.takeScreenshot(mc.getWindow().getWidth(), mc.getWindow().getHeight(), mc.getMainRenderTarget());
+        NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
 
         mc.options.hideGui = hide;
         takeScreenshot = false;

@@ -3,9 +3,9 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class PacketManager {
         this.cooldowns = new HashMap<>();
     }
 
-    public void addBytes(ServerPlayerEntity playerMP, UUID imagegID, int offset, int length, byte[] bytes) {
+    public void addBytes(ServerPlayer playerMP, UUID imagegID, int offset, int length, byte[] bytes) {
         byte[] data;
         if (!clientDataMap.containsKey(imagegID)) {
             data = new byte[length];
@@ -56,7 +56,7 @@ public class PacketManager {
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);
                             if (!playerMP.addItem(stack)) {
-                                InventoryHelper.dropItemStack(playerMP.level, playerMP.getX(), playerMP.getY(), playerMP.getZ(), stack);
+                                Containers.dropItemStack(playerMP.level, playerMP.getX(), playerMP.getY(), playerMP.getZ(), stack);
                             }
                         });
                     } catch (IOException e) {
@@ -70,7 +70,7 @@ public class PacketManager {
         }
     }
 
-    public BufferedImage getExistingImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
+    public BufferedImage getExistingImage(ServerPlayer playerMP, UUID uuid) throws IOException {
         if (imageCache.containsKey(uuid)) {
             return imageCache.get(uuid);
         }

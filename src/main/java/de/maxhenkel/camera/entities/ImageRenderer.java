@@ -1,27 +1,24 @@
 package de.maxhenkel.camera.entities;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Matrix3f;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3f;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -38,20 +35,20 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
     private static Minecraft mc;
 
-    public ImageRenderer(EntityRendererManager renderManager) {
-        super(renderManager);
+    public ImageRenderer(EntityRendererProvider.Context context) {
+        super(context);
         mc = Minecraft.getInstance();
     }
 
     @Override
-    public void render(ImageEntity entity, float f1, float f2, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
-        int imageLight = WorldRenderer.getLightColor(entity.level, entity.getCenterPosition());
+    public void render(ImageEntity entity, float f1, float f2, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
+        int imageLight = LevelRenderer.getLightColor(entity.level, entity.getCenterPosition());
         renderImage(entity.getImageUUID().orElse(null), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
         renderBoundingBox(entity, matrixStack, buffer1);
         super.render(entity, f1, f2, matrixStack, buffer1, light);
     }
 
-    public static void renderImage(UUID imageUUID, Direction facing, float width, float height, MatrixStack matrixStack, IRenderTypeBuffer buffer1, int light) {
+    public static void renderImage(UUID imageUUID, Direction facing, float width, float height, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
         matrixStack.pushPose();
 
         float imageRatio = 1F;
@@ -102,7 +99,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             ratioY *= height;
         }
 
-        IVertexBuilder builderFront = buffer1.getBuffer(getRenderType(resourceLocation));
+        VertexConsumer builderFront = buffer1.getBuffer(RenderType.entityCutout(resourceLocation));
 
         // Front
         vertex(builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
@@ -110,7 +107,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
         vertex(builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
 
-        IVertexBuilder builderSide = buffer1.getBuffer(getRenderType(FRAME_SIDE));
+        VertexConsumer builderSide = buffer1.getBuffer(RenderType.entityCutout(FRAME_SIDE));
 
         //Left
         vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
@@ -136,7 +133,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
         vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
 
-        IVertexBuilder builderBack = buffer1.getBuffer(getRenderType(FRAME_BACK));
+        VertexConsumer builderBack = buffer1.getBuffer(RenderType.entityCutout(FRAME_BACK));
 
         //Back
         vertex(builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
@@ -147,8 +144,8 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         matrixStack.popPose();
     }
 
-    private static void vertex(IVertexBuilder builder, MatrixStack matrixStack, float x, float y, float z, float u, float v, int light) {
-        MatrixStack.Entry entry = matrixStack.last();
+    private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {
+        PoseStack.Pose entry = matrixStack.last();
         Matrix4f matrix4f = entry.pose();
         Matrix3f matrix3f = entry.normal();
         builder.vertex(matrix4f, x, y, z)
@@ -160,32 +157,20 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
                 .endVertex();
     }
 
-    private static RenderType getRenderType(ResourceLocation resourceLocation) {
-        RenderType.State state = RenderType.State
-                .builder()
-                .setTextureState(new RenderState.TextureState(resourceLocation, false, false))
-                .setDiffuseLightingState(new RenderState.DiffuseLightingState(false))
-                .setLightmapState(new RenderState.LightmapState(true))
-                .setOverlayState(new RenderState.OverlayState(true))
-                .setCullState(new RenderState.CullState(true))
-                .createCompositeState(true);
-        return RenderType.create("entity_cutout", DefaultVertexFormats.NEW_ENTITY, GL11.GL_QUADS, 256, true, false, state);
-    }
-
-    private static void renderBoundingBox(ImageEntity entity, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        if (!(mc.hitResult instanceof EntityRayTraceResult) || ((EntityRayTraceResult) mc.hitResult).getEntity() != entity) {
+    private static void renderBoundingBox(ImageEntity entity, PoseStack matrixStack, MultiBufferSource buffer) {
+        if (!(mc.hitResult instanceof EntityHitResult) || ((EntityHitResult) mc.hitResult).getEntity() != entity) {
             return;
         }
         if (mc.options.hideGui) {
             return;
         }
         matrixStack.pushPose();
-        AxisAlignedBB axisalignedbb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
-        WorldRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
+        AABB axisalignedbb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
+        LevelRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
         matrixStack.popPose();
     }
 
-    public static void rotate(Direction facing, MatrixStack matrixStack) {
+    public static void rotate(Direction facing, PoseStack matrixStack) {
         switch (facing) {
             case NORTH:
                 matrixStack.translate(1D, 0D, 1D);

@@ -1,22 +1,21 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 
-public class RecipeImageCloning extends SpecialRecipe {
+public class RecipeImageCloning extends CustomRecipe {
 
     public RecipeImageCloning(ResourceLocation idIn) {
         super(idIn);
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(CraftingContainer inv, Level worldIn) {
         ItemStack paper = null;
         ItemStack image = null;
 
@@ -24,7 +23,7 @@ public class RecipeImageCloning extends SpecialRecipe {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty()) {
                 continue;
-            } else if (stack.getItem().is(Main.IMAGE_PAPER)) {
+            } else if (Main.IMAGE_PAPER.contains(stack.getItem())) {
                 paper = stack;
             } else if (stack.getItem().equals(Main.IMAGE)) {
                 image = stack;
@@ -37,7 +36,7 @@ public class RecipeImageCloning extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (stack.getItem().equals(Main.IMAGE)) {
@@ -49,12 +48,12 @@ public class RecipeImageCloning extends SpecialRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return Main.CRAFTING_SPECIAL_IMAGE_CLONING;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
         NonNullList<ItemStack> items = NonNullList.create();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);

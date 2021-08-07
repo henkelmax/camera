@@ -2,9 +2,9 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class MessageTakeBook implements Message<MessageTakeBook> {
 
@@ -26,12 +26,12 @@ public class MessageTakeBook implements Message<MessageTakeBook> {
     }
 
     @Override
-    public MessageTakeBook fromBytes(PacketBuffer buf) {
+    public MessageTakeBook fromBytes(FriendlyByteBuf buf) {
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
     }
 
 }

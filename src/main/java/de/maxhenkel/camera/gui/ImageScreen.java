@@ -1,26 +1,24 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class ImageScreen extends ContainerScreen<Container> {
+public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
     public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
 
@@ -28,26 +26,30 @@ public class ImageScreen extends ContainerScreen<Container> {
     private UUID imageID;
 
     public ImageScreen(ItemStack image) {
-        super(new DummyContainer(), null, new TranslationTextComponent("gui.image.title"));
+        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.image.title"));
 
         imageID = ImageData.getImageID(image);
     }
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         renderBackground(matrixStack);
-        RenderSystem.color4f(1F, 1F, 1F, 1F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (imageID == null) {
             return;
         }
 
-        drawImage(minecraft, width, height, 100, imageID);
+        drawImage(matrixStack, minecraft, width, height, 100, imageID);
     }
 
-    public static void drawImage(Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
-        RenderSystem.pushMatrix();
+    public static void drawImage(PoseStack matrixStack, Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
+        matrixStack.pushPose();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
 
         ResourceLocation location = TextureCache.instance().getImage(uuid);
 
@@ -56,17 +58,16 @@ public class ImageScreen extends ContainerScreen<Container> {
 
 
         if (location == null) {
-            minecraft.getTextureManager().bind(DEFAULT_IMAGE);
+            RenderSystem.setShaderTexture(0, DEFAULT_IMAGE);
         } else {
-            minecraft.getTextureManager().bind(location);
+            RenderSystem.setShaderTexture(0, location);
             NativeImage image = TextureCache.instance().getNativeImage(uuid);
             imageWidth = (float) image.getWidth();
             imageHeight = (float) image.getHeight();
         }
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         float scale = 0.8F;
 
@@ -93,18 +94,20 @@ public class ImageScreen extends ContainerScreen<Container> {
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        buffer.vertex(left, top, zLevel).uv(0F, 0F).endVertex();
-        buffer.vertex(left, top + hnew, zLevel).uv(0F, 1F).endVertex();
-        buffer.vertex(left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
-        buffer.vertex(left + wnew, top, zLevel).uv(1F, 0F).endVertex();
+        Matrix4f matrix = matrixStack.last().pose();
+        buffer.vertex(matrix, left, top, zLevel).uv(0F, 0F).endVertex();
+        buffer.vertex(matrix, left, top + hnew, zLevel).uv(0F, 1F).endVertex();
+        buffer.vertex(matrix, left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
+        buffer.vertex(matrix, left + wnew, top, zLevel).uv(1F, 0F).endVertex();
 
-        tessellator.end();
+        buffer.end();
+        BufferUploader.end(buffer);
 
-        RenderSystem.popMatrix();
+        matrixStack.popPose();
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+    protected void renderLabels(PoseStack matrixStack, int x, int y) {
 
     }
 }

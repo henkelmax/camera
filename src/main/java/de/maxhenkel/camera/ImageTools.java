@@ -1,11 +1,11 @@
 package de.maxhenkel.camera;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.corelib.CommonUtils;
 import de.maxhenkel.corelib.client.RenderUtils;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.storage.FolderName;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.LevelResource;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 public class ImageTools {
 
-    public static FolderName CAMERA_IMAGES = new FolderName("camera_images");
+    public static LevelResource CAMERA_IMAGES = new LevelResource("camera_images");
 
     private static final int MAX_IMAGE_SIZE = 1920;
 
@@ -143,7 +143,7 @@ public class ImageTools {
     }
 
     @Deprecated
-    public static File getImageFileLegacy(ServerPlayerEntity playerMP, UUID uuid) {
+    public static File getImageFileLegacy(ServerPlayer playerMP, UUID uuid) {
         File imageFolder = CommonUtils.getWorldFolder(playerMP.getLevel(), CAMERA_IMAGES);
         File image = new File(imageFolder, uuid.toString() + ".jpg");
         if (!image.exists()) {
@@ -152,18 +152,18 @@ public class ImageTools {
         return image;
     }
 
-    public static File getImageFile(ServerPlayerEntity playerMP, UUID uuid) {
+    public static File getImageFile(ServerPlayer playerMP, UUID uuid) {
         File imageFolder = CommonUtils.getWorldFolder(playerMP.getLevel(), CAMERA_IMAGES);
         return new File(imageFolder, uuid.toString() + ".jpg");
     }
 
-    public static void saveImage(ServerPlayerEntity playerMP, UUID uuid, BufferedImage bufferedImage) throws IOException {
+    public static void saveImage(ServerPlayer playerMP, UUID uuid, BufferedImage bufferedImage) throws IOException {
         File image = getImageFile(playerMP, uuid);
         image.mkdirs();
         ImageIO.write(bufferedImage, "jpg", image);
     }
 
-    public static BufferedImage loadImage(ServerPlayerEntity playerMP, UUID uuid) throws IOException {
+    public static BufferedImage loadImage(ServerPlayer playerMP, UUID uuid) throws IOException {
         return loadImage(ImageTools.getImageFileLegacy(playerMP, uuid));
     }
 
@@ -207,10 +207,10 @@ public class ImageTools {
             filters.flip();
 
             String path = TinyFileDialogs.tinyfd_openFileDialog(
-                    new TranslationTextComponent("title.choose_image").getString(),
+                    new TranslatableComponent("title.choose_image").getString(),
                     dir.getAbsolutePath() + File.separator,
                     filters,
-                    new TranslationTextComponent("filetype.images").getString(),
+                    new TranslatableComponent("filetype.images").getString(),
                     false
             );
 

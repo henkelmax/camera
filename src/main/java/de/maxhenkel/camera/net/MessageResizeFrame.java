@@ -2,11 +2,11 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.UUID;
 
@@ -33,8 +33,8 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        if (context.getSender().level instanceof ServerWorld && context.getSender().abilities.mayBuild) {
-            ServerWorld world = (ServerWorld) context.getSender().level;
+        if (context.getSender().level instanceof ServerLevel && context.getSender().getAbilities().mayBuild) {
+            ServerLevel world = (ServerLevel) context.getSender().level;
             Entity entity = world.getEntity(uuid);
             if (entity instanceof ImageEntity) {
                 ImageEntity image = (ImageEntity) entity;
@@ -44,7 +44,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public MessageResizeFrame fromBytes(PacketBuffer buf) {
+    public MessageResizeFrame fromBytes(FriendlyByteBuf buf) {
         uuid = buf.readUUID();
         direction = Direction.values()[buf.readInt()];
         larger = buf.readBoolean();
@@ -52,7 +52,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(uuid);
         buf.writeInt(direction.ordinal());
         buf.writeBoolean(larger);

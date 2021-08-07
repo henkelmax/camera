@@ -1,30 +1,31 @@
 package de.maxhenkel.camera.inventory;
 
 import de.maxhenkel.camera.items.ImageItem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-public class AlbumInventory implements IInventory {
+public class AlbumInventory implements Container {
 
     private NonNullList<ItemStack> items;
     private ItemStack album;
     private int invSize;
-    private CompoundNBT inventoryTag;
+    private CompoundTag inventoryTag;
 
     public AlbumInventory(ItemStack album) {
         this.album = album;
         this.invSize = 54;
         this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 
-        CompoundNBT c = album.getOrCreateTag();
+        CompoundTag c = album.getOrCreateTag();
 
         if (c.contains("Images")) {
             inventoryTag = c.getCompound("Images");
-            ItemStackHelper.loadAllItems(inventoryTag, items);
+            ContainerHelper.loadAllItems(inventoryTag, items);
         }
     }
 
@@ -40,14 +41,14 @@ public class AlbumInventory implements IInventory {
 
     @Override
     public ItemStack removeItem(int index, int count) {
-        ItemStack itemstack = ItemStackHelper.removeItem(items, index, count);
+        ItemStack itemstack = ContainerHelper.removeItem(items, index, count);
         setChanged();
         return itemstack;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int index) {
-        return ItemStackHelper.takeItem(items, index);
+        return ContainerHelper.takeItem(items, index);
     }
 
     @Override
@@ -64,11 +65,11 @@ public class AlbumInventory implements IInventory {
     @Override
     public void setChanged() {
         if (inventoryTag == null) {
-            CompoundNBT tag = album.getOrCreateTag();
-            tag.put("Images", inventoryTag = new CompoundNBT());
+            CompoundTag tag = album.getOrCreateTag();
+            tag.put("Images", inventoryTag = new CompoundTag());
         }
 
-        ItemStackHelper.saveAllItems(inventoryTag, items, true);
+        ContainerHelper.saveAllItems(inventoryTag, items, true);
     }
 
     @Override
@@ -88,8 +89,8 @@ public class AlbumInventory implements IInventory {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
-        for (Hand hand : Hand.values()) {
+    public boolean stillValid(Player player) {
+        for (InteractionHand hand : InteractionHand.values()) {
             if (player.getItemInHand(hand).equals(album)) {
                 return true;
             }

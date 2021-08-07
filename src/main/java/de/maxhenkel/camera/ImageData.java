@@ -1,18 +1,18 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.items.ImageItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -81,7 +81,7 @@ public class ImageData {
         return data;
     }
 
-    public static ImageData create(ServerPlayerEntity player, UUID imageID) {
+    public static ImageData create(ServerPlayer player, UUID imageID) {
         ImageData data = new ImageData();
         data.id = imageID;
         data.time = System.currentTimeMillis();
@@ -95,24 +95,24 @@ public class ImageData {
         return data;
     }
 
-    private static boolean canEntityBeSeen(ServerPlayerEntity player, Entity entity) {
+    private static boolean canEntityBeSeen(ServerPlayer player, Entity entity) {
         if (player == entity) {
             return false;
         }
-        Vector3d playerVec = new Vector3d(player.getX(), player.getEyeY(), player.getZ());
-        Vector3d entityVec = new Vector3d(entity.getX(), entity.getEyeY(), entity.getZ());
+        Vec3 playerVec = new Vec3(player.getX(), player.getEyeY(), player.getZ());
+        Vec3 entityVec = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
 
-        Vector3d lookVecToEntity = entityVec.subtract(playerVec).normalize();
-        Vector3d lookVec = player.getLookAngle().normalize();
+        Vec3 lookVecToEntity = entityVec.subtract(playerVec).normalize();
+        Vec3 lookVec = player.getLookAngle().normalize();
 
         if (angle(lookVecToEntity, lookVec) > 90D) {
             return false;
         }
 
-        return player.level.clip(new RayTraceContext(playerVec, entityVec, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player)).getType() == RayTraceResult.Type.MISS;
+        return player.level.clip(new ClipContext(playerVec, entityVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
     }
 
-    private static double angle(Vector3d vec1, Vector3d vec2) {
+    private static double angle(Vec3 vec1, Vec3 vec2) {
         return Math.toDegrees(Math.acos(vec1.dot(vec2) / (vec1.length() * vec2.length())));
     }
 
@@ -140,18 +140,18 @@ public class ImageData {
         }
     }
 
-    private static CompoundNBT getImageTag(ItemStack stack) {
-        CompoundNBT compound = stack.getOrCreateTag();
+    private static CompoundTag getImageTag(ItemStack stack) {
+        CompoundTag compound = stack.getOrCreateTag();
 
         if (!compound.contains("image", Constants.NBT.TAG_COMPOUND)) {
-            compound.put("image", new CompoundNBT());
+            compound.put("image", new CompoundTag());
         }
 
         return compound.getCompound("image");
     }
 
     private static void setImageID(ItemStack stack, UUID uuid) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
 
         compound.putLong("image_id_most", uuid.getMostSignificantBits());
         compound.putLong("image_id_least", uuid.getLeastSignificantBits());
@@ -159,7 +159,7 @@ public class ImageData {
 
     @Nullable
     public static UUID getImageID(ItemStack stack) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
 
         if (!compound.contains("image_id_most", Constants.NBT.TAG_LONG) || !compound.contains("image_id_least", Constants.NBT.TAG_LONG)) {
             return null;
@@ -171,12 +171,12 @@ public class ImageData {
     }
 
     private static void setTime(ItemStack stack, long time) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
         compound.putLong("image_time", time);
     }
 
     private static long getTime(ItemStack stack) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
 
         if (!compound.contains("image_time", Constants.NBT.TAG_LONG)) {
             return 0L;
@@ -186,12 +186,12 @@ public class ImageData {
     }
 
     private static void setOwner(ItemStack stack, String name) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
         compound.putString("owner", name);
     }
 
     private static String getOwner(ItemStack stack) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
 
         if (!compound.contains("owner", Constants.NBT.TAG_STRING)) {
             return "";
@@ -201,13 +201,13 @@ public class ImageData {
     }
 
     private static void setBiome(ItemStack stack, ResourceLocation biome) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
         compound.putString("biome", biome.toString());
     }
 
     @Nullable
     private static ResourceLocation getBiome(ItemStack stack) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
         if (!compound.contains("biome", Constants.NBT.TAG_STRING)) {
             return null;
         }
@@ -215,11 +215,11 @@ public class ImageData {
     }
 
     private static void setEntities(ItemStack stack, List<ResourceLocation> entities) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
 
-        ListNBT list = new ListNBT();
+        ListTag list = new ListTag();
         for (ResourceLocation entity : entities) {
-            list.add(StringNBT.valueOf(entity.toString()));
+            list.add(StringTag.valueOf(entity.toString()));
         }
 
         compound.put("entities", list);
@@ -227,14 +227,14 @@ public class ImageData {
 
     @Nullable
     private static List<ResourceLocation> getEntities(ItemStack stack) {
-        CompoundNBT compound = getImageTag(stack);
+        CompoundTag compound = getImageTag(stack);
         if (!compound.contains("entities", Constants.NBT.TAG_LIST)) {
             return null;
         }
 
-        ListNBT entities = compound.getList("entities", Constants.NBT.TAG_STRING);
+        ListTag entities = compound.getList("entities", Constants.NBT.TAG_STRING);
         List<ResourceLocation> list = new ArrayList<>();
-        for (INBT e : entities) {
+        for (Tag e : entities) {
             list.add(new ResourceLocation(e.getAsString()));
         }
 

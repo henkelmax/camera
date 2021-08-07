@@ -13,7 +13,6 @@ public class PluginCamera implements IWailaPlugin {
     public void register(IRegistrar registrar) {
         registrar.registerComponentProvider(HUDHandlerImageFrame.INSTANCE, TooltipPosition.HEAD, ImageEntity.class);
         registrar.registerComponentProvider(HUDHandlerImageFrame.INSTANCE, TooltipPosition.BODY, ImageEntity.class);
-        registrar.registerComponentProvider(HUDHandlerImageFrame.INSTANCE, TooltipPosition.TAIL, ImageEntity.class);
     }
 
 }

@@ -1,25 +1,25 @@
 package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.Main;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public class AlbumContainer extends Container {
+public class AlbumContainer extends AbstractContainerMenu {
 
-    private final IInventory inventory;
-    private final IIntArray intArray;
+    private final Container inventory;
+    private final ContainerData intArray;
 
     public AlbumContainer(int id) {
-        this(id, new Inventory(1), new IntArray(1));
+        this(id, new SimpleContainer(1), new SimpleContainerData(1));
     }
 
-    public AlbumContainer(int id, IInventory inventory, IIntArray intArray) {
+    public AlbumContainer(int id, Container inventory, ContainerData intArray) {
         super(Main.ALBUM_CONTAINER, id);
         checkContainerSize(inventory, 1);
         checkContainerDataCount(intArray, 1);
@@ -42,7 +42,7 @@ public class AlbumContainer extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return inventory.stillValid(player);
     }
 
@@ -58,13 +58,13 @@ public class AlbumContainer extends Container {
         setData(0, page);
     }
 
-    public void takeBook(PlayerEntity player) {
+    public void takeBook(Player player) {
         if (!player.mayBuild()) {
             return;
         }
         ItemStack itemstack = inventory.removeItemNoUpdate(0);
         inventory.setChanged();
-        if (!player.inventory.add(itemstack)) {
+        if (!player.getInventory().add(itemstack)) {
             player.drop(itemstack, false);
         }
     }

@@ -1,7 +1,7 @@
 package de.maxhenkel.camera;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.net.MessagePartialImage;
-import net.minecraft.client.renderer.texture.NativeImage;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

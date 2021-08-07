@@ -13,30 +13,30 @@ import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.ClientRegistry;
 import de.maxhenkel.corelib.CommonRegistry;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.tags.ITag;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -50,30 +50,30 @@ public class Main {
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
-    public static SpecialRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING;
+    public static SimpleRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING;
     public static ImageFrameItem FRAME_ITEM;
     public static CameraItem CAMERA;
     public static ImageItem IMAGE;
     public static AlbumItem ALBUM;
-    public static ContainerType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
-    public static ContainerType<AlbumContainer> ALBUM_CONTAINER;
+    public static MenuType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
+    public static MenuType<AlbumContainer> ALBUM_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
-    public static ITag<Item> IMAGE_PAPER = ItemTags.bind(new ResourceLocation(Main.MODID, "image_paper").toString());
+    public static Tag<Item> IMAGE_PAPER = ItemTags.bind(new ResourceLocation(Main.MODID, "image_paper").toString());
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;
 
     @OnlyIn(Dist.CLIENT)
-    public static KeyBinding KEY_NEXT;
+    public static KeyMapping KEY_NEXT;
     @OnlyIn(Dist.CLIENT)
-    public static KeyBinding KEY_PREVIOUS;
+    public static KeyMapping KEY_PREVIOUS;
 
     public Main() {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(EntityType.class, this::registerEntities);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainers);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(IRecipeSerializer.class, this::registerRecipes);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerContainers);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, this::registerRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class, true);
@@ -115,7 +115,7 @@ public class Main {
         ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER, AlbumInventoryScreen::new);
         ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER, LecternAlbumScreen::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(IMAGE_ENTITY_TYPE, ImageRenderer::new);
+        EntityRenderers.register(IMAGE_ENTITY_TYPE, ImageRenderer::new);
     }
 
     @SubscribeEvent
@@ -137,7 +137,7 @@ public class Main {
 
     @SubscribeEvent
     public void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-        IMAGE_ENTITY_TYPE = CommonRegistry.registerEntity(Main.MODID, "image_frame", EntityClassification.MISC, ImageEntity.class, builder -> {
+        IMAGE_ENTITY_TYPE = CommonRegistry.registerEntity(Main.MODID, "image_frame", MobCategory.MISC, ImageEntity.class, builder -> {
             builder.setTrackingRange(256)
                     .setUpdateInterval(20)
                     .setShouldReceiveVelocityUpdates(false)
@@ -148,19 +148,19 @@ public class Main {
     }
 
     @SubscribeEvent
-    public void registerContainers(RegistryEvent.Register<ContainerType<?>> event) {
-        ALBUM_INVENTORY_CONTAINER = new ContainerType<>(AlbumInventoryContainer::new);
+    public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
+        ALBUM_INVENTORY_CONTAINER = new MenuType<>(AlbumInventoryContainer::new);
         ALBUM_INVENTORY_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album_inventory"));
         event.getRegistry().register(ALBUM_INVENTORY_CONTAINER);
 
-        ALBUM_CONTAINER = new ContainerType<>((i, playerInventory) -> new AlbumContainer(i));
+        ALBUM_CONTAINER = new MenuType<>((i, playerInventory) -> new AlbumContainer(i));
         ALBUM_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album"));
         event.getRegistry().register(ALBUM_CONTAINER);
     }
 
     @SubscribeEvent
-    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        CRAFTING_SPECIAL_IMAGE_CLONING = new SpecialRecipeSerializer<>(RecipeImageCloning::new);
+    public void registerRecipes(RegistryEvent.Register<RecipeSerializer<?>> event) {
+        CRAFTING_SPECIAL_IMAGE_CLONING = new SimpleRecipeSerializer<>(RecipeImageCloning::new);
         CRAFTING_SPECIAL_IMAGE_CLONING.setRegistryName(MODID, "crafting_special_imagecloning");
         event.getRegistry().register(CRAFTING_SPECIAL_IMAGE_CLONING);
     }

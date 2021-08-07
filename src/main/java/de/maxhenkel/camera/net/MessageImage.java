@@ -4,9 +4,9 @@ import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -45,14 +45,14 @@ public class MessageImage implements Message<MessageImage> {
     }
 
     @Override
-    public MessageImage fromBytes(PacketBuffer buf) {
+    public MessageImage fromBytes(FriendlyByteBuf buf) {
         uuid = buf.readUUID();
         image = buf.readByteArray();
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(uuid);
 
         buf.writeByteArray(image);

@@ -2,10 +2,11 @@ package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
 import de.maxhenkel.corelib.tag.TagUtils;
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 public class ServerConfig extends ConfigBase {
 
@@ -19,7 +20,7 @@ public class ServerConfig extends ConfigBase {
     public final ForgeConfigSpec.BooleanValue advancedImageData;
     public final ForgeConfigSpec.IntValue advancedDataMaxEntities;
 
-    public ITag<Item> cameraConsumeItem;
+    public Tag<Item> cameraConsumeItem;
 
     public ServerConfig(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -53,7 +54,7 @@ public class ServerConfig extends ConfigBase {
     }
 
     @Override
-    public void onReload(ModConfig.ModConfigEvent event) {
+    public void onReload(ModConfigEvent event) {
         super.onReload(event);
         cameraConsumeItem = TagUtils.getItem(cameraConsumeItemSpec.get());
         if (cameraConsumeItem == null) {

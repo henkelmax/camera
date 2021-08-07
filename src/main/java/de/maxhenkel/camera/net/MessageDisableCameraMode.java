@@ -2,11 +2,11 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
@@ -21,7 +21,7 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        for (Hand hand : Hand.values()) {
+        for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = context.getSender().getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA)) {
                 Main.CAMERA.setActive(stack, false);
@@ -31,12 +31,12 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
     }
 
     @Override
-    public MessageDisableCameraMode fromBytes(PacketBuffer buf) {
+    public MessageDisableCameraMode fromBytes(FriendlyByteBuf buf) {
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
 
     }
 }

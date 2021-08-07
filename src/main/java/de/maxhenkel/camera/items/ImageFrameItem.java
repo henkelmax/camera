@@ -2,35 +2,38 @@ package de.maxhenkel.camera.items;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 
 public class ImageFrameItem extends Item {
 
     public ImageFrameItem() {
-        super(new Properties().tab(ItemGroup.TAB_DECORATIONS));
+        super(new Properties().tab(CreativeModeTab.TAB_DECORATIONS));
         setRegistryName(new ResourceLocation(Main.MODID, "image_frame"));
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
         Direction facing = context.getClickedFace();
         BlockPos offset = pos.relative(facing);
-        PlayerEntity player = context.getPlayer();
+        Player player = context.getPlayer();
         if (player != null && !canPlace(player, facing, context.getItemInHand(), offset)) {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        World world = context.getLevel();
+        Level world = context.getLevel();
         ImageEntity image = Main.IMAGE_ENTITY_TYPE.create(world);
         if (image == null) {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
         image.setFacing(facing);
         image.setImagePosition(offset);
@@ -41,12 +44,12 @@ public class ImageFrameItem extends Item {
                 world.addFreshEntity(image);
             }
             context.getItemInHand().shrink(1);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    protected boolean canPlace(PlayerEntity player, Direction facing, ItemStack stack, BlockPos pos) {
+    protected boolean canPlace(Player player, Direction facing, ItemStack stack, BlockPos pos) {
         return !facing.getAxis().isVertical() && player.mayUseItemAt(pos, facing, stack);
     }
 }

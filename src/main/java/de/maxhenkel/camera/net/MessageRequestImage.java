@@ -3,9 +3,9 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -39,13 +39,13 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
     }
 
     @Override
-    public MessageRequestImage fromBytes(PacketBuffer buf) {
+    public MessageRequestImage fromBytes(FriendlyByteBuf buf) {
         imgUUID = buf.readUUID();
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
     }
 

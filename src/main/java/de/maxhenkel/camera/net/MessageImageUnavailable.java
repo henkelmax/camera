@@ -2,9 +2,9 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
@@ -32,13 +32,13 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
     }
 
     @Override
-    public MessageImageUnavailable fromBytes(PacketBuffer buf) {
+    public MessageImageUnavailable fromBytes(FriendlyByteBuf buf) {
         imgUUID = buf.readUUID();
         return this;
     }
 
     @Override
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
     }
 }

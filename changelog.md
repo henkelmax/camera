@@ -1,1 +1,1 @@
-- Fixed camera not working in off hand
+- Updated to 1.17.1
