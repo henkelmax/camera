@@ -1,14 +1,14 @@
 package de.maxhenkel.camera.integration.jei;
 
 import mezz.jei.api.gui.handlers.IGuiProperties;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
 public class NoJEIGuiProperties implements IGuiProperties {
 
-    private final ContainerScreen<?> containerScreen;
+    private final AbstractContainerScreen<?> containerScreen;
 
-    public NoJEIGuiProperties(ContainerScreen<?> containerScreen) {
+    public NoJEIGuiProperties(AbstractContainerScreen<?> containerScreen) {
         this.containerScreen = containerScreen;
     }
 

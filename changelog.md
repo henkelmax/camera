@@ -1,1 +1,1 @@
-- Updated to 1.17.1
+- Re added JEI support
