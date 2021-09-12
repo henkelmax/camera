@@ -1,1 +1,1 @@
-- Re added JEI support
+- Re added albums in lecterns

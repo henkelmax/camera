@@ -6,9 +6,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.18', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'de.maxhenkel.forge-update', name: 'forge-update', version: '1.0.4'
-//        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
@@ -21,7 +21,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'forge-update'
 apply plugin: 'idea'
-//apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.spongepowered.mixin'
 
 idea {
     module {
@@ -91,12 +91,12 @@ dependencies {
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-//    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 }
 
-/*mixin {
+mixin {
     add sourceSets.main, "camera.refmap.json"
-}*/
+}
 
 jar {
     manifest {
@@ -241,17 +241,4 @@ shadowJar {
 
 reobf {
     shadowJar {}
-}
-
-sourceSets {
-    main {
-        java {
-            exclude 'de/maxhenkel/camera/mixins/**'
-            exclude 'de/maxhenkel/camera/MixinConnector.java'
-        }
-        resources {
-            exclude 'assets/camera/camera.mixins.json'
-            exclude 'META-INF/MANIFEST.MF'
-        }
-    }
 }
