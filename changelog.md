@@ -1,1 +1,1 @@
-- Re added albums in lecterns
+- Added french translation
