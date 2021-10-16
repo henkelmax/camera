@@ -36,7 +36,7 @@ public class TextureCache {
             awaitingImages.remove(uuid);
         }
 
-        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "texures/camera/" + uuid.toString());
+        ResourceLocation resourceLocation = new ResourceLocation(Main.MODID, "textures/camera/" + uuid.toString());
         CameraTextureObject cameraTextureObject = new CameraTextureObject(resourceLocation, image);
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
