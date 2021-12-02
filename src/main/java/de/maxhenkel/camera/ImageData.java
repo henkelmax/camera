@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -143,7 +142,7 @@ public class ImageData {
     private static CompoundTag getImageTag(ItemStack stack) {
         CompoundTag compound = stack.getOrCreateTag();
 
-        if (!compound.contains("image", Constants.NBT.TAG_COMPOUND)) {
+        if (!compound.contains("image", Tag.TAG_COMPOUND)) {
             compound.put("image", new CompoundTag());
         }
 
@@ -161,7 +160,7 @@ public class ImageData {
     public static UUID getImageID(ItemStack stack) {
         CompoundTag compound = getImageTag(stack);
 
-        if (!compound.contains("image_id_most", Constants.NBT.TAG_LONG) || !compound.contains("image_id_least", Constants.NBT.TAG_LONG)) {
+        if (!compound.contains("image_id_most", Tag.TAG_LONG) || !compound.contains("image_id_least", Tag.TAG_LONG)) {
             return null;
         }
 
@@ -178,7 +177,7 @@ public class ImageData {
     private static long getTime(ItemStack stack) {
         CompoundTag compound = getImageTag(stack);
 
-        if (!compound.contains("image_time", Constants.NBT.TAG_LONG)) {
+        if (!compound.contains("image_time", Tag.TAG_LONG)) {
             return 0L;
         }
 
@@ -193,7 +192,7 @@ public class ImageData {
     private static String getOwner(ItemStack stack) {
         CompoundTag compound = getImageTag(stack);
 
-        if (!compound.contains("owner", Constants.NBT.TAG_STRING)) {
+        if (!compound.contains("owner", Tag.TAG_STRING)) {
             return "";
         }
 
@@ -208,7 +207,7 @@ public class ImageData {
     @Nullable
     private static ResourceLocation getBiome(ItemStack stack) {
         CompoundTag compound = getImageTag(stack);
-        if (!compound.contains("biome", Constants.NBT.TAG_STRING)) {
+        if (!compound.contains("biome", Tag.TAG_STRING)) {
             return null;
         }
         return new ResourceLocation(compound.getString("biome"));
@@ -228,11 +227,11 @@ public class ImageData {
     @Nullable
     private static List<ResourceLocation> getEntities(ItemStack stack) {
         CompoundTag compound = getImageTag(stack);
-        if (!compound.contains("entities", Constants.NBT.TAG_LIST)) {
+        if (!compound.contains("entities", Tag.TAG_LIST)) {
             return null;
         }
 
-        ListTag entities = compound.getList("entities", Constants.NBT.TAG_STRING);
+        ListTag entities = compound.getList("entities", Tag.TAG_STRING);
         List<ResourceLocation> list = new ArrayList<>();
         for (Tag e : entities) {
             list.add(new ResourceLocation(e.getAsString()));

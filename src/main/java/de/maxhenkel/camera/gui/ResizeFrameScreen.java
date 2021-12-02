@@ -111,7 +111,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
             blit(matrixStack, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
         }
 
-        if (visibilityButton.isHovered()) {
+        if (visibilityButton.isHoveredOrFocused()) {
             renderTooltip(matrixStack, Arrays.asList(new TranslatableComponent("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
         }
     }

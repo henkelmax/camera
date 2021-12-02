@@ -1,1 +1,1 @@
-- Added french translation
+- Updated to 1.18

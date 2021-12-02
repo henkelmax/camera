@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "de.maxhenkel.camera.mixins",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "camera.refmap.json",
   "minVersion": "0.8",
   "mixins": [

@@ -143,9 +143,9 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onGuiOpen(ScreenOpenEvent event) {
         if (inCameraMode) {
-            if (event.getGui() instanceof PauseScreen) {
+            if (event.getScreen() instanceof PauseScreen) {
                 Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
@@ -223,7 +223,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onFOVModifierEvent(EntityViewRenderEvent.FOVModifier event) {
+    public void onFOVModifierEvent(EntityViewRenderEvent.FieldOfView event) {
         if (!inCameraMode) {
             fov = (float) mc.options.fov;
             return;
