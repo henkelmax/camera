@@ -1,1 +1,1 @@
-- Updated to 1.18
+- Re added JEI integration
