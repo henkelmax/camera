@@ -1,1 +1,1 @@
-- Re added JEI integration
+- Updated to 1.18.1
