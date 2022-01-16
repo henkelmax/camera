@@ -1,1 +1,2 @@
-- Updated to 1.18.1
+- Fixed empty ItemStack getting NBT data
+- Fixed can't take album out of empty album in lectern 

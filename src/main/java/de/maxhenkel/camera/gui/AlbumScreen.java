@@ -43,6 +43,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrixStack);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -51,7 +52,6 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
         }
         UUID uuid = images.get(index);
         ImageScreen.drawImage(matrixStack, minecraft, width, height, 100, uuid);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

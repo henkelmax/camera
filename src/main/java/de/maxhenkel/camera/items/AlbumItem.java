@@ -27,8 +27,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +46,6 @@ public class AlbumItem extends Item {
             if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayer) {
                 NetworkHooks.openGui((ServerPlayer) playerIn, new MenuProvider() {
 
-                    @Nullable
                     @Override
                     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
                         return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(stack));
@@ -91,6 +90,9 @@ public class AlbumItem extends Item {
     }
 
     public List<UUID> getImages(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<UUID> images = new ArrayList<>();
         Container inventory = new AlbumInventory(stack);
         for (int i = 0; i < inventory.getContainerSize(); i++) {
