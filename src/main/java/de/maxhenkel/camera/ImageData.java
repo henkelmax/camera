@@ -141,6 +141,7 @@ public class ImageData {
     }
 
     private static CompoundTag getImageTag(ItemStack stack) {
+        assert stack.getItem() instanceof ImageItem;
         CompoundTag compound = stack.getOrCreateTag();
 
         if (!compound.contains("image", Constants.NBT.TAG_COMPOUND)) {

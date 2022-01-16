@@ -17,6 +17,7 @@ public class AlbumInventory implements Container {
     private CompoundTag inventoryTag;
 
     public AlbumInventory(ItemStack album) {
+        assert !album.isEmpty();
         this.album = album;
         this.invSize = 54;
         this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);

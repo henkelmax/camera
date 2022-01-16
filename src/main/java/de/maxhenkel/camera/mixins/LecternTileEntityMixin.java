@@ -50,7 +50,6 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         super(type, pos, state);
     }
 
-
     @Inject(method = "hasBook", at = @At("HEAD"), cancellable = true)
     public void hasBook(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(!book.isEmpty());
@@ -83,8 +82,11 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         cir.setReturnValue(new AlbumContainer(id, bookAccess, dataAccess));
     }
 
-    @Inject(method = "load", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "load", at = @At("TAIL"))
     public void read(CompoundTag compound, CallbackInfo info) {
+        if (!(book.getItem() instanceof AlbumItem)) {
+            return;
+        }
         pageCount = Main.ALBUM.getImages(book).size();
     }
 
