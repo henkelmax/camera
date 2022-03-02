@@ -87,7 +87,7 @@ public class ImageData {
         data.owner = player.getName().getContents();
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
-            data.biome = player.level.getBiome(player.blockPosition()).getRegistryName();
+            data.biome = player.level.getBiome(player.blockPosition()).value().getRegistryName();
             data.entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(livingEntity -> livingEntity.getType().getRegistryName()).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 

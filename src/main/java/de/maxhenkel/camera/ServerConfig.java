@@ -1,11 +1,10 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
+import de.maxhenkel.corelib.tag.Tag;
 import de.maxhenkel.corelib.tag.TagUtils;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 public class ServerConfig extends ConfigBase {

@@ -30,7 +30,7 @@ public class ImageCopyExtension<T extends RecipeImageCloning> implements ICustom
 
         ItemStack out = image.copy();
 
-        List<ItemStack> paper = Main.IMAGE_PAPER.getValues().stream().map(ItemStack::new).collect(Collectors.toList());
+        List<ItemStack> paper = Main.IMAGE_PAPER.getAll().stream().map(ItemStack::new).collect(Collectors.toList());
 
         guiItemStacks.set(0, out);
         guiItemStacks.set(1, paper);
@@ -39,7 +39,7 @@ public class ImageCopyExtension<T extends RecipeImageCloning> implements ICustom
 
     @Override
     public void setIngredients(IIngredients ingredients) {
-        List<ItemStack> paper = Main.IMAGE_PAPER.getValues().stream().map(ItemStack::new).collect(Collectors.toList());
+        List<ItemStack> paper = Main.IMAGE_PAPER.getAll().stream().map(ItemStack::new).collect(Collectors.toList());
         ingredients.setInputs(VanillaTypes.ITEM, paper);
         ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(Main.IMAGE));
     }
