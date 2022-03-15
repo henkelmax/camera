@@ -45,7 +45,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(Main.SERVER_CONFIG.cameraConsumeItem.getValues().stream().map(item -> new ItemStack(item, Main.SERVER_CONFIG.cameraConsumeItemAmount.get())).collect(Collectors.toList()), CATEGORY_TAKE_IMAGE);
+        registration.addRecipes(Main.SERVER_CONFIG.cameraConsumeItem.getAll().stream().map(item -> new ItemStack(item, Main.SERVER_CONFIG.cameraConsumeItemAmount.get())).collect(Collectors.toList()), CATEGORY_TAKE_IMAGE);
     }
 
     @Override
