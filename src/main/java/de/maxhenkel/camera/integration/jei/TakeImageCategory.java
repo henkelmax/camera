@@ -2,11 +2,13 @@ package de.maxhenkel.camera.integration.jei;
 
 import de.maxhenkel.camera.Main;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -18,10 +20,15 @@ import java.util.List;
 
 public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
-    private IGuiHelper helper;
+    private final IGuiHelper helper;
 
     public TakeImageCategory(IGuiHelper helper) {
         this.helper = helper;
+    }
+
+    @Override
+    public RecipeType<ItemStack> getRecipeType() {
+        return JEIPlugin.RECIPE_TYPE_TAKE_IMAGE;
     }
 
     @Override
@@ -31,19 +38,24 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public IDrawable getIcon() {
-        return helper.createDrawableIngredient(new ItemStack(Main.CAMERA));
+        return helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA));
     }
 
     @Override
-    public List<Component> getTooltipStrings(ItemStack recipe, double mouseX, double mouseY) {
+    public List<Component> getTooltipStrings(ItemStack recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         return Collections.singletonList(new TranslatableComponent("jei.camera.tooltip.take_image", recipe.getCount(), recipe.getHoverName()));
     }
 
     @Override
-    public void setIngredients(ItemStack recipe, IIngredients ingredients) {
-        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(Main.CAMERA));
-        ingredients.setInput(VanillaTypes.ITEM, recipe);
-        ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(Main.IMAGE));
+    public void setRecipe(IRecipeLayoutBuilder builder, ItemStack recipe, IFocusGroup focuses) {
+        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
+                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA));
+
+        builder.addSlot(RecipeIngredientRole.INPUT, 40, 1)
+                .addIngredient(VanillaTypes.ITEM, recipe);
+
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 88, 1)
+                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.IMAGE));
     }
 
     @Override
@@ -53,23 +65,12 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public ResourceLocation getUid() {
-        return JEIPlugin.CATEGORY_TAKE_IMAGE;
+        return new ResourceLocation(Main.MODID, "take_image");
     }
 
     @Override
     public Class<? extends ItemStack> getRecipeClass() {
         return ItemStack.class;
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayout layout, ItemStack wrapper, IIngredients ingredients) {
-        IGuiItemStackGroup group = layout.getItemStacks();
-        group.init(0, true, 0, 0);
-        group.set(0, new ItemStack(Main.CAMERA));
-        group.init(1, true, 39, 0);
-        group.set(1, wrapper);
-        group.init(2, true, 87, 0);
-        group.set(2, new ItemStack(Main.IMAGE));
     }
 
 }

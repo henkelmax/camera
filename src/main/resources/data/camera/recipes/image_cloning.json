@@ -1,3 +1,9 @@
 {
-  "type": "camera:crafting_special_imagecloning"
+  "type": "camera:image_cloning",
+  "image": {
+    "item": "camera:image"
+  },
+  "paper": {
+    "tag": "camera:image_paper"
+  }
 }

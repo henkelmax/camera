@@ -19,22 +19,22 @@ public class NoJEIGuiProperties implements IGuiProperties {
 
     @Override
     public int getGuiLeft() {
-        return Integer.MAX_VALUE;
+        return containerScreen.width;
     }
 
     @Override
     public int getGuiTop() {
-        return Integer.MAX_VALUE;
+        return containerScreen.height;
     }
 
     @Override
     public int getGuiXSize() {
-        return containerScreen.getXSize();
+        return containerScreen.width;
     }
 
     @Override
     public int getGuiYSize() {
-        return containerScreen.getYSize();
+        return containerScreen.height;
     }
 
     @Override

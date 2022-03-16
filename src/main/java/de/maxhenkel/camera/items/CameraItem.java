@@ -127,7 +127,7 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return Main.SERVER_CONFIG.cameraConsumeItem.contains(stack.getItem());
+        return stack.is(Main.IMAGE_PAPER);
     }
 
     public boolean isActive(ItemStack stack) {

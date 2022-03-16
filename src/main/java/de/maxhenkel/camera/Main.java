@@ -13,18 +13,17 @@ import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.ClientRegistry;
 import de.maxhenkel.corelib.CommonRegistry;
-import de.maxhenkel.corelib.tag.Tag;
-import de.maxhenkel.corelib.tag.TagUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -50,7 +49,7 @@ public class Main {
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
-    public static SimpleRecipeSerializer<RecipeImageCloning> CRAFTING_SPECIAL_IMAGE_CLONING;
+    public static ImageCloningRecipe.ImageCloningSerializer IMAGE_CLONING_SERIALIZER;
     public static ImageFrameItem FRAME_ITEM;
     public static CameraItem CAMERA;
     public static ImageItem IMAGE;
@@ -58,7 +57,7 @@ public class Main {
     public static MenuType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
     public static MenuType<AlbumContainer> ALBUM_CONTAINER;
     public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
-    public static Tag<Item> IMAGE_PAPER = TagUtils.getItemTag(new ResourceLocation(Main.MODID, "image_paper"));
+    public static TagKey<Item> IMAGE_PAPER = ItemTags.create(new ResourceLocation(Main.MODID, "image_paper"));
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;
@@ -160,9 +159,9 @@ public class Main {
 
     @SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<RecipeSerializer<?>> event) {
-        CRAFTING_SPECIAL_IMAGE_CLONING = new SimpleRecipeSerializer<>(RecipeImageCloning::new);
-        CRAFTING_SPECIAL_IMAGE_CLONING.setRegistryName(MODID, "crafting_special_imagecloning");
-        event.getRegistry().register(CRAFTING_SPECIAL_IMAGE_CLONING);
+        IMAGE_CLONING_SERIALIZER = new ImageCloningRecipe.ImageCloningSerializer();
+        IMAGE_CLONING_SERIALIZER.setRegistryName(MODID, "image_cloning");
+        event.getRegistry().register(IMAGE_CLONING_SERIALIZER);
     }
 
 }

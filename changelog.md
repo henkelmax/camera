@@ -1,1 +1,1 @@
-- Re added JEI and Jade integration
+- Fixed JEI integration
