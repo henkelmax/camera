@@ -10,7 +10,7 @@ import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +26,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
     private UUID imageID;
 
     public ImageScreen(ItemStack image) {
-        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.image.title"));
+        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.image.title"));
 
         imageID = ImageData.getImageID(image);
     }
@@ -100,8 +100,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
         buffer.vertex(matrix, left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
         buffer.vertex(matrix, left + wnew, top, zLevel).uv(1F, 0F).endVertex();
 
-        buffer.end();
-        BufferUploader.end(buffer);
+        BufferUploader.drawWithShader(buffer.end());
 
         matrixStack.popPose();
     }

@@ -8,8 +8,6 @@ import de.maxhenkel.camera.inventory.AlbumInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
@@ -36,7 +34,6 @@ public class AlbumItem extends Item {
 
     public AlbumItem() {
         super(new Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
-        setRegistryName(new ResourceLocation(Main.MODID, "album"));
     }
 
     @Override
@@ -53,7 +50,7 @@ public class AlbumItem extends Item {
 
                     @Override
                     public Component getDisplayName() {
-                        return new TranslatableComponent(AlbumItem.this.getDescriptionId());
+                        return Component.translatable(AlbumItem.this.getDescriptionId());
                     }
                 });
             }
@@ -65,7 +62,7 @@ public class AlbumItem extends Item {
 
     public static void openAlbum(Player player, ItemStack album) {
         if (player.level.isClientSide) {
-            List<UUID> images = Main.ALBUM.getImages(album);
+            List<UUID> images = Main.ALBUM.get().getImages(album);
             if (!images.isEmpty()) {
                 openClientGui(images);
             }

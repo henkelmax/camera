@@ -3,7 +3,7 @@ package de.maxhenkel.camera;
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.corelib.CommonUtils;
 import de.maxhenkel.corelib.client.RenderUtils;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
 import org.lwjgl.PointerBuffer;
@@ -207,10 +207,10 @@ public class ImageTools {
             filters.flip();
 
             String path = TinyFileDialogs.tinyfd_openFileDialog(
-                    new TranslatableComponent("title.choose_image").getString(),
+                    Component.translatable("title.choose_image").getString(),
                     dir.getAbsolutePath() + File.separator,
                     filters,
-                    new TranslatableComponent("filetype.images").getString(),
+                    Component.translatable("filetype.images").getString(),
                     false
             );
 

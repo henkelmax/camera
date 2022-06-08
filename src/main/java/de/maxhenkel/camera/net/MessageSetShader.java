@@ -29,8 +29,8 @@ public class MessageSetShader implements Message<MessageSetShader> {
     public void executeServerSide(NetworkEvent.Context context) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = context.getSender().getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA)) {
-                Main.CAMERA.setShader(stack, shader);
+            if (stack.getItem().equals(Main.CAMERA.get())) {
+                Main.CAMERA.get().setShader(stack, shader);
             }
         }
     }

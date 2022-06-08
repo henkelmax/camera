@@ -29,7 +29,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(VanillaTypes.ITEM, new ItemStack(Main.CAMERA), RECIPE_TYPE_TAKE_IMAGE);
+        registration.addRecipeCatalyst(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()), RECIPE_TYPE_TAKE_IMAGE);
     }
 
     @Override

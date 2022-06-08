@@ -18,7 +18,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA) || event.player.getOffhandItem().getItem().equals(Main.CAMERA)) {
+        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA.get()) || event.player.getOffhandItem().getItem().equals(Main.CAMERA.get())) {
             return;
         }
 
@@ -38,7 +38,7 @@ public class ServerEvents {
         Player player = event.getPlayer();
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack item = player.getItemInHand(hand);
-            if (item.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(item)) {
+            if (item.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(item)) {
                 event.setUseBlock(Event.Result.DENY);
                 event.setCanceled(true);
                 break;
@@ -64,7 +64,7 @@ public class ServerEvents {
     public void handleLeftClick(PlayerInteractEvent event) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = event.getPlayer().getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
                 if (event.isCancelable()) {
                     event.setCanceled(true);
                 }
@@ -84,7 +84,7 @@ public class ServerEvents {
         Player player = (Player) source;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
                 event.setCanceled(true);
                 break;
             }
@@ -97,8 +97,8 @@ public class ServerEvents {
     }
 
     private void disableCamera(ItemStack stack) {
-        if (stack.getItem().equals(Main.CAMERA)) {
-            Main.CAMERA.setActive(stack, false);
+        if (stack.getItem().equals(Main.CAMERA.get())) {
+            Main.CAMERA.get().setActive(stack, false);
         }
     }
 

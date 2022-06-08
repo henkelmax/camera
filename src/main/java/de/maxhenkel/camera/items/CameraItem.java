@@ -8,8 +8,7 @@ import de.maxhenkel.corelib.item.ItemUtils;
 import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -32,7 +31,6 @@ public class CameraItem extends Item {
 
     public CameraItem() {
         super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
-        setRegistryName(new ResourceLocation(Main.MODID, "camera"));
     }
 
     @Override
@@ -51,18 +49,18 @@ public class CameraItem extends Item {
         }
 
         if (!isActive(stack)) {
-            Main.CAMERA.setActive(stack, true);
+            Main.CAMERA.get().setActive(stack, true);
         } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUUID())) {
             if (consumePaper(playerIn)) {
-                worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE, SoundSource.AMBIENT, 1F, 1F);
+                worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE.get(), SoundSource.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
                 NetUtils.sendTo(Main.SIMPLE_CHANNEL, (ServerPlayer) playerIn, new MessageTakeImage(uuid));
-                Main.CAMERA.setActive(stack, false);
+                Main.CAMERA.get().setActive(stack, false);
             } else {
-                playerIn.displayClientMessage(new TranslatableComponent("message.no_consumable"), true);
+                playerIn.displayClientMessage(Component.translatable("message.no_consumable"), true);
             }
         } else {
-            playerIn.displayClientMessage(new TranslatableComponent("message.image_cooldown"), true);
+            playerIn.displayClientMessage(Component.translatable("message.image_cooldown"), true);
         }
         return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }

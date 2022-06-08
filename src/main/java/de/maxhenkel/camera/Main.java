@@ -16,7 +16,6 @@ import de.maxhenkel.corelib.CommonRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -27,7 +26,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -36,6 +36,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -49,14 +52,23 @@ public class Main {
     public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
-    public static ImageCloningRecipe.ImageCloningSerializer IMAGE_CLONING_SERIALIZER;
-    public static ImageFrameItem FRAME_ITEM;
-    public static CameraItem CAMERA;
-    public static ImageItem IMAGE;
-    public static AlbumItem ALBUM;
-    public static MenuType<AlbumInventoryContainer> ALBUM_INVENTORY_CONTAINER;
-    public static MenuType<AlbumContainer> ALBUM_CONTAINER;
-    public static EntityType<ImageEntity> IMAGE_ENTITY_TYPE;
+    private static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+
+    public static final RegistryObject<ImageFrameItem> FRAME_ITEM = ITEM_REGISTER.register("image_frame", ImageFrameItem::new);
+    public static final RegistryObject<CameraItem> CAMERA = ITEM_REGISTER.register("camera", CameraItem::new);
+    public static final RegistryObject<ImageItem> IMAGE = ITEM_REGISTER.register("image", ImageItem::new);
+    public static final RegistryObject<AlbumItem> ALBUM = ITEM_REGISTER.register("album", AlbumItem::new);
+
+    private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
+    public static final RegistryObject<MenuType<AlbumInventoryContainer>> ALBUM_INVENTORY_CONTAINER = MENU_REGISTER.register("album_inventory", () -> IForgeMenuType.create((windowId, inv, data) -> new AlbumInventoryContainer(windowId, inv)));
+    public static final RegistryObject<MenuType<AlbumContainer>> ALBUM_CONTAINER = MENU_REGISTER.register("album", () -> IForgeMenuType.create((windowId, inv, data) -> new AlbumContainer(windowId)));
+
+    private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    public static final RegistryObject<EntityType<ImageEntity>> IMAGE_ENTITY_TYPE = ENTITY_REGISTER.register("image_frame", Main::createImageEntityType);
+
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER_REGISTER = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+    public static final RegistryObject<RecipeSerializer<ImageCloningRecipe>> IMAGE_CLONING_SERIALIZER = RECIPE_SERIALIZER_REGISTER.register("image_cloning", ImageCloningRecipe.ImageCloningSerializer::new);
+
     public static TagKey<Item> IMAGE_PAPER = ItemTags.create(new ResourceLocation(Main.MODID, "image_paper"));
 
     public static ServerConfig SERVER_CONFIG;
@@ -68,17 +80,19 @@ public class Main {
     public static KeyMapping KEY_PREVIOUS;
 
     public Main() {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(SoundEvent.class, this::registerSounds);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(EntityType.class, this::registerEntities);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerContainers);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(RecipeSerializer.class, this::registerRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 
         SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class, true);
         CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class, true);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup));
+
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEM_REGISTER.register(eventBus);
+        MENU_REGISTER.register(eventBus);
+        ENTITY_REGISTER.register(eventBus);
+        RECIPE_SERIALIZER_REGISTER.register(eventBus);
+        ModSounds.SOUND_REGISTER.register(eventBus);
     }
 
     @SubscribeEvent
@@ -102,6 +116,16 @@ public class Main {
         CommonRegistry.registerMessage(SIMPLE_CHANNEL, 11, MessageTakeBook.class);
     }
 
+    private static EntityType<ImageEntity> createImageEntityType() {
+        return CommonRegistry.registerEntity(Main.MODID, "image_frame", MobCategory.MISC, ImageEntity.class, builder -> {
+            builder.setTrackingRange(256)
+                    .setUpdateInterval(20)
+                    .setShouldReceiveVelocityUpdates(false)
+                    .sized(1F, 1F)
+                    .setCustomClientFactory((spawnEntity, world) -> new ImageEntity(world));
+        });
+    }
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
@@ -111,57 +135,9 @@ public class Main {
 
         KEY_PREVIOUS = ClientRegistry.registerKeyBinding("key.previous_image", "key.categories.misc", GLFW.GLFW_KEY_UP);
 
-        ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER, AlbumInventoryScreen::new);
-        ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER, LecternAlbumScreen::new);
+        ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER.get(), AlbumInventoryScreen::new);
+        ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER.get(), LecternAlbumScreen::new);
 
-        EntityRenderers.register(IMAGE_ENTITY_TYPE, ImageRenderer::new);
+        EntityRenderers.register(IMAGE_ENTITY_TYPE.get(), ImageRenderer::new);
     }
-
-    @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(
-                FRAME_ITEM = new ImageFrameItem(),
-                CAMERA = new CameraItem(),
-                IMAGE = new ImageItem(),
-                ALBUM = new AlbumItem()
-        );
-    }
-
-    @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        event.getRegistry().registerAll(
-                ModSounds.TAKE_IMAGE
-        );
-    }
-
-    @SubscribeEvent
-    public void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
-        IMAGE_ENTITY_TYPE = CommonRegistry.registerEntity(Main.MODID, "image_frame", MobCategory.MISC, ImageEntity.class, builder -> {
-            builder.setTrackingRange(256)
-                    .setUpdateInterval(20)
-                    .setShouldReceiveVelocityUpdates(false)
-                    .sized(1F, 1F)
-                    .setCustomClientFactory((spawnEntity, world) -> new ImageEntity(world));
-        });
-        event.getRegistry().register(IMAGE_ENTITY_TYPE);
-    }
-
-    @SubscribeEvent
-    public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
-        ALBUM_INVENTORY_CONTAINER = new MenuType<>(AlbumInventoryContainer::new);
-        ALBUM_INVENTORY_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album_inventory"));
-        event.getRegistry().register(ALBUM_INVENTORY_CONTAINER);
-
-        ALBUM_CONTAINER = new MenuType<>((i, playerInventory) -> new AlbumContainer(i));
-        ALBUM_CONTAINER.setRegistryName(new ResourceLocation(Main.MODID, "album"));
-        event.getRegistry().register(ALBUM_CONTAINER);
-    }
-
-    @SubscribeEvent
-    public void registerRecipes(RegistryEvent.Register<RecipeSerializer<?>> event) {
-        IMAGE_CLONING_SERIALIZER = new ImageCloningRecipe.ImageCloningSerializer();
-        IMAGE_CLONING_SERIALIZER.setRegistryName(MODID, "image_cloning");
-        event.getRegistry().register(IMAGE_CLONING_SERIALIZER);
-    }
-
 }

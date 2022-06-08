@@ -11,8 +11,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
@@ -32,7 +32,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     private Button visibilityButton;
 
     public ResizeFrameScreen(UUID uuid) {
-        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.frame.resize"));
+        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.frame.resize"));
         this.uuid = uuid;
         visibility = Main.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
         imageWidth = 248;
@@ -44,23 +44,23 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         super.init();
         clearWidgets();
         int left = (width - imageWidth) / 2;
-        addRenderableWidget(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
+        addRenderableWidget(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.LEFT);
         }));
 
-        addRenderableWidget(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
+        addRenderableWidget(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.RIGHT);
         }));
 
-        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
+        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.UP);
         }));
 
-        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, TextComponent.EMPTY, (button) -> {
+        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.DOWN);
         }));
 
-        visibilityButton = addRenderableWidget(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, new TranslatableComponent("tooltip.visibility_short"), (button) -> {
+        visibilityButton = addRenderableWidget(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, Component.translatable("tooltip.visibility_short"), (button) -> {
             visibility -= 0.25;
             if (visibility < 0F) {
                 visibility = 1F;
@@ -88,11 +88,11 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
 
     @Override
     protected void renderLabels(PoseStack matrixStack, int x, int y) {
-        TranslatableComponent title = new TranslatableComponent("gui.frame.resize");
+        MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
         font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor());
 
-        TranslatableComponent description = new TranslatableComponent("gui.frame.resize_description");
+        MutableComponent description = Component.translatable("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
         font.draw(matrixStack, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor());
 
@@ -112,7 +112,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         }
 
         if (visibilityButton.isHoveredOrFocused()) {
-            renderTooltip(matrixStack, Arrays.asList(new TranslatableComponent("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
+            renderTooltip(matrixStack, Arrays.asList(Component.translatable("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
         }
     }
 

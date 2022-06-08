@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -31,7 +32,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -59,11 +59,11 @@ public class ImageEntity extends Entity {
     }
 
     public ImageEntity(Level world) {
-        this(Main.IMAGE_ENTITY_TYPE, world);
+        this(Main.IMAGE_ENTITY_TYPE.get(), world);
     }
 
     public ImageEntity(Level world, double x, double y, double z) {
-        this(Main.IMAGE_ENTITY_TYPE, world);
+        this(Main.IMAGE_ENTITY_TYPE.get(), world);
         this.setPos(x, y, z);
         this.setDeltaMovement(Vec3.ZERO);
         this.xo = x;
@@ -193,7 +193,7 @@ public class ImageEntity extends Entity {
             }
         }
 
-        dropItem(new ItemStack(Main.FRAME_ITEM));
+        dropItem(new ItemStack(Main.FRAME_ITEM.get()));
         if (hasImage()) {
             dropItem(removeImage());
         }
@@ -240,7 +240,7 @@ public class ImageEntity extends Entity {
         if (hasImage()) {
             return getItem().copy();
         }
-        return new ItemStack(Main.FRAME_ITEM);
+        return new ItemStack(Main.FRAME_ITEM.get());
     }
 
     private void updateBoundingBox() {
@@ -328,7 +328,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public Packet<?> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+        return new ClientboundAddEntityPacket(this);
     }
 
     @Override

@@ -23,7 +23,7 @@ public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraft
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
-        ItemStack image = new ItemStack(Main.IMAGE);
+        ItemStack image = new ItemStack(Main.IMAGE.get());
         ImageData.dummy().addToImage(image);
 
         List<ItemStack> paper = Arrays.asList(recipe.getPaper().getItems());

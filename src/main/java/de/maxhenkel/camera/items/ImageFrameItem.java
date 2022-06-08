@@ -4,7 +4,6 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -17,7 +16,6 @@ public class ImageFrameItem extends Item {
 
     public ImageFrameItem() {
         super(new Properties().tab(CreativeModeTab.TAB_DECORATIONS));
-        setRegistryName(new ResourceLocation(Main.MODID, "image_frame"));
     }
 
     @Override
@@ -31,7 +29,7 @@ public class ImageFrameItem extends Item {
         }
 
         Level world = context.getLevel();
-        ImageEntity image = Main.IMAGE_ENTITY_TYPE.create(world);
+        ImageEntity image = Main.IMAGE_ENTITY_TYPE.get().create(world);
         if (image == null) {
             return InteractionResult.FAIL;
         }

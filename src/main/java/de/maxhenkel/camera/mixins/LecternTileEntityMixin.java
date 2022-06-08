@@ -70,7 +70,7 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         info.cancel();
         book = resolveBook(stack, player);
         page = 0;
-        pageCount = Main.ALBUM.getImages(book).size();
+        pageCount = Main.ALBUM.get().getImages(book).size();
         setChanged();
     }
 
@@ -87,7 +87,7 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         if (!(book.getItem() instanceof AlbumItem)) {
             return;
         }
-        pageCount = Main.ALBUM.getImages(book).size();
+        pageCount = Main.ALBUM.get().getImages(book).size();
     }
 
     @Shadow

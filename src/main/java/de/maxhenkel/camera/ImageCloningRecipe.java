@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.IShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
 
@@ -87,7 +86,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Main.IMAGE_CLONING_SERIALIZER;
+        return Main.IMAGE_CLONING_SERIALIZER.get();
     }
 
     @Override
@@ -95,7 +94,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
         return RecipeType.CRAFTING;
     }
 
-    public static class ImageCloningSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<ImageCloningRecipe> {
+    public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
 
         public ImageCloningSerializer() {
 

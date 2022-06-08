@@ -4,7 +4,7 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.network.NetworkEvent;
@@ -35,10 +35,10 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
             if (CameraItem.consumePaper(player)) {
                 Main.SIMPLE_CHANNEL.reply(new MessageUploadCustomImage(uuid), context);
             } else {
-                player.displayClientMessage(new TranslatableComponent("message.no_consumable"), true);
+                player.displayClientMessage(Component.translatable("message.no_consumable"), true);
             }
         } else {
-            player.displayClientMessage(new TranslatableComponent("message.image_cooldown"), true);
+            player.displayClientMessage(Component.translatable("message.image_cooldown"), true);
         }
     }
 

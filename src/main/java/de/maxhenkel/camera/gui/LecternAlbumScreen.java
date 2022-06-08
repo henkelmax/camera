@@ -5,7 +5,6 @@ import de.maxhenkel.camera.net.MessageAlbumPage;
 import de.maxhenkel.camera.net.MessageTakeBook;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
@@ -45,7 +44,7 @@ public class LecternAlbumScreen extends AlbumScreen {
         albumContainer.addSlotListener(listener);
 
         if (minecraft.player.mayBuild()) {
-            addRenderableWidget(new Button(width / 2 - 50, height - 25, 100, 20, new TranslatableComponent("lectern.take_book"), (button) -> {
+            addRenderableWidget(new Button(width / 2 - 50, height - 25, 100, 20, Component.translatable("lectern.take_book"), (button) -> {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), minecraft.getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
             }));
         }
@@ -84,7 +83,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void updateContents() {
-        images = Main.ALBUM.getImages(albumContainer.getAlbum());
+        images = Main.ALBUM.get().getImages(albumContainer.getAlbum());
     }
 
     private void updatePage() {

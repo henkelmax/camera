@@ -38,7 +38,7 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public IDrawable getIcon() {
-        return helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA));
+        return helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()));
     }
 
     @Override
@@ -49,13 +49,13 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ItemStack recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA));
+                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()));
 
         builder.addSlot(RecipeIngredientRole.INPUT, 40, 1)
                 .addIngredient(VanillaTypes.ITEM, recipe);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 88, 1)
-                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.IMAGE));
+                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.IMAGE.get()));
     }
 
     @Override

@@ -56,8 +56,8 @@ public class ClientEvents {
         mc.options.setCameraType(CameraType.FIRST_PERSON);
 
         setShader(getShader(mc.player));
-        drawViewFinder(event.getMatrixStack());
-        drawZoom(event.getMatrixStack(), getFOVPercentage());
+        drawViewFinder(event.getPoseStack());
+        drawZoom(event.getPoseStack(), getFOVPercentage());
     }
 
     private void drawViewFinder(PoseStack matrixStack) {
@@ -95,9 +95,7 @@ public class ClientEvents {
         buffer.vertex(matrix, left, top + hnew, 0F).uv(0F, 100F / 256F).endVertex();
         buffer.vertex(matrix, left + wnew, top + hnew, 0F).uv(192F / 256F, 100F / 256F).endVertex();
         buffer.vertex(matrix, left + wnew, top, 0F).uv(192F / 256F, 0F).endVertex();
-
-        buffer.end();
-        BufferUploader.end(buffer);
+        BufferUploader.drawWithShader(buffer.end());
     }
 
     private void drawZoom(PoseStack matrixStack, float percent) {
@@ -129,9 +127,7 @@ public class ClientEvents {
         buffer.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 20F / 128F).endVertex();
         buffer.vertex(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).uv((112F / 128F) * percent, 20F / 128F).endVertex();
         buffer.vertex(matrix, left + percWidth, top, 0F).uv((112F / 128F) * percent, 10F / 128F).endVertex();
-
-        buffer.end();
-        BufferUploader.end(buffer);
+        BufferUploader.drawWithShader(buffer.end());
     }
 
 
@@ -155,10 +151,10 @@ public class ClientEvents {
     private ResourceLocation getShader(Player player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (!stack.getItem().equals(Main.CAMERA)) {
+            if (!stack.getItem().equals(Main.CAMERA.get())) {
                 continue;
             }
-            return Shaders.getShader(Main.CAMERA.getShader(stack));
+            return Shaders.getShader(Main.CAMERA.get().getShader(stack));
         }
         return null;
     }
@@ -185,7 +181,7 @@ public class ClientEvents {
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem() instanceof CameraItem && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem() instanceof CameraItem && Main.CAMERA.get().isActive(stack)) {
                 player.startUsingItem(hand);
             }
         }
@@ -225,7 +221,7 @@ public class ClientEvents {
     @SubscribeEvent
     public void onFOVModifierEvent(EntityViewRenderEvent.FieldOfView event) {
         if (!inCameraMode) {
-            fov = (float) mc.options.fov;
+            fov = (float) mc.options.fov().get();
             return;
         }
 
@@ -247,7 +243,7 @@ public class ClientEvents {
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = mc.player.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA) && Main.CAMERA.isActive(stack)) {
+            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
                 return stack;
             }
         }

@@ -1,1 +1,1 @@
-- Added czech translation
+- Updated to 1.19

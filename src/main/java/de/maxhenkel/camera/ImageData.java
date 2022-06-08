@@ -11,8 +11,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -84,14 +86,19 @@ public class ImageData {
         ImageData data = new ImageData();
         data.id = imageID;
         data.time = System.currentTimeMillis();
-        data.owner = player.getName().getContents();
+        data.owner = player.getName().getString();
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
-            data.biome = player.level.getBiome(player.blockPosition()).value().getRegistryName();
-            data.entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(livingEntity -> livingEntity.getType().getRegistryName()).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            Biome biome = player.level.getBiome(player.blockPosition()).value();
+            data.biome = ForgeRegistries.BIOMES.getKey(biome);
+            data.entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 
         return data;
+    }
+
+    private static ResourceLocation getEntityID(Entity entity) {
+        return ForgeRegistries.ENTITIES.getKey(entity.getType());
     }
 
     private static boolean canEntityBeSeen(ServerPlayer player, Entity entity) {

@@ -1,17 +1,17 @@
 package de.maxhenkel.camera;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ModSounds {
 
-    //https://www.soundjay.com/mechanical/sounds/camera-shutter-click-01.mp3
-    public static SoundEvent TAKE_IMAGE = registerSound("take_image");
+    public static final DeferredRegister<SoundEvent> SOUND_REGISTER = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Main.MODID);
 
-    public static SoundEvent registerSound(String soundName) {
-        SoundEvent event = new SoundEvent(new ResourceLocation(Main.MODID, soundName));
-        event.setRegistryName(new ResourceLocation(Main.MODID, soundName));
-        return event;
-    }
+    //https://www.soundjay.com/mechanical/sounds/camera-shutter-click-01.mp3
+    public static final RegistryObject<SoundEvent> TAKE_IMAGE = SOUND_REGISTER.register("take_image", () -> new SoundEvent(new ResourceLocation(Main.MODID, "take_image")));
 
 }

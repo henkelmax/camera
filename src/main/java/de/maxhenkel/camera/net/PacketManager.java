@@ -52,7 +52,7 @@ public class PacketManager {
                         ImageTools.saveImage(playerMP, imagegID, image);
 
                         playerMP.getServer().submitAsync(() -> {
-                            ItemStack stack = new ItemStack(Main.IMAGE);
+                            ItemStack stack = new ItemStack(Main.IMAGE.get());
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);
                             if (!playerMP.addItem(stack)) {

@@ -20,7 +20,7 @@ public class AlbumContainer extends AbstractContainerMenu {
     }
 
     public AlbumContainer(int id, Container inventory, ContainerData intArray) {
-        super(Main.ALBUM_CONTAINER, id);
+        super(Main.ALBUM_CONTAINER.get(), id);
         checkContainerSize(inventory, 1);
         checkContainerDataCount(intArray, 1);
         this.inventory = inventory;
@@ -33,6 +33,11 @@ public class AlbumContainer extends AbstractContainerMenu {
             }
         });
         addDataSlots(intArray);
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player playerIn, int index) {
+        return ItemStack.EMPTY;
     }
 
     @Override

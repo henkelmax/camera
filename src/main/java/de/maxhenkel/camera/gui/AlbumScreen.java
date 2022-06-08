@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -32,7 +31,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     public AlbumScreen(List<UUID> images) {
-        this(new AlbumContainer(-1), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.album.title"), images);
+        this(new AlbumContainer(-1), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.album.title"), images);
     }
 
     @Override

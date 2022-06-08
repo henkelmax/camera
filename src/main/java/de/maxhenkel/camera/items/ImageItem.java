@@ -9,8 +9,6 @@ import de.maxhenkel.corelib.client.ItemRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,7 +28,6 @@ public class ImageItem extends CustomRendererItem {
 
     public ImageItem() {
         super(new Item.Properties().stacksTo(1));
-        setRegistryName(new ResourceLocation(Main.MODID, "image"));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -60,11 +57,11 @@ public class ImageItem extends CustomRendererItem {
         if (data != null) {
             String name = data.getOwner();
             if (!name.isEmpty()) {
-                tooltip.add(new TranslatableComponent("tooltip.image_owner", ChatFormatting.DARK_GRAY + name).withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("tooltip.image_owner", ChatFormatting.DARK_GRAY + name).withStyle(ChatFormatting.GRAY));
             }
             long time = data.getTime();
             if (time > 0L) {
-                tooltip.add(new TranslatableComponent("tooltip.image_time", ChatFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("tooltip.image_time", ChatFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(time))).withStyle(ChatFormatting.GRAY));
             }
         }
         super.appendHoverText(stack, worldIn, tooltip, flagIn);

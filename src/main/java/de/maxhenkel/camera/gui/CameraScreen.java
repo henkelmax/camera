@@ -11,7 +11,8 @@ import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
@@ -32,7 +33,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     private Button upload;
 
     public CameraScreen(String currentShader) {
-        super(CAMERA_TEXTURE, new DummyContainer(), Minecraft.getInstance().player.getInventory(), new TranslatableComponent("gui.camera.title"));
+        super(CAMERA_TEXTURE, new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.camera.title"));
         imageWidth = 248;
         imageHeight = 109;
 
@@ -55,14 +56,14 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     protected void init() {
         super.init();
         clearWidgets();
-        addRenderableWidget(new Button(leftPos + PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("button.camera.prev"), button -> {
+        addRenderableWidget(new Button(leftPos + PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.prev"), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
             sendShader();
         }));
-        addRenderableWidget(new Button(leftPos + imageWidth - BUTTON_WIDTH - PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("button.camera.next"), button -> {
+        addRenderableWidget(new Button(leftPos + imageWidth - BUTTON_WIDTH - PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.next"), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
@@ -71,7 +72,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
         }));
 
         if (Main.SERVER_CONFIG.allowImageUpload.get()) {
-            upload = addRenderableWidget(new Button(leftPos + imageWidth / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("button.camera.upload"), button -> {
+            upload = addRenderableWidget(new Button(leftPos + imageWidth / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -79,7 +80,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         ClientImageUploadManager.addImage(uuid, image);
                         Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
-                        minecraft.player.displayClientMessage(new TranslatableComponent("message.upload_error", e.getMessage()), true);
+                        minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
                         e.printStackTrace();
                     }
                     minecraft.screen = null;
@@ -102,15 +103,15 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
         super.renderLabels(matrixStack, mouseX, mouseY);
 
-        TranslatableComponent chooseFilter = new TranslatableComponent("gui.camera.choose_filter");
+        MutableComponent chooseFilter = Component.translatable("gui.camera.choose_filter");
         int chooseFilterWidth = font.width(chooseFilter);
         font.draw(matrixStack, chooseFilter.getVisualOrderText(), imageWidth / 2 - chooseFilterWidth / 2, 10, FONT_COLOR);
 
-        TranslatableComponent shaderName = new TranslatableComponent("shader." + Shaders.SHADER_LIST.get(index));
+        MutableComponent shaderName = Component.translatable("shader." + Shaders.SHADER_LIST.get(index));
         int shaderWidth = font.width(shaderName);
         font.draw(matrixStack, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, ChatFormatting.WHITE.getColor());
 
-        TranslatableComponent uploadImage = new TranslatableComponent("gui.camera.upload_image");
+        MutableComponent uploadImage = Component.translatable("gui.camera.upload_image");
         int uploadImageWidth = font.width(uploadImage);
         font.draw(matrixStack, uploadImage.getVisualOrderText(), imageWidth / 2 - uploadImageWidth / 2, imageHeight - PADDING - BUTTON_HEIGHT - PADDING - font.lineHeight, FONT_COLOR);
     }
