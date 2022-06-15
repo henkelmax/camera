@@ -86,7 +86,7 @@ dependencies {
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
-//    implementation fg.deobf("curse.maven:jade-324717:${jade_id}")
+    implementation fg.deobf("curse.maven:jade-324717:${jade_id}")
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -253,7 +253,7 @@ reobf {
 sourceSets {
     main {
         java {
-            exclude 'de/maxhenkel/camera/integration/*/**'
+            exclude 'de/maxhenkel/camera/integration/jei/*/**'
         }
     }
 }

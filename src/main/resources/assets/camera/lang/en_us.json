@@ -40,5 +40,6 @@
   "title.choose_image": "Choose Image",
   "sound.camera.take_image": "Camera taking an image",
   "jei.camera.take_image": "Taking an image",
-  "jei.camera.tooltip.take_image": "Consumes %sx %s from your inventory when taking an image"
+  "jei.camera.tooltip.take_image": "Consumes %sx %s from your inventory when taking an image",
+  "config.jade.plugin_camera.image_frame": "Image Frame"
 }

@@ -1,1 +1,1 @@
-- Updated to 1.19
+- Re added Jade integration
