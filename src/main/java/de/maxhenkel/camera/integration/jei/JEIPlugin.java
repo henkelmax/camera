@@ -29,7 +29,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()), RECIPE_TYPE_TAKE_IMAGE);
+        registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, new ItemStack(Main.CAMERA.get()), RECIPE_TYPE_TAKE_IMAGE);
     }
 
     @Override
@@ -39,11 +39,11 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-//        registration.addGuiScreenHandler(ImageScreen.class, NoJEIGuiProperties::new);
-//        registration.addGuiScreenHandler(AlbumScreen.class, NoJEIGuiProperties::new);
-//        registration.addGuiScreenHandler(LecternAlbumScreen.class, NoJEIGuiProperties::new);
-//        registration.addGuiScreenHandler(ResizeFrameScreen.class, NoJEIGuiProperties::new);
-//        registration.addGuiScreenHandler(CameraScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(ImageScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(AlbumScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(LecternAlbumScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(ResizeFrameScreen.class, NoJEIGuiProperties::new);
+        registration.addGuiScreenHandler(CameraScreen.class, NoJEIGuiProperties::new);
     }
 
     @Override

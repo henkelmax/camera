@@ -11,7 +11,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,39 +37,29 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public IDrawable getIcon() {
-        return helper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()));
+        return helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Main.CAMERA.get()));
     }
 
     @Override
     public List<Component> getTooltipStrings(ItemStack recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-        return Collections.singletonList(new TranslatableComponent("jei.camera.tooltip.take_image", recipe.getCount(), recipe.getHoverName()));
+        return Collections.singletonList(Component.translatable("jei.camera.tooltip.take_image", recipe.getCount(), recipe.getHoverName()));
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ItemStack recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1)
-                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.CAMERA.get()));
+                .addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Main.CAMERA.get()));
 
         builder.addSlot(RecipeIngredientRole.INPUT, 40, 1)
-                .addIngredient(VanillaTypes.ITEM, recipe);
+                .addIngredient(VanillaTypes.ITEM_STACK, recipe);
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 88, 1)
-                .addIngredient(VanillaTypes.ITEM, new ItemStack(Main.IMAGE.get()));
+                .addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Main.IMAGE.get()));
     }
 
     @Override
     public Component getTitle() {
-        return new TranslatableComponent("jei.camera.take_image");
-    }
-
-    @Override
-    public ResourceLocation getUid() {
-        return new ResourceLocation(Main.MODID, "take_image");
-    }
-
-    @Override
-    public Class<? extends ItemStack> getRecipeClass() {
-        return ItemStack.class;
+        return Component.translatable("jei.camera.take_image");
     }
 
 }
