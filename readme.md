@@ -1,3 +1,5 @@
+<!-- modrinth_exclude.start -->
+
 # Camera Mod ![](http://cf.way2muchnoise.eu/full_289310_downloads.svg) ![](http://cf.way2muchnoise.eu/versions/289310.svg)
 
 ## Links
@@ -8,6 +10,8 @@
 - [Credits](https://modrepo.de/minecraft/camera/credits)
 
 ---
+
+<!-- modrinth_exclude.end -->
 
 This mod adds a Camera and a frame for the images. The Camera takes real images of your game.
 
