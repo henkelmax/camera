@@ -25,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -85,7 +86,10 @@ public class Main {
         SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class, true);
         CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class, true);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::registerKeyBinds);
+        });
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEM_REGISTER.register(eventBus);
@@ -131,13 +135,18 @@ public class Main {
     public void clientSetup(FMLClientSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
 
-        KEY_NEXT = ClientRegistry.registerKeyBinding("key.next_image", "key.categories.misc", GLFW.GLFW_KEY_DOWN);
-
-        KEY_PREVIOUS = ClientRegistry.registerKeyBinding("key.previous_image", "key.categories.misc", GLFW.GLFW_KEY_UP);
-
         ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER.get(), AlbumInventoryScreen::new);
         ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER.get(), LecternAlbumScreen::new);
 
         EntityRenderers.register(IMAGE_ENTITY_TYPE.get(), ImageRenderer::new);
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void registerKeyBinds(RegisterKeyMappingsEvent event) {
+        KEY_NEXT = new KeyMapping("key.next_image", GLFW.GLFW_KEY_DOWN, "key.categories.misc");
+        KEY_PREVIOUS = new KeyMapping("key.previous_image", GLFW.GLFW_KEY_UP, "key.categories.misc");
+        event.register(KEY_NEXT);
+        event.register(KEY_PREVIOUS);
     }
 }

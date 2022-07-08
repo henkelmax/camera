@@ -39,11 +39,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Pre event) {
-        if (event.getType().equals(RenderGameOverlayEvent.ElementType.ALL)) {
-            return;
-        }
-
+    public void renderOverlay(RenderGuiOverlayEvent.Pre event) {
         inCameraMode = isInCameraMode();
 
         if (!inCameraMode) {
@@ -139,7 +135,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onGuiOpen(ScreenOpenEvent event) {
+    public void onGuiOpen(ScreenEvent.Opening event) {
         if (inCameraMode) {
             if (event.getScreen() instanceof PauseScreen) {
                 Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
@@ -202,7 +198,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onMouseEvent(InputEvent.MouseScrollEvent event) {
+    public void onMouseEvent(InputEvent.MouseScrollingEvent event) {
         if (event.getScrollDelta() == 0D) {
             return;
         }
@@ -219,9 +215,9 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onFOVModifierEvent(EntityViewRenderEvent.FieldOfView event) {
+    public void onFOVModifierEvent(ViewportEvent.ComputeFov event) {
         if (!inCameraMode) {
-            fov = (float) mc.options.fov().get();
+            fov = (float) event.getFOV();
             return;
         }
 
