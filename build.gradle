@@ -83,13 +83,13 @@ dependencies {
 //    compileOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}:api")
 //    runtimeOnly fg.deobf("mezz.jei:jei-${jei_minecraft_version}:${jei_version}")
 
-//    implementation fg.deobf("curse.maven:jei-238222:3834070")
+    compileOnly fg.deobf("curse.maven:jei-238222:3834070")
 
     shadow fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:api")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}")
     runtimeOnly fg.deobf("de.maxhenkel.corelib:corelib:${mod_minecraft_version}-${corelib_version}:javadoc")
 
-//    implementation fg.deobf("curse.maven:jade-324717:${jade_id}")
+    compileOnly fg.deobf("curse.maven:jade-324717:${jade_id}")
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -272,12 +272,4 @@ shadowJar {
 
 reobf {
     shadowJar {}
-}
-
-sourceSets {
-    main {
-        java {
-            exclude 'de/maxhenkel/camera/integration/*/**'
-        }
-    }
 }
