@@ -1,1 +1,1 @@
-- Re-added mod integrations
+- Fixed render image item config option

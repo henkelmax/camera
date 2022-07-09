@@ -22,7 +22,7 @@ public class ClientConfig extends ConfigBase {
                 .define("image_date_format", "MM/dd/yyyy HH:mm");
         lastImagePath = builder.define("last_image_path", "");
         renderImageItem = builder
-                .comment("If the image item should render the actual image (This may cause poor performance)")
+                .comment("If the image item should render the actual image")
                 .define("render_image_item", true);
         resizeGuiOpacity = builder
                 .comment("The opacity of the resize image frame GUI")
