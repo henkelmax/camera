@@ -1,1 +1,1 @@
-- Fixed render image item config option
+- Updated Forge version

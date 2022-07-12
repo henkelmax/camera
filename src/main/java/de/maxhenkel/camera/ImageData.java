@@ -98,7 +98,7 @@ public class ImageData {
     }
 
     private static ResourceLocation getEntityID(Entity entity) {
-        return ForgeRegistries.ENTITIES.getKey(entity.getType());
+        return ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
     }
 
     private static boolean canEntityBeSeen(ServerPlayer player, Entity entity) {

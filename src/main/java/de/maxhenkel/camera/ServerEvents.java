@@ -35,7 +35,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack item = player.getItemInHand(hand);
             if (item.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(item)) {
@@ -63,7 +63,7 @@ public class ServerEvents {
 
     public void handleLeftClick(PlayerInteractEvent event) {
         for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack stack = event.getPlayer().getItemInHand(hand);
+            ItemStack stack = event.getEntity().getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
                 if (event.isCancelable()) {
                     event.setCanceled(true);
@@ -93,7 +93,7 @@ public class ServerEvents {
 
     @SubscribeEvent
     public void onItemToss(ItemTossEvent event) {
-        disableCamera(event.getEntityItem().getItem());
+        disableCamera(event.getEntity().getItem());
     }
 
     private void disableCamera(ItemStack stack) {

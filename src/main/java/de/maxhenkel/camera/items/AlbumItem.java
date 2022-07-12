@@ -41,7 +41,7 @@ public class AlbumItem extends Item {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
             if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayer) {
-                NetworkHooks.openGui((ServerPlayer) playerIn, new MenuProvider() {
+                NetworkHooks.openScreen((ServerPlayer) playerIn, new MenuProvider() {
 
                     @Override
                     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {

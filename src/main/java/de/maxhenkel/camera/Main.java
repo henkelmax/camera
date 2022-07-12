@@ -60,11 +60,11 @@ public class Main {
     public static final RegistryObject<ImageItem> IMAGE = ITEM_REGISTER.register("image", ImageItem::new);
     public static final RegistryObject<AlbumItem> ALBUM = ITEM_REGISTER.register("album", AlbumItem::new);
 
-    private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
+    private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
     public static final RegistryObject<MenuType<AlbumInventoryContainer>> ALBUM_INVENTORY_CONTAINER = MENU_REGISTER.register("album_inventory", () -> IForgeMenuType.create((windowId, inv, data) -> new AlbumInventoryContainer(windowId, inv)));
     public static final RegistryObject<MenuType<AlbumContainer>> ALBUM_CONTAINER = MENU_REGISTER.register("album", () -> IForgeMenuType.create((windowId, inv, data) -> new AlbumContainer(windowId)));
 
-    private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     public static final RegistryObject<EntityType<ImageEntity>> IMAGE_ENTITY_TYPE = ENTITY_REGISTER.register("image_frame", Main::createImageEntityType);
 
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER_REGISTER = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);

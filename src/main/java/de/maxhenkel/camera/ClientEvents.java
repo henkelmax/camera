@@ -171,7 +171,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (player == mc.player) {
             return;
         }
@@ -186,7 +186,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         if (player == mc.player) {
             return;
         }
@@ -194,7 +194,7 @@ public class ClientEvents {
             return;
         }
 
-        event.getPlayer().stopUsingItem();
+        event.getEntity().stopUsingItem();
     }
 
     @SubscribeEvent
