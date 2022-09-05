@@ -16,6 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
+import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
     private int index = 0;
 
+    @Nullable
     private Button upload;
 
     public CameraScreen(String currentShader) {
@@ -92,7 +94,9 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     @Override
     public void containerTick() {
         super.containerTick();
-        upload.active = !ImageTools.isFileChooserOpen();
+        if (upload != null) {
+            upload.active = !ImageTools.isFileChooserOpen();
+        }
     }
 
     private void sendShader() {
