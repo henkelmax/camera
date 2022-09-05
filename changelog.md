@@ -1,1 +1,1 @@
-- Added czech translation
+- Fixed crash when disabling custom uploads
