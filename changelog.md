@@ -1,1 +1,1 @@
-- Fixed crash when disabling custom uploads
+- Updated to 1.19.3

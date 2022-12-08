@@ -3,9 +3,7 @@ package de.maxhenkel.camera.entities;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
@@ -19,6 +17,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -174,17 +174,17 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         switch (facing) {
             case NORTH:
                 matrixStack.translate(1D, 0D, 1D);
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(180F));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(180F));
                 break;
             case SOUTH:
                 break;
             case EAST:
                 matrixStack.translate(0D, 0D, 1D);
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(90F));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(90F));
                 break;
             case WEST:
                 matrixStack.translate(1D, 0D, 0D);
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(270F));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(270F));
                 break;
         }
     }

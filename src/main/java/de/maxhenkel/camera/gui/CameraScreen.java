@@ -58,23 +58,23 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     protected void init() {
         super.init();
         clearWidgets();
-        addRenderableWidget(new Button(leftPos + PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.prev"), button -> {
+        addRenderableWidget(Button.builder(Component.translatable("button.camera.prev"), button -> {
             index--;
             if (index < 0) {
                 index = Shaders.SHADER_LIST.size() - 1;
             }
             sendShader();
-        }));
-        addRenderableWidget(new Button(leftPos + imageWidth - BUTTON_WIDTH - PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.next"), button -> {
+        }).bounds(leftPos + PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        addRenderableWidget(Button.builder(Component.translatable("button.camera.next"), button -> {
             index++;
             if (index >= Shaders.SHADER_LIST.size()) {
                 index = 0;
             }
             sendShader();
-        }));
+        }).bounds(leftPos + imageWidth - BUTTON_WIDTH - PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
         if (Main.SERVER_CONFIG.allowImageUpload.get()) {
-            upload = addRenderableWidget(new Button(leftPos + imageWidth / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("button.camera.upload"), button -> {
+            upload = addRenderableWidget(Button.builder(Component.translatable("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {
                         UUID uuid = UUID.randomUUID();
@@ -87,7 +87,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                     }
                     minecraft.screen = null;
                 });
-            }));
+            }).bounds(leftPos + imageWidth / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
         }
     }
 

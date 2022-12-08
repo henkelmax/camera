@@ -30,6 +30,7 @@ public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraft
 
         ItemStack out = image.copy();
 
+        //TODO Fix
         craftingGridHelper.setInputs(builder, VanillaTypes.ITEM_STACK, Arrays.asList(List.of(image), paper), 0, 0);
         craftingGridHelper.setOutputs(builder, VanillaTypes.ITEM_STACK, List.of(out));
     }

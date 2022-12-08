@@ -94,6 +94,11 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
         return RecipeType.CRAFTING;
     }
 
+    @Override
+    public CraftingBookCategory category() {
+        return CraftingBookCategory.MISC;
+    }
+
     public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
 
         public ImageCloningSerializer() {

@@ -44,30 +44,30 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         super.init();
         clearWidgets();
         int left = (width - imageWidth) / 2;
-        addRenderableWidget(new Button(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
+        addRenderableWidget(Button.builder(Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.LEFT);
-        }));
+        }).bounds(left + PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        addRenderableWidget(new Button(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
+        addRenderableWidget(Button.builder(Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.RIGHT);
-        }));
+        }).bounds(left + imageWidth - BUTTON_WIDTH - PADDING, height / 2 - BUTTON_HEIGHT / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
+        addRenderableWidget(Button.builder(Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.UP);
-        }));
+        }).bounds(width / 2 - BUTTON_WIDTH / 2, topPos + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        addRenderableWidget(new Button(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT, Component.empty(), (button) -> {
+        addRenderableWidget(Button.builder(Component.empty(), (button) -> {
             sendMoveImage(MessageResizeFrame.Direction.DOWN);
-        }));
+        }).bounds(width / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - PADDING - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        visibilityButton = addRenderableWidget(new Button(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20, Component.translatable("tooltip.visibility_short"), (button) -> {
+        visibilityButton = addRenderableWidget(Button.builder(Component.translatable("tooltip.visibility_short"), (button) -> {
             visibility -= 0.25;
             if (visibility < 0F) {
                 visibility = 1F;
             }
             Main.CLIENT_CONFIG.resizeGuiOpacity.set((double) visibility);
             Main.CLIENT_CONFIG.resizeGuiOpacity.save();
-        }));
+        }).bounds(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20).build());
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {

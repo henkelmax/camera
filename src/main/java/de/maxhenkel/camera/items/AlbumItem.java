@@ -13,7 +13,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -33,7 +32,7 @@ import java.util.UUID;
 public class AlbumItem extends Item {
 
     public AlbumItem() {
-        super(new Properties().stacksTo(1).tab(CreativeModeTab.TAB_DECORATIONS));
+        super(new Properties().stacksTo(1)/*.tab(CreativeModeTab.TAB_DECORATIONS)*/); // TODO Fix creative tab
     }
 
     @Override

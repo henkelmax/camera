@@ -44,9 +44,9 @@ public class LecternAlbumScreen extends AlbumScreen {
         albumContainer.addSlotListener(listener);
 
         if (minecraft.player.mayBuild()) {
-            addRenderableWidget(new Button(width / 2 - 50, height - 25, 100, 20, Component.translatable("lectern.take_book"), (button) -> {
+            addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"), (button) -> {
                 Main.SIMPLE_CHANNEL.sendTo(new MessageTakeBook(), minecraft.getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
-            }));
+            }).bounds(width / 2 - 50, height - 25, 100, 20).build());
         }
     }
 

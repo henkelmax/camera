@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -15,7 +14,7 @@ import net.minecraft.world.level.Level;
 public class ImageFrameItem extends Item {
 
     public ImageFrameItem() {
-        super(new Properties().tab(CreativeModeTab.TAB_DECORATIONS));
+        super(new Properties()/*.tab(CreativeModeTab.TAB_DECORATIONS)*/); // TODO Fix creative tab
     }
 
     @Override
