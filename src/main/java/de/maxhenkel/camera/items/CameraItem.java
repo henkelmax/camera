@@ -29,7 +29,7 @@ import java.util.UUID;
 public class CameraItem extends Item {
 
     public CameraItem() {
-        super(new Item.Properties().stacksTo(1)/*.tab(CreativeModeTab.TAB_DECORATIONS)*/); // TODO Fix creative tab
+        super(new Item.Properties().stacksTo(1));
     }
 
     @Override

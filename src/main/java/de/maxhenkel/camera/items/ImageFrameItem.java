@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 public class ImageFrameItem extends Item {
 
     public ImageFrameItem() {
-        super(new Properties()/*.tab(CreativeModeTab.TAB_DECORATIONS)*/); // TODO Fix creative tab
+        super(new Properties());
     }
 
     @Override

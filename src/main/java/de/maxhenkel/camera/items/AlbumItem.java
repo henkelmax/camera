@@ -32,7 +32,7 @@ import java.util.UUID;
 public class AlbumItem extends Item {
 
     public AlbumItem() {
-        super(new Properties().stacksTo(1)/*.tab(CreativeModeTab.TAB_DECORATIONS)*/); // TODO Fix creative tab
+        super(new Properties().stacksTo(1));
     }
 
     @Override
