@@ -10,11 +10,9 @@ public class CreativeTabEvents {
     @SubscribeEvent
     public static void onCreativeModeTabBuildContents(CreativeModeTabEvent.BuildContents event) {
         if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.register((flags, builder, hasPermissions) -> {
-                builder.accept(new ItemStack(Main.CAMERA.get()));
-                builder.accept(new ItemStack(Main.ALBUM.get()));
-                builder.accept(new ItemStack(Main.FRAME_ITEM.get()));
-            });
+            event.accept(new ItemStack(Main.CAMERA.get()));
+            event.accept(new ItemStack(Main.ALBUM.get()));
+            event.accept(new ItemStack(Main.FRAME_ITEM.get()));
         }
     }
 
