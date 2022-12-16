@@ -4,9 +4,6 @@
 
 ## Links
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/camera-mod)
-- [ModRepo](https://modrepo.de/minecraft/camera/overview)
-- [GitHub](https://github.com/henkelmax/camera)
-- [FAQ](https://modrepo.de/minecraft/camera/faq)
 - [Credits](https://modrepo.de/minecraft/camera/credits)
 
 ---
