@@ -6,8 +6,8 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageRenderer;
 import de.maxhenkel.corelib.client.ItemRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
@@ -15,7 +15,7 @@ import java.util.UUID;
 public class ImageItemRenderer extends ItemRenderer {
 
     @Override
-    public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext itemDisplayContext, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay) {
         UUID uuid;
         if (Main.CLIENT_CONFIG.renderImageItem.get()) {
             uuid = ImageData.getImageID(stack);

@@ -3,6 +3,7 @@ package de.maxhenkel.camera;
 import com.google.gson.JsonObject;
 import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -53,8 +54,8 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
-        CraftingResult craft = craft(inv);
+    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+        CraftingResult craft = craft(container);
         if (craft == null) {
             return null;
         }
@@ -67,7 +68,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess p_267052_) {
         return image;
     }
 

@@ -285,7 +285,7 @@ public class ImageEntity extends Entity {
 
     public BlockPos getCenterPosition() {
         Vector3d center = getCenter(getBoundingBox());
-        return new BlockPos(center.x, center.y, center.z);
+        return new BlockPos((int) center.x, (int) center.y, (int) center.z);
     }
 
     public Vector3d getCenter(AABB aabb) {
