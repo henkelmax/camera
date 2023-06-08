@@ -20,6 +20,9 @@ public class ImageTaker {
     private static boolean hide;
 
     public static void takeScreenshot(UUID id) {
+        if (takeScreenshot && id.equals(uuid)) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
 
         hide = mc.options.hideGui;

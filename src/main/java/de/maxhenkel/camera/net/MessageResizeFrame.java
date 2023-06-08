@@ -33,8 +33,8 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
     @Override
     public void executeServerSide(NetworkEvent.Context context) {
-        if (context.getSender().level instanceof ServerLevel && context.getSender().getAbilities().mayBuild) {
-            ServerLevel world = (ServerLevel) context.getSender().level;
+        if (context.getSender().level() instanceof ServerLevel && context.getSender().getAbilities().mayBuild) {
+            ServerLevel world = (ServerLevel) context.getSender().level();
             Entity entity = world.getEntity(uuid);
             if (entity instanceof ImageEntity) {
                 ImageEntity image = (ImageEntity) entity;

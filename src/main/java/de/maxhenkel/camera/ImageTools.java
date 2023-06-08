@@ -144,7 +144,7 @@ public class ImageTools {
 
     @Deprecated
     public static File getImageFileLegacy(ServerPlayer playerMP, UUID uuid) {
-        File imageFolder = CommonUtils.getWorldFolder(playerMP.getLevel(), CAMERA_IMAGES);
+        File imageFolder = CommonUtils.getWorldFolder(playerMP.serverLevel(), CAMERA_IMAGES);
         File image = new File(imageFolder, uuid.toString() + ".jpg");
         if (!image.exists()) {
             image = new File(imageFolder, uuid.toString() + ".png");
@@ -153,7 +153,7 @@ public class ImageTools {
     }
 
     public static File getImageFile(ServerPlayer playerMP, UUID uuid) {
-        File imageFolder = CommonUtils.getWorldFolder(playerMP.getLevel(), CAMERA_IMAGES);
+        File imageFolder = CommonUtils.getWorldFolder(playerMP.serverLevel(), CAMERA_IMAGES);
         return new File(imageFolder, uuid.toString() + ".jpg");
     }
 

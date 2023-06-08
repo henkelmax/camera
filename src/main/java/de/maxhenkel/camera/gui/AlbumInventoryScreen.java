@@ -1,8 +1,8 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.inventory.ScreenBase;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,10 +22,10 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
-        super.renderLabels(matrixStack, x, y);
-        font.draw(matrixStack, getTitle().getVisualOrderText(), 8F, 6F, FONT_COLOR);
-        font.draw(matrixStack, playerInventory.getDisplayName().getVisualOrderText(), 8F, (float) (imageHeight - 96 + 2), FONT_COLOR);
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+        super.renderLabels(guiGraphics, x, y);
+        guiGraphics.drawString(font, getTitle().getVisualOrderText(), 8F, 6F, FONT_COLOR, false);
+        guiGraphics.drawString(font, playerInventory.getDisplayName().getVisualOrderText(), 8F, (float) (imageHeight - 96 + 2), FONT_COLOR, false);
     }
 
 }

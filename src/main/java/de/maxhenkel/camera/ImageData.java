@@ -89,9 +89,9 @@ public class ImageData {
         data.owner = player.getName().getString();
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
-            Biome biome = player.level.getBiome(player.blockPosition()).value();
+            Biome biome = player.level().getBiome(player.blockPosition()).value();
             data.biome = ForgeRegistries.BIOMES.getKey(biome);
-            data.entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 
         return data;
@@ -115,7 +115,7 @@ public class ImageData {
             return false;
         }
 
-        return player.level.clip(new ClipContext(playerVec, entityVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
+        return player.level().clip(new ClipContext(playerVec, entityVec, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
     }
 
     private static double angle(Vec3 vec1, Vec3 vec2) {

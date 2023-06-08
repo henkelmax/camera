@@ -39,7 +39,7 @@ public class AlbumItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
-            if (!playerIn.level.isClientSide && playerIn instanceof ServerPlayer) {
+            if (!playerIn.level().isClientSide && playerIn instanceof ServerPlayer) {
                 NetworkHooks.openScreen((ServerPlayer) playerIn, new MenuProvider() {
 
                     @Override
@@ -60,7 +60,7 @@ public class AlbumItem extends Item {
     }
 
     public static void openAlbum(Player player, ItemStack album) {
-        if (player.level.isClientSide) {
+        if (player.level().isClientSide) {
             List<UUID> images = Main.ALBUM.get().getImages(album);
             if (!images.isEmpty()) {
                 openClientGui(images);

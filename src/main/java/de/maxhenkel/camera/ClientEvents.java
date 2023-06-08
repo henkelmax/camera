@@ -6,6 +6,7 @@ import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -52,11 +53,11 @@ public class ClientEvents {
         mc.options.setCameraType(CameraType.FIRST_PERSON);
 
         setShader(getShader(mc.player));
-        drawViewFinder(event.getPoseStack());
-        drawZoom(event.getPoseStack(), getFOVPercentage());
+        drawViewFinder(event.getGuiGraphics());
+        drawZoom(event.getGuiGraphics(), getFOVPercentage());
     }
 
-    private void drawViewFinder(PoseStack matrixStack) {
+    private void drawViewFinder(GuiGraphics guiGraphics) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, VIEWFINDER);
@@ -86,7 +87,7 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        Matrix4f matrix = matrixStack.last().pose();
+        Matrix4f matrix = guiGraphics.pose().last().pose();
         buffer.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
         buffer.vertex(matrix, left, top + hnew, 0F).uv(0F, 100F / 256F).endVertex();
         buffer.vertex(matrix, left + wnew, top + hnew, 0F).uv(192F / 256F, 100F / 256F).endVertex();
@@ -94,7 +95,7 @@ public class ClientEvents {
         BufferUploader.drawWithShader(buffer.end());
     }
 
-    private void drawZoom(PoseStack matrixStack, float percent) {
+    private void drawZoom(GuiGraphics guiGraphics, float percent) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, ZOOM);
@@ -111,7 +112,7 @@ public class ClientEvents {
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        Matrix4f matrix = matrixStack.last().pose();
+        Matrix4f matrix = guiGraphics.pose().last().pose();
         buffer.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
         buffer.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 10F / 128F).endVertex();
         buffer.vertex(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).uv(112F / 128F, 10F / 128F).endVertex();

@@ -1,12 +1,12 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainerMenu> {
@@ -75,44 +75,42 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
         if (visibility >= 1F) {
-            renderBackground(matrixStack);
+            renderBackground(guiGraphics);
         }
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
-        RenderSystem.setShaderTexture(0, CAMERA_TEXTURE);
 
-        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(CAMERA_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
-        font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor());
+        guiGraphics.drawString(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor(), false);
 
         MutableComponent description = Component.translatable("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
-        font.draw(matrixStack, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor());
+        guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor(), false);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
-        RenderSystem.setShaderTexture(0, CAMERA_TEXTURE);
         if (Screen.hasShiftDown()) {
-            blit(matrixStack, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16);
-            blit(matrixStack, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
-            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
-            blit(matrixStack, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
         } else {
-            blit(matrixStack, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16);
-            blit(matrixStack, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
-            blit(matrixStack, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
-            blit(matrixStack, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            guiGraphics.blit(CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
         }
 
         if (visibilityButton.isHoveredOrFocused()) {
-            renderTooltip(matrixStack, Arrays.asList(Component.translatable("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
+            guiGraphics.renderTooltip(font, List.of(Component.translatable("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
         }
     }
 

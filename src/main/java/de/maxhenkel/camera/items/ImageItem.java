@@ -39,7 +39,7 @@ public class ImageItem extends CustomRendererItem {
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
-        if (playerIn.level.isClientSide) {
+        if (playerIn.level().isClientSide) {
             openClientGui(stack);
         }
 

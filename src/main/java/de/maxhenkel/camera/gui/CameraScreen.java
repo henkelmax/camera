@@ -1,6 +1,5 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
@@ -10,6 +9,7 @@ import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -104,20 +104,20 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderLabels(guiGraphics, mouseX, mouseY);
 
         MutableComponent chooseFilter = Component.translatable("gui.camera.choose_filter");
         int chooseFilterWidth = font.width(chooseFilter);
-        font.draw(matrixStack, chooseFilter.getVisualOrderText(), imageWidth / 2 - chooseFilterWidth / 2, 10, FONT_COLOR);
+        guiGraphics.drawString(font, chooseFilter.getVisualOrderText(), imageWidth / 2 - chooseFilterWidth / 2, 10, FONT_COLOR, false);
 
         MutableComponent shaderName = Component.translatable("shader." + Shaders.SHADER_LIST.get(index));
         int shaderWidth = font.width(shaderName);
-        font.draw(matrixStack, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, ChatFormatting.WHITE.getColor());
+        guiGraphics.drawString(font, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, ChatFormatting.WHITE.getColor(), false);
 
         MutableComponent uploadImage = Component.translatable("gui.camera.upload_image");
         int uploadImageWidth = font.width(uploadImage);
-        font.draw(matrixStack, uploadImage.getVisualOrderText(), imageWidth / 2 - uploadImageWidth / 2, imageHeight - PADDING - BUTTON_HEIGHT - PADDING - font.lineHeight, FONT_COLOR);
+        guiGraphics.drawString(font, uploadImage.getVisualOrderText(), imageWidth / 2 - uploadImageWidth / 2, imageHeight - PADDING - BUTTON_HEIGHT - PADDING - font.lineHeight, FONT_COLOR, false);
     }
 
 }

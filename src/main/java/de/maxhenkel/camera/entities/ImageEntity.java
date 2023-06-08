@@ -86,7 +86,7 @@ public class ImageEntity extends Entity {
         }
 
         if (player.isShiftKeyDown() && canModify(player)) {
-            if (level.isClientSide) {
+            if (level().isClientSide) {
                 openClientGui();
             }
             return InteractionResult.SUCCESS;
@@ -122,7 +122,7 @@ public class ImageEntity extends Entity {
         setImageUUID(imageID);
         playAddSound();
 
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level().isClientSide);
     }
 
     public boolean canModify(Player player) {
@@ -148,7 +148,7 @@ public class ImageEntity extends Entity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (level.isClientSide) {
+        if (level().isClientSide) {
             return true;
         }
         if (!(source.getDirectEntity() instanceof Player)) {
@@ -159,7 +159,7 @@ public class ImageEntity extends Entity {
         }
         if (hasImage()) {
             ItemStack image = removeImage();
-            if (!level.isClientSide) {
+            if (!level().isClientSide) {
                 playRemoveSound();
                 dropItem(image);
             }
@@ -173,7 +173,7 @@ public class ImageEntity extends Entity {
     }
 
     public boolean isValid() {
-        return level.noCollision(this, getBoundingBox()) && level.getEntitiesOfClass(ImageEntity.class, getBoundingBox().contract(getFacing().getStepX() == 0 ? 2D / 16D : 0D, getFacing().getStepY() == 0 ? 2D / 16D : 0D, getFacing().getStepZ() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
+        return level().noCollision(this, getBoundingBox()) && level().getEntitiesOfClass(ImageEntity.class, getBoundingBox().contract(getFacing().getStepX() == 0 ? 2D / 16D : 0D, getFacing().getStepY() == 0 ? 2D / 16D : 0D, getFacing().getStepZ() == 0 ? 2D / 16D : 0D), image -> image != this).isEmpty();
     }
 
     public void checkValid() {
@@ -183,7 +183,7 @@ public class ImageEntity extends Entity {
     }
 
     public void onBroken(Entity entity) {
-        if (!level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (!level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
@@ -299,14 +299,14 @@ public class ImageEntity extends Entity {
         }
 
         BlockPos center = getCenterPosition();
-        ItemEntity entityitem = new ItemEntity(level, center.getX() + 0.5D, center.getY() + 0.5D, center.getZ() + 0.5D, stack);
+        ItemEntity entityitem = new ItemEntity(level(), center.getX() + 0.5D, center.getY() + 0.5D, center.getZ() + 0.5D, stack);
         entityitem.setDefaultPickUpDelay();
-        level.addFreshEntity(entityitem);
+        level().addFreshEntity(entityitem);
         return entityitem;
     }
 
     public void removeFrame(Entity source) {
-        if (!isRemoved() && !level.isClientSide) {
+        if (!isRemoved() && !level().isClientSide) {
             onBroken(source);
             kill();
         }
@@ -338,15 +338,15 @@ public class ImageEntity extends Entity {
     }
 
     public void playPlaceSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.PAINTING_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level().playSound(null, getCenterPosition(), SoundEvents.PAINTING_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public void playAddSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level().playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public void playRemoveSound() {
-        level.playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level().playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public Optional<UUID> getOwner() {

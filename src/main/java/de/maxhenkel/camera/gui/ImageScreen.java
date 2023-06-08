@@ -7,6 +7,7 @@ import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -33,8 +34,8 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        renderBackground(matrixStack);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        renderBackground(guiGraphics);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -42,11 +43,11 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
             return;
         }
 
-        drawImage(matrixStack, minecraft, width, height, 100, imageID);
+        drawImage(guiGraphics, minecraft, width, height, 100, imageID);
     }
 
-    public static void drawImage(PoseStack matrixStack, Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
-        matrixStack.pushPose();
+    public static void drawImage(GuiGraphics guiGraphics, Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
+        guiGraphics.pose().pushPose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -94,7 +95,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        Matrix4f matrix = matrixStack.last().pose();
+        Matrix4f matrix = guiGraphics.pose().last().pose();
         buffer.vertex(matrix, left, top, zLevel).uv(0F, 0F).endVertex();
         buffer.vertex(matrix, left, top + hnew, zLevel).uv(0F, 1F).endVertex();
         buffer.vertex(matrix, left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
@@ -102,11 +103,11 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
 
         BufferUploader.drawWithShader(buffer.end());
 
-        matrixStack.popPose();
+        guiGraphics.pose().popPose();
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
 
     }
 }

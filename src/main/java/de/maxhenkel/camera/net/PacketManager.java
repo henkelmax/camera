@@ -56,7 +56,7 @@ public class PacketManager {
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);
                             if (!playerMP.addItem(stack)) {
-                                Containers.dropItemStack(playerMP.level, playerMP.getX(), playerMP.getY(), playerMP.getZ(), stack);
+                                Containers.dropItemStack(playerMP.level(), playerMP.getX(), playerMP.getY(), playerMP.getZ(), stack);
                             }
                         });
                     } catch (IOException e) {
