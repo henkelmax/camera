@@ -1,1 +1,2 @@
-- Updated to 1.19.4
+- Fixed images appearing slightly darker in frames
+- Fixed images in frames being black in some cases
