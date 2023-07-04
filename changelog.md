@@ -1,1 +1,2 @@
-- Updated to 1.20.1
+- Fixed images appearing slightly darker in frames
+- Fixed images in frames being black in some cases
