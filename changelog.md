@@ -1,1 +1,2 @@
-- Fixed crash when disabling custom uploads
+- Fixed images appearing slightly darker in frames
+- Fixed images in frames being black in some cases
