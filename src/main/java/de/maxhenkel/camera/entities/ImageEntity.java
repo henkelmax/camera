@@ -281,14 +281,9 @@ public class ImageEntity extends Entity {
         }
     }
 
-
     public BlockPos getCenterPosition() {
-        Vector3d center = getCenter(getBoundingBox());
-        return new BlockPos(center.x, center.y, center.z);
-    }
-
-    public Vector3d getCenter(AABB aabb) {
-        return new Vector3d(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D);
+        Vec3 center = getBoundingBox().getCenter();
+        return new BlockPos.MutableBlockPos(center.x, center.y, center.z);
     }
 
     @Nullable
