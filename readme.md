@@ -1,8 +1,9 @@
 <!-- modrinth_exclude.start -->
 
-# Camera Mod ![](http://cf.way2muchnoise.eu/full_289310_downloads.svg) ![](http://cf.way2muchnoise.eu/versions/289310.svg)
+# Camera Mod
 
 ## Links
+- [Modrinth](https://modrinth.com/mod/camera-mod)
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/camera-mod)
 - [Credits](https://modrepo.de/minecraft/camera/credits)
 
