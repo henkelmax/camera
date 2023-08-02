@@ -1,2 +1,3 @@
-- Fixed images appearing slightly darker in frames
-- Fixed images in frames being black in some cases
+- Added JEI to mods.toml
+- Added Jade to mods.toml
+- Switch to NeoGradle
