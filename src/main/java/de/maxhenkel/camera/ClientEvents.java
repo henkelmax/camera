@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
+import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -139,7 +140,7 @@ public class ClientEvents {
     public void onGuiOpen(ScreenEvent.Opening event) {
         if (inCameraMode) {
             if (event.getScreen() instanceof PauseScreen) {
-                Main.SIMPLE_CHANNEL.sendToServer(new MessageDisableCameraMode());
+                NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }
@@ -200,14 +201,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void onMouseEvent(InputEvent.MouseScrollingEvent event) {
-        if (event.getScrollDelta() == 0D) {
+        if (event.getDeltaY() == 0D) {
             return;
         }
         if (!inCameraMode) {
             return;
         }
 
-        if (event.getScrollDelta() < 0D) {
+        if (event.getDeltaY() < 0D) {
             fov = Math.min(fov + 5F, MAX_FOV);
         } else {
             fov = Math.max(fov - 5F, MIN_FOV);

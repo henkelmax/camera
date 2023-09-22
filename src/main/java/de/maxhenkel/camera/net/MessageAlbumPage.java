@@ -4,7 +4,7 @@ import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
@@ -24,7 +24,7 @@ public class MessageAlbumPage implements Message<MessageAlbumPage> {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(CustomPayloadEvent.Context context) {
         if (context.getSender().containerMenu instanceof AlbumContainer) {
             AlbumContainer container = (AlbumContainer) context.getSender().containerMenu;
             container.setPage(page);

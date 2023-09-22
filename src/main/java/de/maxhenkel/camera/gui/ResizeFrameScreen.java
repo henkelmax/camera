@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
+import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -71,22 +72,24 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
+        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (visibility >= 1F) {
-            renderBackground(guiGraphics);
+            renderTransparentBackground(guiGraphics);
         }
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
-
         guiGraphics.blit(CAMERA_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-    }
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(leftPos, topPos, 0F);
+
         MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
         guiGraphics.drawString(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor(), false);
@@ -109,9 +112,26 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
             guiGraphics.blit(CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
         }
 
-        if (visibilityButton.isHoveredOrFocused()) {
-            guiGraphics.renderTooltip(font, List.of(Component.translatable("tooltip.visibility").getVisualOrderText()), x - leftPos, y - topPos);
+        if (visibilityButton.isHovered()) {
+            guiGraphics.renderTooltip(font, List.of(Component.translatable("tooltip.visibility").getVisualOrderText()), mouseX - leftPos, mouseY - topPos);
         }
+
+        guiGraphics.pose().popPose();
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
+
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+
     }
 
     private long lastCheck;

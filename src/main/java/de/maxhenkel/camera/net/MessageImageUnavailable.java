@@ -4,7 +4,7 @@ import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(CustomPayloadEvent.Context context) {
         TextureCache.instance().addImage(imgUUID, new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
     }
 

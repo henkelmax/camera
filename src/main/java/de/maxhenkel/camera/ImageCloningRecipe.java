@@ -1,25 +1,25 @@
 package de.maxhenkel.camera;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.IShapedRecipe;
+import org.jetbrains.annotations.Nullable;
 
 public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
 
-    private final ResourceLocation id;
     private final ItemStack image;
     private final Ingredient paper;
 
-    public ImageCloningRecipe(ResourceLocation id, ItemStack image, Ingredient paper) {
-        this.id = id;
+    public ImageCloningRecipe(ItemStack image, Ingredient paper) {
         this.image = image;
         this.paper = paper;
     }
@@ -72,11 +72,6 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
         return image;
     }
 
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
-
     public ItemStack getImage() {
         return image;
     }
@@ -102,23 +97,32 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
 
     public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
 
+        private Codec<ImageCloningRecipe> codec;
+
         public ImageCloningSerializer() {
-
+            codec = RecordCodecBuilder.create((builder) -> builder
+                    .group(
+                            BuiltInRegistries.ITEM.byNameCodec().xmap(ItemStack::new, ItemStack::getItem)
+                                    .fieldOf("image")
+                                    .forGetter((recipe) -> recipe.image),
+                            Ingredient.CODEC_NONEMPTY
+                                    .fieldOf("paper")
+                                    .forGetter((recipe) -> recipe.paper)
+                    ).apply(builder, ImageCloningRecipe::new));
         }
 
         @Override
-        public ImageCloningRecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
-            return new ImageCloningRecipe(resourceLocation, ShapedRecipe.itemStackFromJson(jsonObject.getAsJsonObject("image")), Ingredient.fromJson(jsonObject.getAsJsonObject("paper")));
+        public Codec<ImageCloningRecipe> codec() {
+            return codec;
         }
 
         @Override
-        public ImageCloningRecipe fromNetwork(ResourceLocation resourceLocation, FriendlyByteBuf packetBuffer) {
-            return new ImageCloningRecipe(packetBuffer.readResourceLocation(), packetBuffer.readItem(), Ingredient.fromNetwork(packetBuffer));
+        public @Nullable ImageCloningRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
+            return new ImageCloningRecipe(packetBuffer.readItem(), Ingredient.fromNetwork(packetBuffer));
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf packetBuffer, ImageCloningRecipe recipe) {
-            packetBuffer.writeResourceLocation(recipe.getId());
             packetBuffer.writeItem(recipe.image);
             recipe.paper.toNetwork(packetBuffer);
         }

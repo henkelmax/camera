@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(CustomPayloadEvent.Context context) {
         ServerPlayer player = context.getSender();
         if (Main.PACKET_MANAGER.canTakeImage(player.getUUID())) {
             if (CameraItem.consumePaper(player)) {

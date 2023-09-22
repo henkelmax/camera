@@ -2,6 +2,7 @@ package de.maxhenkel.camera;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.net.MessagePartialImage;
+import de.maxhenkel.corelib.net.NetUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -20,14 +21,14 @@ public class ImageProcessor {
 
         int size = data.length;
         if (size < 30_000) {
-            Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, 0, size, data));
+            NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessagePartialImage(uuid, 0, size, data));
         } else {
 
             int bufferProgress = 0;
             byte[] currentBuffer = new byte[30_000];
             for (int i = 0; i < size; i++) {
                 if (bufferProgress >= currentBuffer.length) {
-                    Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
+                    NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
                     bufferProgress = 0;
                     currentBuffer = new byte[currentBuffer.length];
                 }
@@ -38,7 +39,7 @@ public class ImageProcessor {
             if (bufferProgress > 0) {
                 byte[] rest = new byte[bufferProgress];
                 System.arraycopy(currentBuffer, 0, rest, 0, bufferProgress);
-                Main.SIMPLE_CHANNEL.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
+                NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessagePartialImage(uuid, size - rest.length, data.length, rest));
             }
         }
     }

@@ -7,6 +7,7 @@ import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.inventory.ScreenBase;
+import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -80,7 +81,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         UUID uuid = UUID.randomUUID();
                         BufferedImage image = ImageTools.loadImage(file);
                         ClientImageUploadManager.addImage(uuid, image);
-                        Main.SIMPLE_CHANNEL.sendToServer(new MessageRequestUploadCustomImage(uuid));
+                        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
                         minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
                         e.printStackTrace();
@@ -100,7 +101,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     private void sendShader() {
-        Main.SIMPLE_CHANNEL.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageSetShader(Shaders.SHADER_LIST.get(index)));
     }
 
     @Override

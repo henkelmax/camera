@@ -5,7 +5,7 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(CustomPayloadEvent.Context context) {
         try {
             byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(context.getSender(), imgUUID));
             Main.SIMPLE_CHANNEL.reply(new MessageImage(imgUUID, data), context);

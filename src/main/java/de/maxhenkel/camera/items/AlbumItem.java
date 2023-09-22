@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,8 +38,8 @@ public class AlbumItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
-            if (!playerIn.level().isClientSide && playerIn instanceof ServerPlayer) {
-                NetworkHooks.openScreen((ServerPlayer) playerIn, new MenuProvider() {
+            if (!playerIn.level().isClientSide && playerIn instanceof ServerPlayer serverPlayer) {
+                serverPlayer.openMenu(new MenuProvider() {
 
                     @Override
                     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {

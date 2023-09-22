@@ -4,7 +4,7 @@ import de.maxhenkel.camera.ImageTaker;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class MessageTakeImage implements Message<MessageTakeImage> {
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(CustomPayloadEvent.Context context) {
         ImageTaker.takeScreenshot(uuid);
     }
 

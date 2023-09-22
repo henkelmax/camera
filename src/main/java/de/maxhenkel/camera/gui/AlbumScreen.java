@@ -2,7 +2,6 @@ package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.camera.Main;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,7 +41,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(guiGraphics);
+        renderTransparentBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -55,8 +54,8 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (delta < 0D) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
+        if (deltaY < 0D) {
             next();
         } else {
             previous();

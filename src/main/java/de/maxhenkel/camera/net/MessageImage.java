@@ -6,7 +6,7 @@ import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class MessageImage implements Message<MessageImage> {
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(CustomPayloadEvent.Context context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
             Minecraft.getInstance().submitAsync(() -> TextureCache.instance().addImage(uuid, img));

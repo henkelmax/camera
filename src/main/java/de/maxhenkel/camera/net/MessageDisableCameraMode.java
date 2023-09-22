@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
@@ -20,7 +20,7 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(CustomPayloadEvent.Context context) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = context.getSender().getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA.get())) {
