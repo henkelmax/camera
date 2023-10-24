@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.corelib.CommonUtils;
 import de.maxhenkel.corelib.client.RenderUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.LanguageInfo;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -238,8 +239,8 @@ public class ImageTools {
      */
     private static String getChooseImageTranslation() {
         LanguageManager manager = Minecraft.getInstance().getLanguageManager();
-        String lang = manager.getSelected();
-        return switch (lang) {
+        LanguageInfo lang = manager.getSelected();
+        return switch (lang.getCode()) {
             case "cs_cz" -> "Vybrat obrázek";
             case "de_de" -> "Bild auswählen";
             case "es_ar" -> "Elegir imagen";
@@ -261,8 +262,8 @@ public class ImageTools {
      */
     private static String getImageFileTypeTranslation() {
         LanguageManager manager = Minecraft.getInstance().getLanguageManager();
-        String lang = manager.getSelected();
-        return switch (lang) {
+        LanguageInfo lang = manager.getSelected();
+        return switch (lang.getCode()) {
             case "cs_cz" -> "Obrázky";
             case "de_de" -> "Bilder";
             case "es_ar" -> "Imagenes";
