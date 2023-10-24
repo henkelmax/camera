@@ -1,1 +1,1 @@
-- Updated to 1.20.2
+- Fixed an issue with the image file chooser
