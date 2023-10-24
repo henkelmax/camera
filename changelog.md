@@ -1,3 +1,1 @@
-- Added JEI to mods.toml
-- Added Jade to mods.toml
-- Switch to NeoGradle
+- Fixed an issue with the image file chooser
