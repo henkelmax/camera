@@ -1,20 +1,20 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ServerConfig extends ConfigBase {
 
-    public final ForgeConfigSpec.IntValue imageCooldown;
-    public final ForgeConfigSpec.IntValue cameraConsumeItemAmount;
-    public final ForgeConfigSpec.IntValue maxImageSize;
-    public final ForgeConfigSpec.DoubleValue imageCompression;
-    public final ForgeConfigSpec.BooleanValue allowImageUpload;
-    public final ForgeConfigSpec.BooleanValue frameOnlyOwnerModify;
-    public final ForgeConfigSpec.BooleanValue advancedImageData;
-    public final ForgeConfigSpec.IntValue advancedDataMaxEntities;
+    public final ModConfigSpec.IntValue imageCooldown;
+    public final ModConfigSpec.IntValue cameraConsumeItemAmount;
+    public final ModConfigSpec.IntValue maxImageSize;
+    public final ModConfigSpec.DoubleValue imageCompression;
+    public final ModConfigSpec.BooleanValue allowImageUpload;
+    public final ModConfigSpec.BooleanValue frameOnlyOwnerModify;
+    public final ModConfigSpec.BooleanValue advancedImageData;
+    public final ModConfigSpec.IntValue advancedDataMaxEntities;
 
-    public ServerConfig(ForgeConfigSpec.Builder builder) {
+    public ServerConfig(ModConfigSpec.Builder builder) {
         super(builder);
         imageCooldown = builder
                 .comment("The time in milliseconds the camera will be on cooldown after taking an image")

@@ -5,8 +5,8 @@ import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public void executeServerSide(CustomPayloadEvent.Context context) {
+    public void executeServerSide(NetworkEvent.Context context) {
         if (context.getSender().level() instanceof ServerLevel && context.getSender().getAbilities().mayBuild) {
             ServerLevel world = (ServerLevel) context.getSender().level();
             Entity entity = world.getEntity(uuid);

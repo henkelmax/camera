@@ -3,8 +3,8 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
     }
 
     @Override
-    public void executeServerSide(CustomPayloadEvent.Context context) {
+    public void executeServerSide(NetworkEvent.Context context) {
         Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
     }
 

@@ -5,19 +5,19 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @Mod.EventBusSubscriber(modid = Main.MODID)
 public class ServerEvents {
 
     @SubscribeEvent
-    public void onTick(TickEvent.PlayerTickEvent event) {
+    public static void onTick(TickEvent.PlayerTickEvent event) {
         if (event.player.getMainHandItem().getItem().equals(Main.CAMERA.get()) || event.player.getOffhandItem().getItem().equals(Main.CAMERA.get())) {
             return;
         }
@@ -34,7 +34,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onRightClick(PlayerInteractEvent.RightClickBlock event) {
+    public static void onRightClick(PlayerInteractEvent.RightClickBlock event) {
         Player player = event.getEntity();
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack item = player.getItemInHand(hand);
@@ -47,27 +47,24 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
+    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
         handleLeftClick(event);
     }
 
     @SubscribeEvent
-    public void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
+    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
         handleLeftClick(event);
     }
 
     @SubscribeEvent
-    public void onLeftClick(PlayerInteractEvent.EntityInteract event) {
+    public static void onLeftClick(PlayerInteractEvent.EntityInteract event) {
         handleLeftClick(event);
     }
 
-    public void handleLeftClick(PlayerInteractEvent event) {
+    public static void handleLeftClick(PlayerInteractEvent event) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = event.getEntity().getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
-                if (event.isCancelable()) {
-                    event.setCanceled(true);
-                }
                 event.setCancellationResult(InteractionResult.PASS);
                 break;
             }
@@ -76,7 +73,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onHit(LivingAttackEvent event) {
+    public static void onHit(LivingAttackEvent event) {
         Entity source = event.getSource().getDirectEntity();
         if (!(source instanceof Player)) {
             return;
@@ -92,11 +89,11 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public void onItemToss(ItemTossEvent event) {
+    public static void onItemToss(ItemTossEvent event) {
         disableCamera(event.getEntity().getItem());
     }
 
-    private void disableCamera(ItemStack stack) {
+    private static void disableCamera(ItemStack stack) {
         if (stack.getItem().equals(Main.CAMERA.get())) {
             Main.CAMERA.get().setActive(stack, false);
         }

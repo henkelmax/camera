@@ -14,10 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
+import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
@@ -201,14 +206,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void onMouseEvent(InputEvent.MouseScrollingEvent event) {
-        if (event.getDeltaY() == 0D) {
+        if (event.getScrollDelta() == 0D) {
             return;
         }
         if (!inCameraMode) {
             return;
         }
 
-        if (event.getDeltaY() < 0D) {
+        if (event.getScrollDelta() < 0D) {
             fov = Math.min(fov + 5F, MAX_FOV);
         } else {
             fov = Math.max(fov - 5F, MIN_FOV);

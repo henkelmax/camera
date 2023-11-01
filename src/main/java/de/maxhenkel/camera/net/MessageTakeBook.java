@@ -3,8 +3,8 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 public class MessageTakeBook implements Message<MessageTakeBook> {
 
@@ -18,7 +18,7 @@ public class MessageTakeBook implements Message<MessageTakeBook> {
     }
 
     @Override
-    public void executeServerSide(CustomPayloadEvent.Context context) {
+    public void executeServerSide(NetworkEvent.Context context) {
         if (context.getSender().containerMenu instanceof AlbumContainer) {
             AlbumContainer container = (AlbumContainer) context.getSender().containerMenu;
             container.takeBook(context.getSender());

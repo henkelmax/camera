@@ -1,21 +1,20 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-
 import java.text.SimpleDateFormat;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ClientConfig extends ConfigBase {
 
-    private final ForgeConfigSpec.ConfigValue<String> imageDateFormatSpec;
-    public final ForgeConfigSpec.ConfigValue<String> lastImagePath;
-    public final ForgeConfigSpec.BooleanValue renderImageItem;
-    public final ForgeConfigSpec.DoubleValue resizeGuiOpacity;
+    private final ModConfigSpec.ConfigValue<String> imageDateFormatSpec;
+    public final ModConfigSpec.ConfigValue<String> lastImagePath;
+    public final ModConfigSpec.BooleanValue renderImageItem;
+    public final ModConfigSpec.DoubleValue resizeGuiOpacity;
 
     public SimpleDateFormat imageDateFormat;
 
-    public ClientConfig(ForgeConfigSpec.Builder builder) {
+    public ClientConfig(ModConfigSpec.Builder builder) {
         super(builder);
         imageDateFormatSpec = builder
                 .comment("The format the date will be displayed on the image")

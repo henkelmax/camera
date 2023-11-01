@@ -4,8 +4,8 @@ import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageProcessor;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class MessageUploadCustomImage implements Message<MessageUploadCustomImag
     }
 
     @Override
-    public void executeClientSide(CustomPayloadEvent.Context context) {
+    public void executeClientSide(NetworkEvent.Context context) {
         BufferedImage image = ClientImageUploadManager.getAndRemoveImage(uuid);
 
         if (image == null) {

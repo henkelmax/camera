@@ -1,1 +1,0 @@
-MixinConnector: de.maxhenkel.camera.MixinConnector
