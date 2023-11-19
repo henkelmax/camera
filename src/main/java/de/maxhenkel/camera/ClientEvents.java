@@ -206,14 +206,14 @@ public class ClientEvents {
 
     @SubscribeEvent
     public void onMouseEvent(InputEvent.MouseScrollingEvent event) {
-        if (event.getScrollDelta() == 0D) {
+        if (event.getScrollDeltaY() == 0D) {
             return;
         }
         if (!inCameraMode) {
             return;
         }
 
-        if (event.getScrollDelta() < 0D) {
+        if (event.getScrollDeltaY() < 0D) {
             fov = Math.min(fov + 5F, MAX_FOV);
         } else {
             fov = Math.max(fov - 5F, MIN_FOV);

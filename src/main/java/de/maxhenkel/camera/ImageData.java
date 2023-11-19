@@ -1,6 +1,8 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.camera.items.ImageItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -14,7 +16,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -89,7 +91,7 @@ public class ImageData {
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
             Biome biome = player.level().getBiome(player.blockPosition()).value();
-            data.biome = ForgeRegistries.BIOMES.getKey(biome);
+            data.biome = player.getServer().registryAccess().registry(Registries.BIOME).map(biomes -> biomes.getKey(biome)).orElse(null);
             data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
         }
 
@@ -97,7 +99,7 @@ public class ImageData {
     }
 
     private static ResourceLocation getEntityID(Entity entity) {
-        return ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+        return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
     }
 
     private static boolean canEntityBeSeen(ServerPlayer player, Entity entity) {
