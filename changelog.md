@@ -1,1 +1,2 @@
 - Fixed JEI compatibility
+- Added mod icon

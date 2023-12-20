@@ -8,6 +8,7 @@ version = "${mod_version}"
 displayName = "Camera Mod"
 updateJSONURL = "https://update.maxhenkel.de/neoforge/camera"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/camera-mod"
+logoFile = "icon.png"
 authors = "Max Henkel"
 description = '''This mod adds a working camera'''
 [[dependencies.camera]]
