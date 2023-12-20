@@ -1,1 +1,1 @@
-- Fixed an issue with the image file chooser
+- Fixed JEI compatibility
