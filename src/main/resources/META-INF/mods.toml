@@ -1,36 +1,36 @@
-modLoader="javafml"
-loaderVersion="${loader_version}"
-license="All rights reserved"
-issueTrackerURL="https://github.com/henkelmax/camera/issues"
+modLoader = "javafml"
+loaderVersion = "*"
+license = "All rights reserved"
+issueTrackerURL = "https://github.com/henkelmax/camera/issues"
 [[mods]]
-modId="${mod_id}"
-version="${mod_version}"
-displayName="${mod_name}"
-updateJSONURL="https://update.maxhenkel.de/neoforge/camera"
-displayURL="http://minecraft.curseforge.com/projects/camera-mod"
-authors="${mod_vendor}"
-description='''This mod adds a working camera'''
-[[dependencies.${mod_id}]]
-    modId="neoforge"
-    mandatory=true
-    versionRange="${neoforge_version_range}"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.${mod_id}]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[${minecraft_version}]"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.${mod_id}]]
-    modId="jei"
-    mandatory=false
-    versionRange="*"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.${mod_id}]]
-    modId="jade"
-    mandatory=false
-    versionRange="*"
-    ordering="NONE"
-    side="BOTH"
+modId = "camera"
+version = "${mod_version}"
+displayName = "Camera Mod"
+updateJSONURL = "https://update.maxhenkel.de/neoforge/camera"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/camera-mod"
+authors = "Max Henkel"
+description = '''This mod adds a working camera'''
+[[dependencies.camera]]
+modId = "neoforge"
+mandatory = true
+versionRange = "${neoforge_dependency}"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.camera]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraft_version}]"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.camera]]
+modId = "jei"
+mandatory = false
+versionRange = "*"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.camera]]
+modId = "jade"
+mandatory = false
+versionRange = "*"
+ordering = "NONE"
+side = "BOTH"
