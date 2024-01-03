@@ -3,12 +3,16 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public class MessageSetShader implements Message<MessageSetShader> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "set_shader");
 
     private String shader;
 
@@ -21,14 +25,17 @@ public class MessageSetShader implements Message<MessageSetShader> {
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.SERVERBOUND;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(PlayPayloadContext context) {
+        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+            return;
+        }
         for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack stack = context.getSender().getItemInHand(hand);
+            ItemStack stack = sender.getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA.get())) {
                 Main.CAMERA.get().setShader(stack, shader);
             }
@@ -44,6 +51,11 @@ public class MessageSetShader implements Message<MessageSetShader> {
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUtf(shader);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
 }

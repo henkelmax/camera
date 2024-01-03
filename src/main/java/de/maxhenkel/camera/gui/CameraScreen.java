@@ -7,7 +7,6 @@ import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.inventory.ScreenBase;
-import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
@@ -81,9 +81,10 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         UUID uuid = UUID.randomUUID();
                         BufferedImage image = ImageTools.loadImage(file);
                         ClientImageUploadManager.addImage(uuid, image);
-                        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageRequestUploadCustomImage(uuid));
+                        PacketDistributor.SERVER.noArg().send(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
                         minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
+                        //TODO Properly log an error
                         e.printStackTrace();
                     }
                     minecraft.screen = null;
@@ -101,7 +102,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     private void sendShader() {
-        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+        PacketDistributor.SERVER.noArg().send(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
     }
 
     @Override

@@ -1,18 +1,22 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
+import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
 public class MessageImage implements Message<MessageImage> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "image");
 
     private UUID uuid;
     private byte[] image;
@@ -30,12 +34,12 @@ public class MessageImage implements Message<MessageImage> {
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.CLIENTBOUND;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(PlayPayloadContext context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
             Minecraft.getInstance().submitAsync(() -> TextureCache.instance().addImage(uuid, img));
@@ -56,5 +60,10 @@ public class MessageImage implements Message<MessageImage> {
         buf.writeUUID(uuid);
 
         buf.writeByteArray(image);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

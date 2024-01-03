@@ -13,25 +13,25 @@ authors = "Max Henkel"
 description = '''This mod adds a working camera'''
 [[dependencies.camera]]
 modId = "neoforge"
-mandatory = true
+type = "required"
 versionRange = "${neoforge_dependency}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.camera]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "[${minecraft_version}]"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.camera]]
 modId = "jei"
-mandatory = false
+type = "optional"
 versionRange = "*"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.camera]]
 modId = "jade"
-mandatory = false
+type = "optional"
 versionRange = "*"
 ordering = "NONE"
 side = "BOTH"

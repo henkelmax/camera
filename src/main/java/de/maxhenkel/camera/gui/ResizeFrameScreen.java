@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
-import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,6 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +72,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
+        PacketDistributor.SERVER.noArg().send(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
     }
 
     @Override

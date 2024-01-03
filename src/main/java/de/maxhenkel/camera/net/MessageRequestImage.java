@@ -4,13 +4,17 @@ import de.maxhenkel.camera.ImageTools;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.io.IOException;
 import java.util.UUID;
 
 public class MessageRequestImage implements Message<MessageRequestImage> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "request_image");
 
     private UUID imgUUID;
 
@@ -23,18 +27,22 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.SERVERBOUND;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
+    public void executeServerSide(PlayPayloadContext context) {
+        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+            return;
+        }
         try {
-            byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(context.getSender(), imgUUID));
-            Main.SIMPLE_CHANNEL.reply(new MessageImage(imgUUID, data), context);
+            byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(sender, imgUUID));
+            context.replyHandler().send(new MessageImage(imgUUID, data));
         } catch (IOException e) {
+            //TODO Properly log an error
             e.printStackTrace();
-            Main.SIMPLE_CHANNEL.reply(new MessageImageUnavailable(imgUUID), context);
+            context.replyHandler().send(new MessageImageUnavailable(imgUUID));
         }
     }
 
@@ -47,6 +55,11 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
 }

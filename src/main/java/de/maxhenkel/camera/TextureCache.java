@@ -2,12 +2,13 @@ package de.maxhenkel.camera;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.net.MessageRequestImage;
-import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
+
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class TextureCache {
                 }
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
-            NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageRequestImage(uuid));
+            PacketDistributor.SERVER.noArg().send(new MessageRequestImage(uuid));
 
             return true;
         }

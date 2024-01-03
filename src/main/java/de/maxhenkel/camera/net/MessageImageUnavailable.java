@@ -1,15 +1,19 @@
 package de.maxhenkel.camera.net;
 
+import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class MessageImageUnavailable implements Message<MessageImageUnavailable> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "image_unavailable");
 
     private UUID imgUUID;
 
@@ -22,12 +26,12 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.CLIENTBOUND;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(PlayPayloadContext context) {
         TextureCache.instance().addImage(imgUUID, new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
     }
 
@@ -40,5 +44,10 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 }

@@ -2,15 +2,19 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageProcessor;
+import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class MessageUploadCustomImage implements Message<MessageUploadCustomImage> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "upload");
 
     private UUID uuid;
 
@@ -23,12 +27,12 @@ public class MessageUploadCustomImage implements Message<MessageUploadCustomImag
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.CLIENT;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.CLIENTBOUND;
     }
 
     @Override
-    public void executeClientSide(NetworkEvent.Context context) {
+    public void executeClientSide(PlayPayloadContext context) {
         BufferedImage image = ClientImageUploadManager.getAndRemoveImage(uuid);
 
         if (image == null) {
@@ -47,6 +51,11 @@ public class MessageUploadCustomImage implements Message<MessageUploadCustomImag
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(uuid);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
 }

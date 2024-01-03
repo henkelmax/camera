@@ -31,12 +31,12 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +49,6 @@ public class Main {
     public static final String MODID = "camera";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
-    public static SimpleChannel SIMPLE_CHANNEL;
     public static PacketManager PACKET_MANAGER;
 
     private static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(BuiltInRegistries.ITEM, MODID);
@@ -79,19 +78,18 @@ public class Main {
     @OnlyIn(Dist.CLIENT)
     public static KeyMapping KEY_PREVIOUS;
 
-    public Main() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(CreativeTabEvents::onCreativeModeTabBuildContents);
+    public Main(IEventBus eventBus) {
+        eventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::onRegisterPayloadHandler);
+        eventBus.addListener(CreativeTabEvents::onCreativeModeTabBuildContents);
 
         SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class, true);
         CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class, true);
 
         if (FMLEnvironment.dist.isClient()) {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::clientSetup);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(Main.this::registerKeyBinds);
+            eventBus.addListener(Main.this::clientSetup);
+            eventBus.addListener(Main.this::registerKeyBinds);
         }
-
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEM_REGISTER.register(eventBus);
         MENU_REGISTER.register(eventBus);
         ENTITY_REGISTER.register(eventBus);
@@ -100,20 +98,7 @@ public class Main {
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
-        SIMPLE_CHANNEL = CommonRegistry.registerChannel(Main.MODID, "default");
         PACKET_MANAGER = new PacketManager();
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 0, MessagePartialImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 1, MessageTakeImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 2, MessageRequestImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 3, MessageImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 4, MessageImageUnavailable.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 5, MessageSetShader.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 6, MessageDisableCameraMode.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 7, MessageResizeFrame.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 8, MessageRequestUploadCustomImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 9, MessageUploadCustomImage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 10, MessageAlbumPage.class);
-        CommonRegistry.registerMessage(SIMPLE_CHANNEL, 11, MessageTakeBook.class);
     }
 
     private static EntityType<ImageEntity> createImageEntityType() {
@@ -121,8 +106,7 @@ public class Main {
             builder.setTrackingRange(256)
                     .setUpdateInterval(20)
                     .setShouldReceiveVelocityUpdates(false)
-                    .sized(1F, 1F)
-                    .setCustomClientFactory((spawnEntity, world) -> new ImageEntity(world));
+                    .sized(1F, 1F);
         });
     }
 
@@ -134,6 +118,22 @@ public class Main {
         ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER.get(), LecternAlbumScreen::new);
 
         EntityRenderers.register(IMAGE_ENTITY_TYPE.get(), ImageRenderer::new);
+    }
+
+    public void onRegisterPayloadHandler(RegisterPayloadHandlerEvent event) {
+        IPayloadRegistrar registrar = event.registrar(MODID).versioned("0");
+        CommonRegistry.registerMessage(registrar, MessagePartialImage.class);
+        CommonRegistry.registerMessage(registrar, MessageTakeImage.class);
+        CommonRegistry.registerMessage(registrar, MessageRequestImage.class);
+        CommonRegistry.registerMessage(registrar, MessageImage.class);
+        CommonRegistry.registerMessage(registrar, MessageImageUnavailable.class);
+        CommonRegistry.registerMessage(registrar, MessageSetShader.class);
+        CommonRegistry.registerMessage(registrar, MessageDisableCameraMode.class);
+        CommonRegistry.registerMessage(registrar, MessageResizeFrame.class);
+        CommonRegistry.registerMessage(registrar, MessageRequestUploadCustomImage.class);
+        CommonRegistry.registerMessage(registrar, MessageUploadCustomImage.class);
+        CommonRegistry.registerMessage(registrar, MessageAlbumPage.class);
+        CommonRegistry.registerMessage(registrar, MessageTakeBook.class);
     }
 
     @OnlyIn(Dist.CLIENT)

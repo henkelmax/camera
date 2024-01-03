@@ -5,13 +5,16 @@ import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.UUID;
 
 public class MessageRequestUploadCustomImage implements Message<MessageRequestUploadCustomImage> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "request_upload");
 
     private UUID uuid;
 
@@ -24,21 +27,23 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.SERVERBOUND;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        ServerPlayer player = context.getSender();
-        if (Main.PACKET_MANAGER.canTakeImage(player.getUUID())) {
-            if (CameraItem.consumePaper(player)) {
-                Main.SIMPLE_CHANNEL.reply(new MessageUploadCustomImage(uuid), context);
+    public void executeServerSide(PlayPayloadContext context) {
+        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+            return;
+        }
+        if (Main.PACKET_MANAGER.canTakeImage(sender.getUUID())) {
+            if (CameraItem.consumePaper(sender)) {
+                context.replyHandler().send(new MessageUploadCustomImage(uuid));
             } else {
-                player.displayClientMessage(Component.translatable("message.no_consumable"), true);
+                sender.displayClientMessage(Component.translatable("message.no_consumable"), true);
             }
         } else {
-            player.displayClientMessage(Component.translatable("message.image_cooldown"), true);
+            sender.displayClientMessage(Component.translatable("message.image_cooldown"), true);
         }
     }
 
@@ -51,6 +56,11 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(uuid);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
 }

@@ -3,12 +3,16 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 import java.util.UUID;
 
 public class MessagePartialImage implements Message<MessagePartialImage> {
+
+    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "partial_image");
 
     private UUID imgUUID;
     private int offset;
@@ -27,13 +31,16 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
     }
 
     @Override
-    public Dist getExecutingSide() {
-        return Dist.DEDICATED_SERVER;
+    public PacketFlow getExecutingSide() {
+        return PacketFlow.SERVERBOUND;
     }
 
     @Override
-    public void executeServerSide(NetworkEvent.Context context) {
-        Main.PACKET_MANAGER.addBytes(context.getSender(), imgUUID, offset, length, bytes);
+    public void executeServerSide(PlayPayloadContext context) {
+        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+            return;
+        }
+        Main.PACKET_MANAGER.addBytes(sender, imgUUID, offset, length, bytes);
     }
 
     @Override
@@ -52,6 +59,11 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
         buf.writeInt(length);
 
         buf.writeByteArray(bytes);
+    }
+
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
 }

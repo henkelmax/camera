@@ -3,13 +3,13 @@ package de.maxhenkel.camera.gui;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.net.MessageAlbumPage;
 import de.maxhenkel.camera.net.MessageTakeBook;
-import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LecternAlbumScreen extends AlbumScreen {
 
@@ -45,7 +45,7 @@ public class LecternAlbumScreen extends AlbumScreen {
 
         if (minecraft.player.mayBuild()) {
             addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"), (button) -> {
-                NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageTakeBook());
+                PacketDistributor.SERVER.noArg().send(new MessageTakeBook());
             }).bounds(width / 2 - 50, height - 25, 100, 20).build());
         }
     }
@@ -69,7 +69,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void sendPageUpdate(int page) {
-        NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageAlbumPage(page));
+        PacketDistributor.SERVER.noArg().send(new MessageAlbumPage(page));
     }
 
     @Override

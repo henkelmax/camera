@@ -23,6 +23,7 @@ import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
@@ -145,7 +146,7 @@ public class ClientEvents {
     public void onGuiOpen(ScreenEvent.Opening event) {
         if (inCameraMode) {
             if (event.getScreen() instanceof PauseScreen) {
-                NetUtils.sendToServer(Main.SIMPLE_CHANNEL, new MessageDisableCameraMode());
+                PacketDistributor.SERVER.noArg().send(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }
