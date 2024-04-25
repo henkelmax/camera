@@ -2,17 +2,18 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "disable_camera_mode");
+    public static final CustomPacketPayload.Type<MessageDisableCameraMode> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "disable_camera_mode"));
 
     public MessageDisableCameraMode() {
 
@@ -24,8 +25,8 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         for (InteractionHand hand : InteractionHand.values()) {
@@ -37,17 +38,18 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
     }
 
     @Override
-    public MessageDisableCameraMode fromBytes(FriendlyByteBuf buf) {
+    public MessageDisableCameraMode fromBytes(RegistryFriendlyByteBuf buf) {
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
 
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageDisableCameraMode> type() {
+        return TYPE;
     }
+
 }

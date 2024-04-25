@@ -5,10 +5,11 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 public class MessageImage implements Message<MessageImage> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "image");
+    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "image"));
 
     private UUID uuid;
     private byte[] image;
@@ -39,7 +40,7 @@ public class MessageImage implements Message<MessageImage> {
     }
 
     @Override
-    public void executeClientSide(PlayPayloadContext context) {
+    public void executeClientSide(IPayloadContext context) {
         try {
             BufferedImage img = ImageTools.fromBytes(image);
             Minecraft.getInstance().submitAsync(() -> TextureCache.instance().addImage(uuid, img));
@@ -49,21 +50,22 @@ public class MessageImage implements Message<MessageImage> {
     }
 
     @Override
-    public MessageImage fromBytes(FriendlyByteBuf buf) {
+    public MessageImage fromBytes(RegistryFriendlyByteBuf buf) {
         uuid = buf.readUUID();
         image = buf.readByteArray();
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(uuid);
 
         buf.writeByteArray(image);
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageImage> type() {
+        return TYPE;
     }
+
 }

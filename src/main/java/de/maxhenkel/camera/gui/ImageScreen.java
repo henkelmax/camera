@@ -29,7 +29,10 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
     public ImageScreen(ItemStack image) {
         super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.image.title"));
 
-        imageID = ImageData.getImageID(image);
+        ImageData imageData = ImageData.fromStack(image);
+        if (imageData != null) {
+            imageID = imageData.getId();
+        }
     }
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio

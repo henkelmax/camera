@@ -3,15 +3,16 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageTakeBook implements Message<MessageTakeBook> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "take_book");
+    public static final CustomPacketPayload.Type<MessageTakeBook> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "take_book"));
 
     public MessageTakeBook() {
 
@@ -23,8 +24,8 @@ public class MessageTakeBook implements Message<MessageTakeBook> {
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         if (sender.containerMenu instanceof AlbumContainer container) {
@@ -33,17 +34,17 @@ public class MessageTakeBook implements Message<MessageTakeBook> {
     }
 
     @Override
-    public MessageTakeBook fromBytes(FriendlyByteBuf buf) {
+    public MessageTakeBook fromBytes(RegistryFriendlyByteBuf buf) {
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageTakeBook> type() {
+        return TYPE;
     }
 
 }

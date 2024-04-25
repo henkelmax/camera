@@ -3,19 +3,20 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
 public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "resize_frame");
+    public static final CustomPacketPayload.Type<MessageResizeFrame> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "resize_frame"));
 
     private UUID uuid;
     private Direction direction;
@@ -37,8 +38,8 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         if (sender.level() instanceof ServerLevel serverLevel && sender.getAbilities().mayBuild) {
@@ -51,7 +52,7 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public MessageResizeFrame fromBytes(FriendlyByteBuf buf) {
+    public MessageResizeFrame fromBytes(RegistryFriendlyByteBuf buf) {
         uuid = buf.readUUID();
         direction = Direction.values()[buf.readInt()];
         larger = buf.readBoolean();
@@ -59,15 +60,15 @@ public class MessageResizeFrame implements Message<MessageResizeFrame> {
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(uuid);
         buf.writeInt(direction.ordinal());
         buf.writeBoolean(larger);
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageResizeFrame> type() {
+        return TYPE;
     }
 
     public enum Direction {

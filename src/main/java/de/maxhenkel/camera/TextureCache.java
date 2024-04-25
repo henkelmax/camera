@@ -58,7 +58,7 @@ public class TextureCache {
                 }
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
-            PacketDistributor.SERVER.noArg().send(new MessageRequestImage(uuid));
+            PacketDistributor.sendToServer(new MessageRequestImage(uuid));
 
             return true;
         }

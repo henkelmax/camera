@@ -17,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
@@ -147,13 +146,12 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f matrix4f = entry.pose();
-        Matrix3f matrix3f = entry.normal();
         builder.vertex(matrix4f, x, y, z)
                 .color(255, 255, 255, 255)
                 .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(light)
-                .normal(matrix3f, 0F, 0F, -1F)
+                .normal(entry, 0F, 0F, -1F)
                 .endVertex();
     }
 

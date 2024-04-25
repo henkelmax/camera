@@ -1,5 +1,6 @@
 package de.maxhenkel.camera;
 
+import com.mojang.serialization.Codec;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.entities.ImageRenderer;
 import de.maxhenkel.camera.gui.AlbumContainer;
@@ -15,10 +16,14 @@ import de.maxhenkel.corelib.ClientRegistry;
 import de.maxhenkel.corelib.CommonRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -35,8 +40,8 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
@@ -68,6 +73,11 @@ public class Main {
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER_REGISTER = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ImageCloningRecipe>> IMAGE_CLONING_SERIALIZER = RECIPE_SERIALIZER_REGISTER.register("image_cloning", ImageCloningRecipe.ImageCloningSerializer::new);
 
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPE_REGISTER = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, Main.MODID);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ImageData>> IMAGE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("image", () -> DataComponentType.<ImageData>builder().persistent(ImageData.CODEC).networkSynchronized(ImageData.STREAM_CODEC).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> ACTIVE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("active", () -> DataComponentType.<Unit>builder().networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> SHADER_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("shader", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
+
     public static TagKey<Item> IMAGE_PAPER = ItemTags.create(new ResourceLocation(Main.MODID, "image_paper"));
 
     public static ServerConfig SERVER_CONFIG;
@@ -83,8 +93,8 @@ public class Main {
         eventBus.addListener(this::onRegisterPayloadHandler);
         eventBus.addListener(CreativeTabEvents::onCreativeModeTabBuildContents);
 
-        SERVER_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.SERVER, ServerConfig.class, true);
-        CLIENT_CONFIG = CommonRegistry.registerConfig(ModConfig.Type.CLIENT, ClientConfig.class, true);
+        SERVER_CONFIG = CommonRegistry.registerConfig(MODID, ModConfig.Type.SERVER, ServerConfig.class, true);
+        CLIENT_CONFIG = CommonRegistry.registerConfig(MODID, ModConfig.Type.CLIENT, ClientConfig.class, true);
 
         if (FMLEnvironment.dist.isClient()) {
             eventBus.addListener(Main.this::clientSetup);
@@ -94,6 +104,7 @@ public class Main {
         MENU_REGISTER.register(eventBus);
         ENTITY_REGISTER.register(eventBus);
         RECIPE_SERIALIZER_REGISTER.register(eventBus);
+        DATA_COMPONENT_TYPE_REGISTER.register(eventBus);
         ModSounds.SOUND_REGISTER.register(eventBus);
     }
 
@@ -120,8 +131,8 @@ public class Main {
         EntityRenderers.register(IMAGE_ENTITY_TYPE.get(), ImageRenderer::new);
     }
 
-    public void onRegisterPayloadHandler(RegisterPayloadHandlerEvent event) {
-        IPayloadRegistrar registrar = event.registrar(MODID).versioned("0");
+    public void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(MODID).versioned("0");
         CommonRegistry.registerMessage(registrar, MessagePartialImage.class);
         CommonRegistry.registerMessage(registrar, MessageTakeImage.class);
         CommonRegistry.registerMessage(registrar, MessageRequestImage.class);

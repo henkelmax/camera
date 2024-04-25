@@ -2,17 +2,18 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageSetShader implements Message<MessageSetShader> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "set_shader");
+    public static final CustomPacketPayload.Type<MessageSetShader> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "set_shader"));
 
     private String shader;
 
@@ -30,32 +31,32 @@ public class MessageSetShader implements Message<MessageSetShader> {
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = sender.getItemInHand(hand);
             if (stack.getItem().equals(Main.CAMERA.get())) {
-                Main.CAMERA.get().setShader(stack, shader);
+                stack.set(Main.SHADER_DATA_COMPONENT, shader);
             }
         }
     }
 
     @Override
-    public MessageSetShader fromBytes(FriendlyByteBuf buf) {
+    public MessageSetShader fromBytes(RegistryFriendlyByteBuf buf) {
         shader = buf.readUtf(128);
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(shader);
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageSetShader> type() {
+        return TYPE;
     }
 
 }

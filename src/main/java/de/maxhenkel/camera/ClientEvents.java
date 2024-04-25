@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
-import de.maxhenkel.corelib.net.NetUtils;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,12 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.neoforge.client.event.RenderPlayerEvent;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 
@@ -47,7 +41,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void renderOverlay(RenderGuiOverlayEvent.Pre event) {
+    public void renderOverlay(RenderGuiLayerEvent.Pre event) {
         inCameraMode = isInCameraMode();
 
         if (!inCameraMode) {
@@ -146,7 +140,7 @@ public class ClientEvents {
     public void onGuiOpen(ScreenEvent.Opening event) {
         if (inCameraMode) {
             if (event.getScreen() instanceof PauseScreen) {
-                PacketDistributor.SERVER.noArg().send(new MessageDisableCameraMode());
+                PacketDistributor.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }
@@ -158,7 +152,7 @@ public class ClientEvents {
             if (!stack.getItem().equals(Main.CAMERA.get())) {
                 continue;
             }
-            return Shaders.getShader(Main.CAMERA.get().getShader(stack));
+            return Shaders.getShader(stack.get(Main.SHADER_DATA_COMPONENT));
         }
         return null;
     }

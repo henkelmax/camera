@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "camera:image_frame",
+    "id": "camera:image_frame",
     "count": 1
   }
 }

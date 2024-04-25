@@ -1,18 +1,18 @@
 package de.maxhenkel.camera;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.crafting.IShapedRecipe;
-import org.jetbrains.annotations.Nullable;
 
 public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
 
@@ -25,12 +25,12 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public int getRecipeWidth() {
+    public int getWidth() {
         return 2;
     }
 
     @Override
-    public int getRecipeHeight() {
+    public int getHeight() {
         return 2;
     }
 
@@ -54,7 +54,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+    public ItemStack assemble(CraftingContainer container, HolderLookup.Provider provider) {
         CraftingResult craft = craft(container);
         if (craft == null) {
             return null;
@@ -68,7 +68,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public ItemStack getResultItem(RegistryAccess p_267052_) {
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
         return image;
     }
 
@@ -97,34 +97,36 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
 
     public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
 
-        private Codec<ImageCloningRecipe> codec;
+        private static final MapCodec<ImageCloningRecipe> CODEC = RecordCodecBuilder.mapCodec((builder) -> builder
+                .group(
+                        BuiltInRegistries.ITEM.byNameCodec().xmap(ItemStack::new, ItemStack::getItem)
+                                .fieldOf("image")
+                                .forGetter((recipe) -> recipe.image),
+                        Ingredient.CODEC_NONEMPTY
+                                .fieldOf("paper")
+                                .forGetter((recipe) -> recipe.paper)
+                ).apply(builder, ImageCloningRecipe::new));
+
+        private static final StreamCodec<RegistryFriendlyByteBuf, ImageCloningRecipe> STREAM_CODEC = StreamCodec.composite(
+                ItemStack.STREAM_CODEC,
+                ImageCloningRecipe::getImage,
+                Ingredient.CONTENTS_STREAM_CODEC,
+                ImageCloningRecipe::getPaper,
+                ImageCloningRecipe::new
+        );
 
         public ImageCloningSerializer() {
-            codec = RecordCodecBuilder.create((builder) -> builder
-                    .group(
-                            BuiltInRegistries.ITEM.byNameCodec().xmap(ItemStack::new, ItemStack::getItem)
-                                    .fieldOf("image")
-                                    .forGetter((recipe) -> recipe.image),
-                            Ingredient.CODEC_NONEMPTY
-                                    .fieldOf("paper")
-                                    .forGetter((recipe) -> recipe.paper)
-                    ).apply(builder, ImageCloningRecipe::new));
+
         }
 
         @Override
-        public Codec<ImageCloningRecipe> codec() {
-            return codec;
+        public MapCodec<ImageCloningRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public @Nullable ImageCloningRecipe fromNetwork(FriendlyByteBuf packetBuffer) {
-            return new ImageCloningRecipe(packetBuffer.readItem(), Ingredient.fromNetwork(packetBuffer));
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf packetBuffer, ImageCloningRecipe recipe) {
-            packetBuffer.writeItem(recipe.image);
-            recipe.paper.toNetwork(packetBuffer);
+        public StreamCodec<RegistryFriendlyByteBuf, ImageCloningRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 

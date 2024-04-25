@@ -32,6 +32,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
@@ -110,14 +111,14 @@ public class ImageEntity extends Entity {
         if (!(heldItem.getItem() instanceof ImageItem)) {
             return InteractionResult.PASS;
         }
-        UUID imageID = ImageData.getImageID(heldItem);
-        if (imageID == null) {
+        ImageData imageData = ImageData.fromStack(heldItem);
+        if (imageData == null) {
             return InteractionResult.PASS;
         }
 
         ItemStack frameStack = heldItem.split(1);
         setItem(frameStack);
-        setImageUUID(imageID);
+        setImageUUID(imageData.getId());
         playAddSound();
 
         return InteractionResult.sidedSuccess(level().isClientSide);
@@ -422,13 +423,13 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(ID, Optional.empty());
-        entityData.define(FACING, Direction.NORTH);
-        entityData.define(WIDTH, 1);
-        entityData.define(HEIGHT, 1);
-        entityData.define(ITEM, ItemStack.EMPTY);
-        entityData.define(OWNER, Optional.empty());
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(ID, Optional.empty());
+        builder.define(FACING, Direction.NORTH);
+        builder.define(WIDTH, 1);
+        builder.define(HEIGHT, 1);
+        builder.define(ITEM, ItemStack.EMPTY);
+        builder.define(OWNER, Optional.empty());
     }
 
     @Override
@@ -442,7 +443,7 @@ public class ImageEntity extends Entity {
         compound.putInt("facing", getFacing().get3DDataValue());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
-        compound.put("item", getItem().save(new CompoundTag()));
+        compound.put("item", getItem().save(registryAccess()));
     }
 
     @Override
@@ -456,7 +457,7 @@ public class ImageEntity extends Entity {
         setFacing(Direction.from3DDataValue(compound.getInt("facing")));
         setFrameWidth(compound.getInt("width"));
         setFrameHeight(compound.getInt("height"));
-        setItem(ItemStack.of(compound.getCompound("item")));
+        setItem(ItemStack.parseOptional(registryAccess(), compound.getCompound("item")));
 
         updateBoundingBox();
     }

@@ -7,6 +7,7 @@ import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,7 @@ public class AlbumItem extends Item {
 
                     @Override
                     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-                        return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(stack));
+                        return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(serverPlayer.registryAccess(), stack));
                     }
 
                     @Override
@@ -59,7 +61,7 @@ public class AlbumItem extends Item {
 
     public static void openAlbum(Player player, ItemStack album) {
         if (player.level().isClientSide) {
-            List<UUID> images = Main.ALBUM.get().getImages(album);
+            List<UUID> images = Main.ALBUM.get().getImages(player.level().registryAccess(), album);
             if (!images.isEmpty()) {
                 openClientGui(images);
             }
@@ -83,19 +85,19 @@ public class AlbumItem extends Item {
         }
     }
 
-    public List<UUID> getImages(ItemStack stack) {
+    public List<UUID> getImages(HolderLookup.Provider provider, ItemStack stack) {
         if (stack.isEmpty()) {
             return Collections.emptyList();
         }
         List<UUID> images = new ArrayList<>();
-        Container inventory = new AlbumInventory(stack);
+        Container inventory = new AlbumInventory(provider, stack);
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack s = inventory.getItem(i);
-            UUID uuid = ImageData.getImageID(s);
-            if (uuid == null) {
+            ImageData imageData = ImageData.fromStack(s);
+            if (imageData == null) {
                 continue;
             }
-            images.add(uuid);
+            images.add(imageData.getId());
         }
         return images;
     }

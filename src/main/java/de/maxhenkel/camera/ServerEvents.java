@@ -1,19 +1,18 @@
 package de.maxhenkel.camera;
 
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-@Mod.EventBusSubscriber(modid = Main.MODID)
+@EventBusSubscriber(modid = Main.MODID)
 public class ServerEvents {
 
     @SubscribeEvent
@@ -44,32 +43,6 @@ public class ServerEvents {
                 break;
             }
         }
-    }
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickEmpty event) {
-        handleLeftClick(event);
-    }
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.LeftClickBlock event) {
-        handleLeftClick(event);
-    }
-
-    @SubscribeEvent
-    public static void onLeftClick(PlayerInteractEvent.EntityInteract event) {
-        handleLeftClick(event);
-    }
-
-    public static void handleLeftClick(PlayerInteractEvent event) {
-        for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack stack = event.getEntity().getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
-                event.setCancellationResult(InteractionResult.PASS);
-                break;
-            }
-        }
-
     }
 
     @SubscribeEvent

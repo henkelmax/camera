@@ -45,7 +45,7 @@ public class LecternAlbumScreen extends AlbumScreen {
 
         if (minecraft.player.mayBuild()) {
             addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"), (button) -> {
-                PacketDistributor.SERVER.noArg().send(new MessageTakeBook());
+                PacketDistributor.sendToServer(new MessageTakeBook());
             }).bounds(width / 2 - 50, height - 25, 100, 20).build());
         }
     }
@@ -69,7 +69,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void sendPageUpdate(int page) {
-        PacketDistributor.SERVER.noArg().send(new MessageAlbumPage(page));
+        PacketDistributor.sendToServer(new MessageAlbumPage(page));
     }
 
     @Override
@@ -83,7 +83,10 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void updateContents() {
-        images = Main.ALBUM.get().getImages(albumContainer.getAlbum());
+        if (minecraft.level == null) {
+            return;
+        }
+        images = Main.ALBUM.get().getImages(minecraft.level.registryAccess(), albumContainer.getAlbum());
     }
 
     private void updatePage() {

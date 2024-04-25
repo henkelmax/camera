@@ -3,15 +3,16 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "album_page");
+    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "album_page"));
 
     private int page;
 
@@ -29,8 +30,8 @@ public class MessageAlbumPage implements Message<MessageAlbumPage> {
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         if (sender.containerMenu instanceof AlbumContainer container) {
@@ -39,19 +40,19 @@ public class MessageAlbumPage implements Message<MessageAlbumPage> {
     }
 
     @Override
-    public MessageAlbumPage fromBytes(FriendlyByteBuf buf) {
+    public MessageAlbumPage fromBytes(RegistryFriendlyByteBuf buf) {
         page = buf.readInt();
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeInt(page);
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageAlbumPage> type() {
+        return TYPE;
     }
 
 }

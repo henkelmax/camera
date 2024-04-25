@@ -16,9 +16,12 @@ public class ImageItemRenderer extends ItemRenderer {
 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext itemDisplayContext, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay) {
-        UUID uuid;
+        UUID uuid = null;
         if (Main.CLIENT_CONFIG.renderImageItem.get()) {
-            uuid = ImageData.getImageID(stack);
+            ImageData imageData = ImageData.fromStack(stack);
+            if (imageData != null) {
+                uuid = imageData.getId();
+            }
         } else {
             uuid = ImageRenderer.DEFAULT_IMAGE_UUID;
         }

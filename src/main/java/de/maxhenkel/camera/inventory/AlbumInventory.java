@@ -1,38 +1,44 @@
 package de.maxhenkel.camera.inventory;
 
+import de.maxhenkel.camera.ImageData;
+import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.ImageItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 
 public class AlbumInventory implements Container {
 
+    public static final int SIZE = 54;
+
     private NonNullList<ItemStack> items;
     private ItemStack album;
-    private int invSize;
-    private CompoundTag inventoryTag;
 
-    public AlbumInventory(ItemStack album) {
+    public AlbumInventory(HolderLookup.Provider provider, ItemStack album) {
         assert !album.isEmpty();
         this.album = album;
-        this.invSize = 54;
-        this.items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+        this.items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
-        CompoundTag c = album.getOrCreateTag();
+        convert(provider, album);
 
-        if (c.contains("Images")) {
-            inventoryTag = c.getCompound("Images");
-            ContainerHelper.loadAllItems(inventoryTag, items);
-        }
+        ItemContainerContents contents = album.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        contents.copyInto(items);
     }
 
     @Override
     public int getContainerSize() {
-        return invSize;
+        return SIZE;
     }
 
     @Override
@@ -65,12 +71,7 @@ public class AlbumInventory implements Container {
 
     @Override
     public void setChanged() {
-        if (inventoryTag == null) {
-            CompoundTag tag = album.getOrCreateTag();
-            tag.put("Images", inventoryTag = new CompoundTag());
-        }
-
-        ContainerHelper.saveAllItems(inventoryTag, items, true);
+        album.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
     }
 
     @Override
@@ -97,6 +98,49 @@ public class AlbumInventory implements Container {
             }
         }
         return false;
+    }
+
+    public static void convert(HolderLookup.Provider provider, ItemStack album) {
+        if (!(album.getItem() instanceof AlbumItem)) {
+            return;
+        }
+        CustomData customData = album.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) {
+            return;
+        }
+        CompoundTag itemTag = customData.copyTag();
+        if (!(itemTag.contains("Images", Tag.TAG_COMPOUND))) {
+            return;
+        }
+        CompoundTag images = itemTag.getCompound("Images");
+        itemTag.remove("Images");
+        if (itemTag.isEmpty()) {
+            album.remove(DataComponents.CUSTOM_DATA);
+        } else {
+            album.set(DataComponents.CUSTOM_DATA, CustomData.of(itemTag));
+        }
+        NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+
+        ListTag itemsTag = images.getList("Items", 10);
+
+        for (int i = 0; i < itemsTag.size(); i++) {
+            CompoundTag compoundtag = itemsTag.getCompound(i);
+            int j = compoundtag.getByte("Slot") & 255;
+            if (j > items.size()) {
+                continue;
+            }
+            ItemStack itemStack = ItemStack.parse(provider, compoundtag).orElse(ItemStack.EMPTY);
+            CompoundTag tag = compoundtag.getCompound("tag");
+            ImageData imageData = ImageData.fromImageTag(tag.getCompound("image"));
+            if (imageData == null) {
+                items.set(j, itemStack);
+                continue;
+            }
+            itemStack.set(Main.IMAGE_DATA_COMPONENT, imageData);
+            items.set(j, itemStack);
+        }
+
+        album.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
     }
 
 }

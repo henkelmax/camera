@@ -6,10 +6,10 @@ import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
 import de.maxhenkel.corelib.item.ItemUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,7 +38,7 @@ public class CameraItem extends Item {
 
         if (playerIn.isShiftKeyDown() && !isActive(stack)) {
             if (worldIn.isClientSide) {
-                openClientGui(getShader(stack));
+                openClientGui(stack.get(Main.SHADER_DATA_COMPONENT));
             }
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
@@ -53,7 +53,7 @@ public class CameraItem extends Item {
             if (consumePaper(playerIn)) {
                 worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE.get(), SoundSource.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
-                PacketDistributor.PLAYER.with(serverPlayer).send(new MessageTakeImage(uuid));
+                PacketDistributor.sendToPlayer(serverPlayer, new MessageTakeImage(uuid));
                 Main.CAMERA.get().setActive(stack, false);
             } else {
                 playerIn.displayClientMessage(Component.translatable("message.no_consumable"), true);
@@ -128,28 +128,14 @@ public class CameraItem extends Item {
     }
 
     public boolean isActive(ItemStack stack) {
-        CompoundTag compound = stack.getOrCreateTag();
-        if (!compound.contains("active")) {
-            compound.putBoolean("active", false);
-        }
-        return compound.getBoolean("active");
+        return stack.has(Main.ACTIVE_DATA_COMPONENT);
     }
 
     public void setActive(ItemStack stack, boolean active) {
-        stack.getOrCreateTag().putBoolean("active", active);
-    }
-
-    public String getShader(ItemStack stack) {
-        CompoundTag compound = stack.getOrCreateTag();
-        if (!compound.contains("shader")) {
-            return null;
-        }
-        return compound.getString("shader");
-    }
-
-    public void setShader(ItemStack stack, String shader) {
-        if (shader != null) {
-            stack.getOrCreateTag().putString("shader", shader);
+        if (active) {
+            stack.set(Main.ACTIVE_DATA_COMPONENT, Unit.INSTANCE);
+        } else {
+            stack.remove(Main.ACTIVE_DATA_COMPONENT);
         }
     }
 

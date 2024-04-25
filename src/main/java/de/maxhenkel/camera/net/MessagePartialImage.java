@@ -2,17 +2,18 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
 public class MessagePartialImage implements Message<MessagePartialImage> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "partial_image");
+    public static final CustomPacketPayload.Type<MessagePartialImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "partial_image"));
 
     private UUID imgUUID;
     private int offset;
@@ -36,15 +37,15 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
     }
 
     @Override
-    public void executeServerSide(PlayPayloadContext context) {
-        if (!(context.player().orElse(null) instanceof ServerPlayer sender)) {
+    public void executeServerSide(IPayloadContext context) {
+        if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
         Main.PACKET_MANAGER.addBytes(sender, imgUUID, offset, length, bytes);
     }
 
     @Override
-    public MessagePartialImage fromBytes(FriendlyByteBuf buf) {
+    public MessagePartialImage fromBytes(RegistryFriendlyByteBuf buf) {
         imgUUID = buf.readUUID();
         offset = buf.readInt();
         length = buf.readInt();
@@ -53,7 +54,7 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
         buf.writeInt(offset);
         buf.writeInt(length);
@@ -62,8 +63,8 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessagePartialImage> type() {
+        return TYPE;
     }
 
 }

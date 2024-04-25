@@ -1,30 +1,54 @@
 package de.maxhenkel.camera;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ImageData {
+
+    public static final Codec<ImageData> CODEC = RecordCodecBuilder.create(i -> {
+        return i.group(
+                UUIDUtil.CODEC.fieldOf("id").forGetter(ImageData::getId),
+                Codec.LONG.fieldOf("time").forGetter(ImageData::getTime),
+                Codec.STRING.fieldOf("owner").forGetter(ImageData::getOwner),
+                ResourceLocation.CODEC.optionalFieldOf("biome", null).forGetter(ImageData::getBiome),
+                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities", null).forGetter(ImageData::getEntities)
+        ).apply(i, ImageData::new);
+    });
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ImageData> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC,
+            ImageData::getId,
+            ByteBufCodecs.VAR_LONG,
+            ImageData::getTime,
+            ByteBufCodecs.STRING_UTF8,
+            ImageData::getOwner,
+            ImageData::new
+    );
 
     private UUID id;
     private long time;
@@ -36,6 +60,20 @@ public class ImageData {
 
     private ImageData() {
 
+    }
+
+    private ImageData(UUID id, long time, String owner) {
+        this.id = id;
+        this.time = time;
+        this.owner = owner;
+    }
+
+    private ImageData(UUID id, long time, String owner, @Nullable ResourceLocation biome, @Nullable List<ResourceLocation> entities) {
+        this.id = id;
+        this.time = time;
+        this.owner = owner;
+        this.biome = biome;
+        this.entities = entities;
     }
 
     public UUID getId() {
@@ -62,25 +100,8 @@ public class ImageData {
 
     @Nullable
     public static ImageData fromStack(ItemStack stack) {
-        if (!(stack.getItem() instanceof ImageItem)) {
-            return null;
-        }
-        ImageData data = new ImageData();
-
-        UUID id = getImageID(stack);
-        if (id == null) {
-            return null;
-        }
-        data.id = id;
-        data.time = getTime(stack);
-        data.owner = getOwner(stack);
-
-        if (Main.SERVER_CONFIG.advancedImageData.get()) {
-            data.biome = getBiome(stack);
-            data.entities = getEntities(stack);
-        }
-
-        return data;
+        convert(stack);
+        return stack.get(Main.IMAGE_DATA_COMPONENT);
     }
 
     public static ImageData create(ServerPlayer player, UUID imageID) {
@@ -135,118 +156,87 @@ public class ImageData {
         if (!(stack.getItem() instanceof ImageItem)) {
             return;
         }
-
-        setImageID(stack, id);
-        setTime(stack, time);
-        setOwner(stack, owner);
-        if (biome != null) {
-            setBiome(stack, biome);
-        }
-        if (entities != null) {
-            setEntities(stack, entities);
-        }
+        stack.set(Main.IMAGE_DATA_COMPONENT, this);
     }
 
-    private static CompoundTag getImageTag(ItemStack stack) {
-        assert stack.getItem() instanceof ImageItem;
-        CompoundTag compound = stack.getOrCreateTag();
-
-        if (!compound.contains("image", Tag.TAG_COMPOUND)) {
-            compound.put("image", new CompoundTag());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
 
-        return compound.getCompound("image");
+        ImageData imageData = (ImageData) o;
+        return Objects.equals(id, imageData.id);
     }
 
-    private static void setImageID(ItemStack stack, UUID uuid) {
-        CompoundTag compound = getImageTag(stack);
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 
-        compound.putLong("image_id_most", uuid.getMostSignificantBits());
-        compound.putLong("image_id_least", uuid.getLeastSignificantBits());
+    public static void convert(ItemStack stack) {
+        if (!(stack.getItem() instanceof ImageItem)) {
+            return;
+        }
+        if (stack.has(Main.IMAGE_DATA_COMPONENT)) {
+            return;
+        }
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        if (customData == null) {
+            return;
+        }
+        CompoundTag itemTag = customData.copyTag();
+        if (!itemTag.contains("image", Tag.TAG_COMPOUND)) {
+            return;
+        }
+        CompoundTag imageTag = itemTag.getCompound("image");
+        itemTag.remove("image");
+        if (imageTag.isEmpty()) {
+            stack.remove(DataComponents.CUSTOM_DATA);
+        } else {
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(itemTag));
+        }
+
+        ImageData imageData = fromImageTag(imageTag);
+        if (imageData == null) {
+            return;
+        }
+        stack.set(Main.IMAGE_DATA_COMPONENT, imageData);
     }
 
     @Nullable
-    public static UUID getImageID(ItemStack stack) {
-        CompoundTag compound = getImageTag(stack);
-
-        if (!compound.contains("image_id_most", Tag.TAG_LONG) || !compound.contains("image_id_least", Tag.TAG_LONG)) {
+    public static ImageData fromImageTag(CompoundTag imageTag) {
+        UUID imageID;
+        if (imageTag.contains("image_id_most", Tag.TAG_LONG) && imageTag.contains("image_id_least", Tag.TAG_LONG)) {
+            imageID = new UUID(imageTag.getLong("image_id_most"), imageTag.getLong("image_id_least"));
+        } else {
             return null;
         }
-
-        long most = compound.getLong("image_id_most");
-        long least = compound.getLong("image_id_least");
-        return new UUID(most, least);
-    }
-
-    private static void setTime(ItemStack stack, long time) {
-        CompoundTag compound = getImageTag(stack);
-        compound.putLong("image_time", time);
-    }
-
-    private static long getTime(ItemStack stack) {
-        CompoundTag compound = getImageTag(stack);
-
-        if (!compound.contains("image_time", Tag.TAG_LONG)) {
-            return 0L;
+        long time = imageTag.getLong("image_time");
+        String owner = imageTag.getString("owner");
+        ResourceLocation biome = null;
+        if (imageTag.contains("biome", Tag.TAG_STRING)) {
+            biome = new ResourceLocation(imageTag.getString("biome"));
+        }
+        List<ResourceLocation> entityList = null;
+        if (imageTag.contains("entities", Tag.TAG_LIST)) {
+            ListTag entities = imageTag.getList("entities", Tag.TAG_STRING);
+            entityList = new ArrayList<>();
+            for (Tag e : entities) {
+                entityList.add(new ResourceLocation(e.getAsString()));
+            }
         }
 
-        return compound.getLong("image_time");
-    }
-
-    private static void setOwner(ItemStack stack, String name) {
-        CompoundTag compound = getImageTag(stack);
-        compound.putString("owner", name);
-    }
-
-    private static String getOwner(ItemStack stack) {
-        CompoundTag compound = getImageTag(stack);
-
-        if (!compound.contains("owner", Tag.TAG_STRING)) {
-            return "";
-        }
-
-        return compound.getString("owner");
-    }
-
-    private static void setBiome(ItemStack stack, ResourceLocation biome) {
-        CompoundTag compound = getImageTag(stack);
-        compound.putString("biome", biome.toString());
-    }
-
-    @Nullable
-    private static ResourceLocation getBiome(ItemStack stack) {
-        CompoundTag compound = getImageTag(stack);
-        if (!compound.contains("biome", Tag.TAG_STRING)) {
-            return null;
-        }
-        return new ResourceLocation(compound.getString("biome"));
-    }
-
-    private static void setEntities(ItemStack stack, List<ResourceLocation> entities) {
-        CompoundTag compound = getImageTag(stack);
-
-        ListTag list = new ListTag();
-        for (ResourceLocation entity : entities) {
-            list.add(StringTag.valueOf(entity.toString()));
-        }
-
-        compound.put("entities", list);
-    }
-
-    @Nullable
-    private static List<ResourceLocation> getEntities(ItemStack stack) {
-        CompoundTag compound = getImageTag(stack);
-        if (!compound.contains("entities", Tag.TAG_LIST)) {
-            return null;
-        }
-
-        ListTag entities = compound.getList("entities", Tag.TAG_STRING);
-        List<ResourceLocation> list = new ArrayList<>();
-        for (Tag e : entities) {
-            list.add(new ResourceLocation(e.getAsString()));
-        }
-
-        return list;
+        ImageData data = new ImageData();
+        data.id = imageID;
+        data.time = time;
+        data.owner = owner;
+        data.biome = biome;
+        data.entities = entityList;
+        return data;
     }
 
 }

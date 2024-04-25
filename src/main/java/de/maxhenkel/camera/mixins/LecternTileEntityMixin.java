@@ -4,6 +4,7 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.camera.items.AlbumItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -70,7 +71,11 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         info.cancel();
         book = resolveBook(stack, player);
         page = 0;
-        pageCount = Main.ALBUM.get().getImages(book).size();
+        if (level != null) {
+            pageCount = Main.ALBUM.get().getImages(level.registryAccess(), book).size();
+        } else {
+            pageCount = 0;
+        }
         setChanged();
     }
 
@@ -82,12 +87,12 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         cir.setReturnValue(new AlbumContainer(id, bookAccess, dataAccess));
     }
 
-    @Inject(method = "load", at = @At("TAIL"))
-    public void read(CompoundTag compound, CallbackInfo info) {
+    @Inject(method = "loadAdditional", at = @At("TAIL"))
+    public void read(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
         if (!(book.getItem() instanceof AlbumItem)) {
             return;
         }
-        pageCount = Main.ALBUM.get().getImages(book).size();
+        pageCount = Main.ALBUM.get().getImages(provider, book).size();
     }
 
     @Shadow

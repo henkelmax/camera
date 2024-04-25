@@ -3,17 +3,18 @@ package de.maxhenkel.camera.net;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
 public class MessageImageUnavailable implements Message<MessageImageUnavailable> {
 
-    public static ResourceLocation ID = new ResourceLocation(Main.MODID, "image_unavailable");
+    public static final CustomPacketPayload.Type<MessageImageUnavailable> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "image_unavailable"));
 
     private UUID imgUUID;
 
@@ -31,23 +32,24 @@ public class MessageImageUnavailable implements Message<MessageImageUnavailable>
     }
 
     @Override
-    public void executeClientSide(PlayPayloadContext context) {
+    public void executeClientSide(IPayloadContext context) {
         TextureCache.instance().addImage(imgUUID, new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
     }
 
     @Override
-    public MessageImageUnavailable fromBytes(FriendlyByteBuf buf) {
+    public MessageImageUnavailable fromBytes(RegistryFriendlyByteBuf buf) {
         imgUUID = buf.readUUID();
         return this;
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(imgUUID);
     }
 
     @Override
-    public ResourceLocation id() {
-        return ID;
+    public Type<MessageImageUnavailable> type() {
+        return TYPE;
     }
+
 }

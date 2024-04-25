@@ -22,14 +22,14 @@ public class ImageProcessor {
 
         int size = data.length;
         if (size < 30_000) {
-            PacketDistributor.SERVER.noArg().send(new MessagePartialImage(uuid, 0, size, data));
+            PacketDistributor.sendToServer(new MessagePartialImage(uuid, 0, size, data));
         } else {
 
             int bufferProgress = 0;
             byte[] currentBuffer = new byte[30_000];
             for (int i = 0; i < size; i++) {
                 if (bufferProgress >= currentBuffer.length) {
-                    PacketDistributor.SERVER.noArg().send(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
+                    PacketDistributor.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
                     bufferProgress = 0;
                     currentBuffer = new byte[currentBuffer.length];
                 }
@@ -40,7 +40,7 @@ public class ImageProcessor {
             if (bufferProgress > 0) {
                 byte[] rest = new byte[bufferProgress];
                 System.arraycopy(currentBuffer, 0, rest, 0, bufferProgress);
-                PacketDistributor.SERVER.noArg().send(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
+                PacketDistributor.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
             }
         }
     }

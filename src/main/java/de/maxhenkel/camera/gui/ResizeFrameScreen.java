@@ -72,7 +72,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        PacketDistributor.SERVER.noArg().send(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
+        PacketDistributor.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
     }
 
     @Override

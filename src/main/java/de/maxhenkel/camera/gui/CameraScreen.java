@@ -81,7 +81,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         UUID uuid = UUID.randomUUID();
                         BufferedImage image = ImageTools.loadImage(file);
                         ClientImageUploadManager.addImage(uuid, image);
-                        PacketDistributor.SERVER.noArg().send(new MessageRequestUploadCustomImage(uuid));
+                        PacketDistributor.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
                         minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
                         //TODO Properly log an error
@@ -102,7 +102,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     private void sendShader() {
-        PacketDistributor.SERVER.noArg().send(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+        PacketDistributor.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
     }
 
     @Override
