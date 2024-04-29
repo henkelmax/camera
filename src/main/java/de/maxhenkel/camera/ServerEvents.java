@@ -7,27 +7,27 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(modid = Main.MODID)
 public class ServerEvents {
 
     @SubscribeEvent
-    public static void onTick(TickEvent.PlayerTickEvent event) {
-        if (event.player.getMainHandItem().getItem().equals(Main.CAMERA.get()) || event.player.getOffhandItem().getItem().equals(Main.CAMERA.get())) {
+    public static void onTick(PlayerTickEvent.Pre event) {
+        if (event.getEntity().getMainHandItem().getItem().equals(Main.CAMERA.get()) || event.getEntity().getOffhandItem().getItem().equals(Main.CAMERA.get())) {
             return;
         }
 
-        disableCamera(event.player.getInventory().getSelected());
+        disableCamera(event.getEntity().getInventory().getSelected());
 
-        for (ItemStack stack : event.player.getInventory().items) {
+        for (ItemStack stack : event.getEntity().getInventory().items) {
             disableCamera(stack);
         }
 
-        for (ItemStack stack : event.player.getInventory().offhand) {
+        for (ItemStack stack : event.getEntity().getInventory().offhand) {
             disableCamera(stack);
         }
     }

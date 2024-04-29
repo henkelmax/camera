@@ -7,7 +7,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 
 import java.util.UUID;
 
@@ -34,11 +34,7 @@ public class ImageTaker {
     }
 
     @SubscribeEvent
-    public static void onRenderTickEnd(TickEvent.RenderTickEvent event) {
-        if (!event.phase.equals(TickEvent.Phase.END)) {
-            return;
-        }
-
+    public static void onRenderTickEnd(RenderFrameEvent.Post event) {
         if (!takeScreenshot) {
             return;
         }
