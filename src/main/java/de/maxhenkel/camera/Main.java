@@ -12,7 +12,6 @@ import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.items.ImageFrameItem;
 import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.*;
-import de.maxhenkel.corelib.ClientRegistry;
 import de.maxhenkel.corelib.CommonRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -38,6 +37,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -99,6 +99,7 @@ public class Main {
         if (FMLEnvironment.dist.isClient()) {
             eventBus.addListener(Main.this::clientSetup);
             eventBus.addListener(Main.this::registerKeyBinds);
+            eventBus.addListener(Main.this::onRegisterScreens);
         }
         ITEM_REGISTER.register(eventBus);
         MENU_REGISTER.register(eventBus);
@@ -124,11 +125,13 @@ public class Main {
     @OnlyIn(Dist.CLIENT)
     public void clientSetup(FMLClientSetupEvent event) {
         NeoForge.EVENT_BUS.register(new ClientEvents());
-
-        ClientRegistry.<AlbumInventoryContainer, AlbumInventoryScreen>registerScreen(Main.ALBUM_INVENTORY_CONTAINER.get(), AlbumInventoryScreen::new);
-        ClientRegistry.<AlbumContainer, LecternAlbumScreen>registerScreen(Main.ALBUM_CONTAINER.get(), LecternAlbumScreen::new);
-
         EntityRenderers.register(IMAGE_ENTITY_TYPE.get(), ImageRenderer::new);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void onRegisterScreens(RegisterMenuScreensEvent containers) {
+        containers.<AlbumInventoryContainer, AlbumInventoryScreen>register(Main.ALBUM_INVENTORY_CONTAINER.get(), AlbumInventoryScreen::new);
+        containers.<AlbumContainer, LecternAlbumScreen>register(Main.ALBUM_CONTAINER.get(), LecternAlbumScreen::new);
     }
 
     public void onRegisterPayloadHandler(RegisterPayloadHandlersEvent event) {
