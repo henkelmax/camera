@@ -13,11 +13,11 @@ import java.util.Date;
 
 public class HUDHandlerImageFrame implements IEntityComponentProvider {
 
-    private static final ResourceLocation OBJECT_NAME_TAG = new ResourceLocation("jade", "object_name");
+    private static final ResourceLocation OBJECT_NAME_TAG = ResourceLocation.fromNamespaceAndPath("jade", "object_name");
 
     public static final HUDHandlerImageFrame INSTANCE = new HUDHandlerImageFrame();
 
-    private static final ResourceLocation UID = new ResourceLocation(Main.MODID, "image_frame");
+    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_frame");
 
     @Override
     public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {

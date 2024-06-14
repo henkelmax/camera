@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageSetShader implements Message<MessageSetShader> {
 
-    public static final CustomPacketPayload.Type<MessageSetShader> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "set_shader"));
+    public static final CustomPacketPayload.Type<MessageSetShader> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "set_shader"));
 
     private String shader;
 

@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageTakeBook implements Message<MessageTakeBook> {
 
-    public static final CustomPacketPayload.Type<MessageTakeBook> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "take_book"));
+    public static final CustomPacketPayload.Type<MessageTakeBook> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "take_book"));
 
     public MessageTakeBook() {
 

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MessageTakeImage implements Message<MessageTakeImage> {
 
-    public static final CustomPacketPayload.Type<MessageTakeImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "take_image"));
+    public static final CustomPacketPayload.Type<MessageTakeImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "take_image"));
 
     private UUID uuid;
 

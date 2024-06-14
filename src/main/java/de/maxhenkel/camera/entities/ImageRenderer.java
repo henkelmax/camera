@@ -24,10 +24,10 @@ import java.util.UUID;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity> {
 
-    private static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
-    private static final ResourceLocation EMPTY_IMAGE = new ResourceLocation(Main.MODID, "textures/images/empty_image.png");
-    private static final ResourceLocation FRAME_SIDE = new ResourceLocation(Main.MODID, "textures/images/frame_side.png");
-    private static final ResourceLocation FRAME_BACK = new ResourceLocation(Main.MODID, "textures/images/frame_back.png");
+    private static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/default_image.png");
+    private static final ResourceLocation EMPTY_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/empty_image.png");
+    private static final ResourceLocation FRAME_SIDE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/frame_side.png");
+    private static final ResourceLocation FRAME_BACK = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/frame_back.png");
 
     private static final float THICKNESS = 1F / 16F;
     public static final UUID DEFAULT_IMAGE_UUID = new UUID(0L, 0L);
@@ -146,13 +146,12 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f matrix4f = entry.pose();
-        builder.vertex(matrix4f, x, y, z)
-                .color(255, 255, 255, 255)
-                .uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(light)
-                .normal(entry, 0F, 0F, -1F)
-                .endVertex();
+        builder.addVertex(matrix4f, x, y, z)
+                .setColor(255, 255, 255, 255)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(entry, 0F, 0F, -1F);
     }
 
     private static void renderBoundingBox(ImageEntity entity, PoseStack matrixStack, MultiBufferSource buffer) {

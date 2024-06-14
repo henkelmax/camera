@@ -8,30 +8,19 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.crafting.IShapedRecipe;
 
-public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<CraftingContainer> {
+public class ImageCloningRecipe extends CustomRecipe {
 
     private final ItemStack image;
     private final Ingredient paper;
 
     public ImageCloningRecipe(ItemStack image, Ingredient paper) {
+        super(CraftingBookCategory.MISC);
         this.image = image;
         this.paper = paper;
-    }
-
-    @Override
-    public int getWidth() {
-        return 2;
-    }
-
-    @Override
-    public int getHeight() {
-        return 2;
     }
 
     @Override
@@ -40,12 +29,12 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level worldIn) {
+    public boolean matches(CraftingInput inv, Level worldIn) {
         return craft(inv) != null;
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
         CraftingResult craft = craft(inv);
         if (craft == null) {
             return null;
@@ -54,7 +43,7 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, HolderLookup.Provider provider) {
+    public ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
         CraftingResult craft = craft(container);
         if (craft == null) {
             return null;
@@ -130,12 +119,12 @@ public class ImageCloningRecipe implements CraftingRecipe, IShapedRecipe<Craftin
         }
     }
 
-    protected CraftingResult craft(CraftingContainer inv) {
+    protected CraftingResult craft(RecipeInput inv) {
         ItemStack image = null;
-        NonNullList<ItemStack> remaining = NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+        NonNullList<ItemStack> remaining = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
         int paperSlotIndex = -1;
 
-        for (int i = 0; i < inv.getContainerSize(); i++) {
+        for (int i = 0; i < inv.size(); i++) {
             ItemStack stack = inv.getItem(i);
 
             if (stack.isEmpty()) {

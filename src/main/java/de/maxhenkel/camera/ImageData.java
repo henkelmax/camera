@@ -219,14 +219,17 @@ public class ImageData {
         String owner = imageTag.getString("owner");
         ResourceLocation biome = null;
         if (imageTag.contains("biome", Tag.TAG_STRING)) {
-            biome = new ResourceLocation(imageTag.getString("biome"));
+            biome = ResourceLocation.tryParse(imageTag.getString("biome"));
         }
         List<ResourceLocation> entityList = null;
         if (imageTag.contains("entities", Tag.TAG_LIST)) {
             ListTag entities = imageTag.getList("entities", Tag.TAG_STRING);
             entityList = new ArrayList<>();
             for (Tag e : entities) {
-                entityList.add(new ResourceLocation(e.getAsString()));
+                ResourceLocation resourceLocation = ResourceLocation.tryParse(e.getAsString());
+                if (resourceLocation != null) {
+                    entityList.add(resourceLocation);
+                }
             }
         }
 

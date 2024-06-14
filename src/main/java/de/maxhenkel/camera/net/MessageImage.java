@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class MessageImage implements Message<MessageImage> {
 
-    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "image"));
+    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image"));
 
     private UUID uuid;
     private byte[] image;

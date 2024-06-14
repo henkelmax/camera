@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
-    public static final CustomPacketPayload.Type<MessageDisableCameraMode> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "disable_camera_mode"));
+    public static final CustomPacketPayload.Type<MessageDisableCameraMode> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "disable_camera_mode"));
 
     public MessageDisableCameraMode() {
 

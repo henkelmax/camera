@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/resize_frame.png");
+    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/resize_frame.png");
     private static final int PADDING = 10;
     private static final int BUTTON_HEIGHT = 20;
     private static final int BUTTON_WIDTH = 50;

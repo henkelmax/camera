@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class MessageUploadCustomImage implements Message<MessageUploadCustomImage> {
 
-    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "upload"));
+    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "upload"));
 
     private UUID uuid;
 

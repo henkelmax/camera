@@ -23,8 +23,8 @@ import org.joml.Matrix4f;
 @OnlyIn(Dist.CLIENT)
 public class ClientEvents {
 
-    private static final ResourceLocation VIEWFINDER = new ResourceLocation(Main.MODID, "textures/gui/viewfinder_overlay.png");
-    private static final ResourceLocation ZOOM = new ResourceLocation(Main.MODID, "textures/gui/zoom.png");
+    private static final ResourceLocation VIEWFINDER = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/viewfinder_overlay.png");
+    private static final ResourceLocation ZOOM = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/zoom.png");
 
     public static final float MAX_FOV = 90F;
     public static final float MIN_FOV = 5F;
@@ -65,8 +65,7 @@ public class ClientEvents {
         float imageWidth = 192F;
         float imageHeight = 100F;
 
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         float ws = (float) mc.getWindow().getGuiScaledWidth();
         float hs = (float) mc.getWindow().getGuiScaledHeight();
@@ -89,11 +88,11 @@ public class ClientEvents {
         float left = (ws - wnew) / 2F;
 
         Matrix4f matrix = guiGraphics.pose().last().pose();
-        buffer.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
-        buffer.vertex(matrix, left, top + hnew, 0F).uv(0F, 100F / 256F).endVertex();
-        buffer.vertex(matrix, left + wnew, top + hnew, 0F).uv(192F / 256F, 100F / 256F).endVertex();
-        buffer.vertex(matrix, left + wnew, top, 0F).uv(192F / 256F, 0F).endVertex();
-        BufferUploader.drawWithShader(buffer.end());
+        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 0F);
+        buffer.addVertex(matrix, left, top + hnew, 0F).setUv(0F, 100F / 256F);
+        buffer.addVertex(matrix, left + wnew, top + hnew, 0F).setUv(192F / 256F, 100F / 256F);
+        buffer.addVertex(matrix, left + wnew, top, 0F).setUv(192F / 256F, 0F);
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
     private void drawZoom(GuiGraphics guiGraphics, float percent) {
@@ -104,8 +103,7 @@ public class ClientEvents {
         int zoomWidth = 112;
         int zoomHeight = 20;
 
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();
@@ -114,18 +112,18 @@ public class ClientEvents {
         int top = height / 40;
 
         Matrix4f matrix = guiGraphics.pose().last().pose();
-        buffer.vertex(matrix, left, top, 0F).uv(0F, 0F).endVertex();
-        buffer.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 10F / 128F).endVertex();
-        buffer.vertex(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).uv(112F / 128F, 10F / 128F).endVertex();
-        buffer.vertex(matrix, left + zoomWidth, top, 0F).uv(112F / 128F, 0F).endVertex();
+        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 0F);
+        buffer.addVertex(matrix, left, (float) (top + zoomHeight / 2), 0F).setUv(0F, 10F / 128F);
+        buffer.addVertex(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).setUv(112F / 128F, 10F / 128F);
+        buffer.addVertex(matrix, left + zoomWidth, top, 0F).setUv(112F / 128F, 0F);
 
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
 
-        buffer.vertex(matrix, left, top, 0F).uv(0F, 10F / 128F).endVertex();
-        buffer.vertex(matrix, left, (float) (top + zoomHeight / 2), 0F).uv(0F, 20F / 128F).endVertex();
-        buffer.vertex(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).uv((112F / 128F) * percent, 20F / 128F).endVertex();
-        buffer.vertex(matrix, left + percWidth, top, 0F).uv((112F / 128F) * percent, 10F / 128F).endVertex();
-        BufferUploader.drawWithShader(buffer.end());
+        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 10F / 128F);
+        buffer.addVertex(matrix, left, (float) (top + zoomHeight / 2), 0F).setUv(0F, 20F / 128F);
+        buffer.addVertex(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).setUv((112F / 128F) * percent, 20F / 128F);
+        buffer.addVertex(matrix, left + percWidth, top, 0F).setUv((112F / 128F) * percent, 10F / 128F);
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
     }
 
 

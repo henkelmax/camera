@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
-    public static final CustomPacketPayload.Type<MessageResizeFrame> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "resize_frame"));
+    public static final CustomPacketPayload.Type<MessageResizeFrame> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "resize_frame"));
 
     private UUID uuid;
     private Direction direction;

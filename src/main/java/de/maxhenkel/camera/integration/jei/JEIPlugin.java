@@ -22,7 +22,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(Main.MODID, "camera");
+        return ResourceLocation.fromNamespaceAndPath(Main.MODID, "camera");
     }
 
     @Override

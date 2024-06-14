@@ -78,7 +78,7 @@ public class Main {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> ACTIVE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("active", () -> DataComponentType.<Unit>builder().networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> SHADER_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("shader", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
 
-    public static TagKey<Item> IMAGE_PAPER = ItemTags.create(new ResourceLocation(Main.MODID, "image_paper"));
+    public static TagKey<Item> IMAGE_PAPER = ItemTags.create(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_paper"));
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;

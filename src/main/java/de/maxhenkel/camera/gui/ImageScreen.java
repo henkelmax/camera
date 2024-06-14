@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/images/default_image.png");
+    public static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/default_image.png");
 
     @Nullable
     private UUID imageID;
@@ -70,8 +70,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
             imageHeight = (float) image.getHeight();
         }
 
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
         float scale = 0.8F;
 
@@ -99,12 +98,12 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
         top += ((1F - scale) * hs) / 2F;
 
         Matrix4f matrix = guiGraphics.pose().last().pose();
-        buffer.vertex(matrix, left, top, zLevel).uv(0F, 0F).endVertex();
-        buffer.vertex(matrix, left, top + hnew, zLevel).uv(0F, 1F).endVertex();
-        buffer.vertex(matrix, left + wnew, top + hnew, zLevel).uv(1F, 1F).endVertex();
-        buffer.vertex(matrix, left + wnew, top, zLevel).uv(1F, 0F).endVertex();
+        buffer.addVertex(matrix, left, top, zLevel).setUv(0F, 0F);
+        buffer.addVertex(matrix, left, top + hnew, zLevel).setUv(0F, 1F);
+        buffer.addVertex(matrix, left + wnew, top + hnew, zLevel).setUv(1F, 1F);
+        buffer.addVertex(matrix, left + wnew, top, zLevel).setUv(1F, 0F);
 
-        BufferUploader.drawWithShader(buffer.end());
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         guiGraphics.pose().popPose();
     }

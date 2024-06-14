@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/camera.png");
+    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/camera.png");
     private static final int FONT_COLOR = 4210752;
     private static final int PADDING = 10;
     private static final int BUTTON_WIDTH = 70;

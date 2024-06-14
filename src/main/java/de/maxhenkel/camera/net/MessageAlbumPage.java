@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
-    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "album_page"));
+    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "album_page"));
 
     private int page;
 

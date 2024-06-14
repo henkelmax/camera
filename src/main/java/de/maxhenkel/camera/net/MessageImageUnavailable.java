@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class MessageImageUnavailable implements Message<MessageImageUnavailable> {
 
-    public static final CustomPacketPayload.Type<MessageImageUnavailable> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "image_unavailable"));
+    public static final CustomPacketPayload.Type<MessageImageUnavailable> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_unavailable"));
 
     private UUID imgUUID;
 

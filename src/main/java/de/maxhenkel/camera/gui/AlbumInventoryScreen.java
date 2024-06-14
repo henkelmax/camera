@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
 
-    public static final ResourceLocation DEFAULT_IMAGE = new ResourceLocation(Main.MODID, "textures/gui/album.png");
+    public static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/album.png");
 
     private Inventory playerInventory;
 

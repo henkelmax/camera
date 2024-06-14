@@ -32,7 +32,7 @@ public class TakeImageCategory implements IRecipeCategory<ItemStack> {
 
     @Override
     public IDrawable getBackground() {
-        return helper.createDrawable(new ResourceLocation(Main.MODID, "textures/gui/container/jei_take_image.png"), 0, 0, 105, 18);
+        return helper.createDrawable(ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/container/jei_take_image.png"), 0, 0, 105, 18);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MessagePartialImage implements Message<MessagePartialImage> {
 
-    public static final CustomPacketPayload.Type<MessagePartialImage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(Main.MODID, "partial_image"));
+    public static final CustomPacketPayload.Type<MessagePartialImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "partial_image"));
 
     private UUID imgUUID;
     private int offset;
