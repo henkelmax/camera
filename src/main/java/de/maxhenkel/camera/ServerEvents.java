@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
-import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -46,7 +46,7 @@ public class ServerEvents {
     }
 
     @SubscribeEvent
-    public static void onHit(LivingAttackEvent event) {
+    public static void onHit(LivingIncomingDamageEvent event) {
         Entity source = event.getSource().getDirectEntity();
         if (!(source instanceof Player)) {
             return;
