@@ -1,1 +1,1 @@
-- Fixed container registration
+- Fixed image items not being able to load
