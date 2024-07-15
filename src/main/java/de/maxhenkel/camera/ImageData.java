@@ -35,8 +35,8 @@ public class ImageData {
                 UUIDUtil.CODEC.fieldOf("id").forGetter(ImageData::getId),
                 Codec.LONG.fieldOf("time").forGetter(ImageData::getTime),
                 Codec.STRING.fieldOf("owner").forGetter(ImageData::getOwner),
-                ResourceLocation.CODEC.optionalFieldOf("biome", null).forGetter(ImageData::getBiome),
-                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities", null).forGetter(ImageData::getEntities)
+                ResourceLocation.CODEC.optionalFieldOf("biome").forGetter(o -> Optional.ofNullable(o.getBiome())),
+                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities").forGetter(imageData -> Optional.ofNullable(imageData.getEntities()))
         ).apply(i, ImageData::new);
     });
 
@@ -68,12 +68,12 @@ public class ImageData {
         this.owner = owner;
     }
 
-    private ImageData(UUID id, long time, String owner, @Nullable ResourceLocation biome, @Nullable List<ResourceLocation> entities) {
+    private ImageData(UUID id, long time, String owner, Optional<ResourceLocation> biome, Optional<List<ResourceLocation>> entities) {
         this.id = id;
         this.time = time;
         this.owner = owner;
-        this.biome = biome;
-        this.entities = entities;
+        this.biome = biome.orElse(null);
+        this.entities = entities.orElse(null);
     }
 
     public UUID getId() {

@@ -9,9 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -452,7 +450,9 @@ public class ImageEntity extends Entity {
         setFacing(Direction.from3DDataValue(compound.getInt("facing")));
         setFrameWidth(compound.getInt("width"));
         setFrameHeight(compound.getInt("height"));
-        setItem(ItemStack.parseOptional(registryAccess(), compound.getCompound("item")));
+        if (compound.contains("item", Tag.TAG_COMPOUND)) {
+            setItem(ItemStack.parse(registryAccess(), compound.getCompound("item")).orElse(ItemStack.EMPTY));
+        }
 
         updateBoundingBox();
     }
