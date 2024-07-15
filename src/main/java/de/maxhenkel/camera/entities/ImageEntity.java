@@ -320,11 +320,6 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
-    }
-
-    @Override
     public boolean isPickable() {
         return !isRemoved();
     }
