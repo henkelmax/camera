@@ -1,2 +1,1 @@
-- Fixed JEI compatibility
-- Added mod icon
+- Updated NeoForge
