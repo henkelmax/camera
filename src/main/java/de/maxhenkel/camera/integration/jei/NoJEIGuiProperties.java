@@ -13,37 +13,37 @@ public class NoJEIGuiProperties implements IGuiProperties {
     }
 
     @Override
-    public Class<? extends Screen> getScreenClass() {
+    public Class<? extends Screen> screenClass() {
         return containerScreen.getClass();
     }
 
     @Override
-    public int getGuiLeft() {
+    public int guiLeft() {
         return containerScreen.width;
     }
 
     @Override
-    public int getGuiTop() {
+    public int guiTop() {
         return containerScreen.height;
     }
 
     @Override
-    public int getGuiXSize() {
+    public int guiXSize() {
         return containerScreen.width;
     }
 
     @Override
-    public int getGuiYSize() {
+    public int guiYSize() {
         return containerScreen.height;
     }
 
     @Override
-    public int getScreenWidth() {
+    public int screenWidth() {
         return containerScreen.width;
     }
 
     @Override
-    public int getScreenHeight() {
+    public int screenHeight() {
         return containerScreen.height;
     }
 }
