@@ -1,7 +1,9 @@
 package de.maxhenkel.camera;
 
 import de.maxhenkel.corelib.config.ConfigBase;
+
 import java.text.SimpleDateFormat;
+
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -29,8 +31,18 @@ public class ClientConfig extends ConfigBase {
     }
 
     @Override
-    public void onReload(ModConfigEvent event) {
+    public void onLoad(ModConfigEvent.Loading event) {
+        super.onLoad(event);
+        onConfigChanged();
+    }
+
+    @Override
+    public void onReload(ModConfigEvent.Reloading event) {
         super.onReload(event);
+        onConfigChanged();
+    }
+
+    private void onConfigChanged() {
         imageDateFormat = new SimpleDateFormat(imageDateFormatSpec.get());
     }
 

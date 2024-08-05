@@ -1,2 +1,3 @@
 - Updated NeoForge
-- Fixed image items not being able to load
+- Fixed JEI integration
+- Updated corelib
