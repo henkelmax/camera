@@ -1,3 +1,1 @@
-- Updated NeoForge
-- Fixed JEI integration
-- Updated corelib
+- Updated to 1.21.1
