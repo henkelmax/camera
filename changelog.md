@@ -1,1 +1,1 @@
-- Updated to 1.21.1
+- Added Traditional Chinese translation
