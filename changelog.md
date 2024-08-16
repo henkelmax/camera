@@ -1,1 +1,1 @@
-- Updated NeoForge
+- Added Traditional Chinese translation
