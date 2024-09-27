@@ -3,6 +3,7 @@ package de.maxhenkel.camera;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +14,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +39,9 @@ public class ImageData {
                 Codec.LONG.fieldOf("time").forGetter(ImageData::getTime),
                 Codec.STRING.fieldOf("owner").forGetter(ImageData::getOwner),
                 ResourceLocation.CODEC.optionalFieldOf("biome").forGetter(o -> Optional.ofNullable(o.getBiome())),
-                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities").forGetter(imageData -> Optional.ofNullable(imageData.getEntities()))
+                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities").forGetter(imageData -> Optional.ofNullable(imageData.getEntities())),
+                ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(imageData -> Optional.ofNullable(imageData.getDimension())),
+                BlockPos.CODEC.optionalFieldOf("position").forGetter(imageData -> Optional.ofNullable(imageData.getPosition()))
         ).apply(i, ImageData::new);
     });
 
@@ -57,6 +62,10 @@ public class ImageData {
     private ResourceLocation biome;
     @Nullable
     private List<ResourceLocation> entities;
+    @Nullable
+    private ResourceKey<Level> dimension;
+    @Nullable
+    private BlockPos position;
 
     private ImageData() {
 
@@ -68,12 +77,14 @@ public class ImageData {
         this.owner = owner;
     }
 
-    private ImageData(UUID id, long time, String owner, Optional<ResourceLocation> biome, Optional<List<ResourceLocation>> entities) {
+    private ImageData(UUID id, long time, String owner, Optional<ResourceLocation> biome, Optional<List<ResourceLocation>> entities, Optional<ResourceKey<Level>> dimension, Optional<BlockPos> position) {
         this.id = id;
         this.time = time;
         this.owner = owner;
         this.biome = biome.orElse(null);
         this.entities = entities.orElse(null);
+        this.dimension = dimension.orElse(null);
+        this.position = position.orElse(null);
     }
 
     public UUID getId() {
@@ -99,6 +110,16 @@ public class ImageData {
     }
 
     @Nullable
+    public ResourceKey<Level> getDimension() {
+        return dimension;
+    }
+
+    @Nullable
+    public BlockPos getPosition() {
+        return position;
+    }
+
+    @Nullable
     public static ImageData fromStack(ItemStack stack) {
         convert(stack);
         return stack.get(Main.IMAGE_DATA_COMPONENT);
@@ -114,6 +135,8 @@ public class ImageData {
             Biome biome = player.level().getBiome(player.blockPosition()).value();
             data.biome = player.getServer().registryAccess().registry(Registries.BIOME).map(biomes -> biomes.getKey(biome)).orElse(null);
             data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            data.dimension = player.level().dimension();
+            data.position = player.blockPosition();
         }
 
         return data;
