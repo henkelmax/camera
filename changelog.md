@@ -1,1 +1,1 @@
-- Added Traditional Chinese translation
+- Added more information to advanced image data
