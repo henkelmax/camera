@@ -3,6 +3,8 @@ package de.maxhenkel.camera;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
+import de.maxhenkel.corelib.codec.CodecUtils;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
@@ -45,15 +47,36 @@ public class ImageData {
         ).apply(i, ImageData::new);
     });
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ImageData> STREAM_CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC,
-            ImageData::getId,
-            ByteBufCodecs.VAR_LONG,
-            ImageData::getTime,
-            ByteBufCodecs.STRING_UTF8,
-            ImageData::getOwner,
-            ImageData::new
-    );
+    public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(ResourceLocation.STREAM_CODEC);
+    public static final StreamCodec<ByteBuf, Optional<List<ResourceLocation>>> OPTIONAL_RESOURCE_LOCATION_LIST_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(CodecUtils.listStreamCodecByteBuf(ResourceLocation.STREAM_CODEC));
+    public static final StreamCodec<ByteBuf, Optional<ResourceKey<Level>>> OPTIONAL_DIMENSION_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(ResourceKey.streamCodec(Registries.DIMENSION));
+    public static final StreamCodec<ByteBuf, Optional<BlockPos>> OPTIONAL_BLOCK_POS_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(BlockPos.STREAM_CODEC);
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ImageData> STREAM_CODEC = new StreamCodec<RegistryFriendlyByteBuf, ImageData>() {
+        @Override
+        public ImageData decode(RegistryFriendlyByteBuf buf) {
+            return new ImageData(
+                    UUIDUtil.STREAM_CODEC.decode(buf),
+                    ByteBufCodecs.VAR_LONG.decode(buf),
+                    ByteBufCodecs.STRING_UTF8.decode(buf),
+                    OPTIONAL_RESOURCE_LOCATION_STREAM_CODEC.decode(buf),
+                    OPTIONAL_RESOURCE_LOCATION_LIST_STREAM_CODEC.decode(buf),
+                    OPTIONAL_DIMENSION_STREAM_CODEC.decode(buf),
+                    OPTIONAL_BLOCK_POS_STREAM_CODEC.decode(buf)
+            );
+        }
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buf, ImageData data) {
+            UUIDUtil.STREAM_CODEC.encode(buf, data.getId());
+            ByteBufCodecs.VAR_LONG.encode(buf, data.getTime());
+            ByteBufCodecs.STRING_UTF8.encode(buf, data.getOwner());
+            OPTIONAL_RESOURCE_LOCATION_STREAM_CODEC.encode(buf, Optional.ofNullable(data.getBiome()));
+            OPTIONAL_RESOURCE_LOCATION_LIST_STREAM_CODEC.encode(buf, Optional.ofNullable(data.getEntities()));
+            OPTIONAL_DIMENSION_STREAM_CODEC.encode(buf, Optional.ofNullable(data.getDimension()));
+            OPTIONAL_BLOCK_POS_STREAM_CODEC.encode(buf, Optional.ofNullable(data.getPosition()));
+        }
+    };
 
     private UUID id;
     private long time;

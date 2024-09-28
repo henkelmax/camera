@@ -1,1 +1,1 @@
-- Fixed recipes
+- Fixed image synchronization issues
