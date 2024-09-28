@@ -1,1 +1,1 @@
-- Added more information to advanced image data
+- Fixed recipes

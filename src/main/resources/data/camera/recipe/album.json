@@ -2,10 +2,10 @@
   "type": "crafting_shapeless",
   "ingredients": [
     {
-      "tag": "forge:string"
+      "tag": "c:strings"
     },
     {
-      "tag": "forge:leather"
+      "tag": "c:leathers"
     },
     {
       "item": "minecraft:paper"

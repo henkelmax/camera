@@ -31,11 +31,6 @@ public class JEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new TakeImageCategory(registration.getJeiHelpers().getGuiHelper()));
-    }
-
-    @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiScreenHandler(ImageScreen.class, NoJEIGuiProperties::new);
         registration.addGuiScreenHandler(AlbumScreen.class, NoJEIGuiProperties::new);
