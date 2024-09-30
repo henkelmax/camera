@@ -1,1 +1,1 @@
-- Fixed image synchronization issues
+- Fixed JEI error
