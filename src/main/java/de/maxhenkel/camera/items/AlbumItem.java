@@ -31,12 +31,12 @@ import java.util.UUID;
 
 public class AlbumItem extends Item {
 
-    public AlbumItem() {
-        super(new Properties().stacksTo(1));
+    public AlbumItem(Properties properties) {
+        super(properties.stacksTo(1));
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
             if (!playerIn.level().isClientSide && playerIn instanceof ServerPlayer serverPlayer) {
@@ -56,7 +56,7 @@ public class AlbumItem extends Item {
         } else {
             openAlbum(playerIn, stack);
         }
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+        return InteractionResult.SUCCESS;
     }
 
     public static void openAlbum(Player player, ItemStack album) {
@@ -79,7 +79,7 @@ public class AlbumItem extends Item {
         BlockPos blockpos = context.getClickedPos();
         BlockState blockstate = world.getBlockState(blockpos);
         if (blockstate.is(Blocks.LECTERN)) {
-            return LecternBlock.tryPlaceBook(context.getPlayer(), world, blockpos, blockstate, context.getItemInHand()) ? InteractionResult.sidedSuccess(world.isClientSide) : InteractionResult.PASS;
+            return LecternBlock.tryPlaceBook(context.getPlayer(), world, blockpos, blockstate, context.getItemInHand()) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         } else {
             return InteractionResult.PASS;
         }

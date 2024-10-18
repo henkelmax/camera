@@ -11,8 +11,10 @@ import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.items.ImageFrameItem;
 import de.maxhenkel.camera.items.ImageItem;
+import de.maxhenkel.camera.items.render.ImageItemRenderer;
 import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.CommonRegistry;
+import de.maxhenkel.corelib.client.CustomRenderItemExtension;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponentType;
@@ -38,6 +40,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -56,12 +59,12 @@ public class Main {
 
     public static PacketManager PACKET_MANAGER;
 
-    private static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(BuiltInRegistries.ITEM, MODID);
+    private static final DeferredRegister.Items ITEM_REGISTER = DeferredRegister.createItems(MODID);
 
-    public static final DeferredHolder<Item, ImageFrameItem> FRAME_ITEM = ITEM_REGISTER.register("image_frame", ImageFrameItem::new);
-    public static final DeferredHolder<Item, CameraItem> CAMERA = ITEM_REGISTER.register("camera", CameraItem::new);
-    public static final DeferredHolder<Item, ImageItem> IMAGE = ITEM_REGISTER.register("image", ImageItem::new);
-    public static final DeferredHolder<Item, AlbumItem> ALBUM = ITEM_REGISTER.register("album", AlbumItem::new);
+    public static final DeferredHolder<Item, ImageFrameItem> FRAME_ITEM = ITEM_REGISTER.registerItem("image_frame", ImageFrameItem::new);
+    public static final DeferredHolder<Item, CameraItem> CAMERA = ITEM_REGISTER.registerItem("camera", CameraItem::new);
+    public static final DeferredHolder<Item, ImageItem> IMAGE = ITEM_REGISTER.registerItem("image", ImageItem::new);
+    public static final DeferredHolder<Item, AlbumItem> ALBUM = ITEM_REGISTER.registerItem("album", AlbumItem::new);
 
     private static final DeferredRegister<MenuType<?>> MENU_REGISTER = DeferredRegister.create(BuiltInRegistries.MENU, MODID);
     public static final DeferredHolder<MenuType<?>, MenuType<AlbumInventoryContainer>> ALBUM_INVENTORY_CONTAINER = MENU_REGISTER.register("album_inventory", () -> IMenuTypeExtension.create((windowId, inv, data) -> new AlbumInventoryContainer(windowId, inv)));
@@ -100,6 +103,7 @@ public class Main {
             eventBus.addListener(Main.this::clientSetup);
             eventBus.addListener(Main.this::registerKeyBinds);
             eventBus.addListener(Main.this::onRegisterScreens);
+            eventBus.addListener(Main.this::onRegisterClientExtensions);
         }
         ITEM_REGISTER.register(eventBus);
         MENU_REGISTER.register(eventBus);
@@ -157,4 +161,10 @@ public class Main {
         event.register(KEY_NEXT);
         event.register(KEY_PREVIOUS);
     }
+
+    @OnlyIn(Dist.CLIENT)
+    public void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new CustomRenderItemExtension(new ImageItemRenderer()), IMAGE);
+    }
+
 }

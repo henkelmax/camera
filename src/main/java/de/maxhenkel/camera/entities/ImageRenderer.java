@@ -10,19 +10,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import org.joml.Matrix4f;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class ImageRenderer extends EntityRenderer<ImageEntity> {
+public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRenderState> {
 
     private static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/default_image.png");
     private static final ResourceLocation EMPTY_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/empty_image.png");
@@ -40,11 +39,15 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
     }
 
     @Override
-    public void render(ImageEntity entity, float f1, float f2, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
-        int imageLight = LevelRenderer.getLightColor(entity.level(), entity.getCenterPosition());
-        renderImage(entity.getImageUUID().orElse(null), entity.getFacing(), entity.getFrameWidth(), entity.getFrameHeight(), matrixStack, buffer1, imageLight);
-        renderBoundingBox(entity, matrixStack, buffer1);
-        super.render(entity, f1, f2, matrixStack, buffer1, light);
+    public ImageEntityRenderState createRenderState() {
+        return new ImageEntityRenderState();
+    }
+
+    @Override
+    public void render(ImageEntityRenderState state, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
+        renderImage(state.imageUUID, state.facing, state.frameWidth, state.frameHeight, stack, bufferSource, state.light);
+        renderBoundingBox(state, stack, bufferSource);
+        super.render(state, stack, bufferSource, packedLight);
     }
 
     public static void renderImage(UUID imageUUID, Direction facing, float width, float height, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
@@ -143,6 +146,20 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
         matrixStack.popPose();
     }
 
+    @Override
+    public void extractRenderState(ImageEntity image, ImageEntityRenderState state, float partialTicks) {
+        super.extractRenderState(image, state, partialTicks);
+
+        state.imageEntityUUID = image.getUUID();
+
+        state.frameWidth = image.getFrameWidth();
+        state.frameHeight = image.getFrameHeight();
+        state.facing = image.getFacing();
+        state.imageUUID = image.getImageUUID().orElse(null);
+        state.light = LevelRenderer.getLightColor(image.level(), image.getCenterPosition());
+        state.imageBoundingBox = image.getBoundingBox().move(-image.getX(), -image.getY(), -image.getZ());
+    }
+
     private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f matrix4f = entry.pose();
@@ -154,16 +171,15 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
                 .setNormal(entry, 0F, 0F, -1F);
     }
 
-    private static void renderBoundingBox(ImageEntity entity, PoseStack matrixStack, MultiBufferSource buffer) {
-        if (!(mc.hitResult instanceof EntityHitResult) || ((EntityHitResult) mc.hitResult).getEntity() != entity) {
+    private static void renderBoundingBox(ImageEntityRenderState state, PoseStack matrixStack, MultiBufferSource buffer) {
+        if (!(mc.hitResult instanceof EntityHitResult entityHitResult) || !entityHitResult.getEntity().getUUID().equals(state.imageEntityUUID)) {
             return;
         }
         if (mc.options.hideGui) {
             return;
         }
         matrixStack.pushPose();
-        AABB axisalignedbb = entity.getBoundingBox().move(-entity.getX(), -entity.getY(), -entity.getZ());
-        LevelRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), axisalignedbb, 0F, 0F, 0F, 0.4F);
+        ShapeRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), state.imageBoundingBox, 0F, 0F, 0F, 0.4F);
         matrixStack.popPose();
     }
 
@@ -184,12 +200,6 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
                 matrixStack.mulPose(Axis.YP.rotationDegrees(270F));
                 break;
         }
-    }
-
-    @Nullable
-    @Override
-    public ResourceLocation getTextureLocation(ImageEntity entity) {
-        return EMPTY_IMAGE;
     }
 
 }

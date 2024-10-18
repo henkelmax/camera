@@ -13,6 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -119,7 +120,7 @@ public class ImageEntity extends Entity {
         setImageUUID(imageData.getId());
         playAddSound();
 
-        return InteractionResult.sidedSuccess(level().isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     public boolean canModify(Player player) {
@@ -144,10 +145,7 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (level().isClientSide) {
-            return true;
-        }
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
         if (!(source.getDirectEntity() instanceof Player)) {
             return false;
         }
@@ -161,8 +159,6 @@ public class ImageEntity extends Entity {
                 dropItem(image);
             }
             return true;
-        } else if (isInvulnerableTo(source)) {
-            return false;
         } else {
             removeFrame(source.getEntity());
             return true;
@@ -180,7 +176,10 @@ public class ImageEntity extends Entity {
     }
 
     public void onBroken(Entity entity) {
-        if (!level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
@@ -298,9 +297,9 @@ public class ImageEntity extends Entity {
     }
 
     public void removeFrame(Entity source) {
-        if (!isRemoved() && !level().isClientSide) {
+        if (!isRemoved() && level() instanceof ServerLevel serverLevel) {
             onBroken(source);
-            kill();
+            kill(serverLevel);
         }
     }
 
@@ -311,12 +310,6 @@ public class ImageEntity extends Entity {
     @Override
     protected boolean repositionEntityAfterLoad() {
         return false;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    @Override
-    public AABB getBoundingBoxForCulling() {
-        return getBoundingBox();
     }
 
     @Override

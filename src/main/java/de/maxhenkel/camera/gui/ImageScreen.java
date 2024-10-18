@@ -9,7 +9,7 @@ import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -37,22 +37,21 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        renderTransparentBackground(guiGraphics);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        renderBlurredBackground();
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         if (imageID == null) {
             return;
         }
 
-        drawImage(guiGraphics, minecraft, width, height, 100, imageID);
+        drawImage(guiGraphics, width, height, 100, imageID);
     }
 
-    public static void drawImage(GuiGraphics guiGraphics, Minecraft minecraft, int width, int height, float zLevel, UUID uuid) {
+    public static void drawImage(GuiGraphics guiGraphics, int width, int height, float zLevel, UUID uuid) {
         guiGraphics.pose().pushPose();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(CoreShaders.POSITION_TEX);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
 
         ResourceLocation location = TextureCache.instance().getImage(uuid);
@@ -110,6 +109,11 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
 
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
 
     }
 }

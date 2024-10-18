@@ -33,7 +33,7 @@ public class ImageTools {
 
         for (int x = 0; x < nativeImage.getWidth(); x++) {
             for (int y = 0; y < nativeImage.getHeight(); y++) {
-                int rgba = nativeImage.getPixelRGBA(x, y);
+                int rgba = nativeImage.getPixel(x, y);
                 int alpha = RenderUtils.getAlpha(rgba);
                 int red = RenderUtils.getRed(rgba);
                 int green = RenderUtils.getGreen(rgba);
@@ -54,7 +54,7 @@ public class ImageTools {
                 int red = RenderUtils.getRed(rgba);
                 int green = RenderUtils.getGreen(rgba);
                 int blue = RenderUtils.getBlue(rgba);
-                nativeImage.setPixelRGBA(x, y, RenderUtils.getArgb(alpha, blue, green, red));
+                nativeImage.setPixel(x, y, RenderUtils.getArgb(alpha, blue, green, red));
             }
         }
         return nativeImage;

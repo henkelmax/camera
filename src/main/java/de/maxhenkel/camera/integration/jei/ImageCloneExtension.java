@@ -8,6 +8,7 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
@@ -21,7 +22,7 @@ public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraft
         ItemStack image = new ItemStack(Main.IMAGE.get());
         ImageData.dummy().addToImage(image);
 
-        List<ItemStack> paper = Arrays.asList(recipeHolder.value().getPaper().getItems());
+        List<ItemStack> paper = recipeHolder.value().getPaper().getValues().stream().map(Holder::value).map(ItemStack::new).toList();
 
         ItemStack out = image.copy();
 

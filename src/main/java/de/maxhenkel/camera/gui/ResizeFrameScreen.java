@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -80,9 +80,8 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         if (visibility >= 1F) {
             renderTransparentBackground(guiGraphics);
         }
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
-        guiGraphics.blit(CAMERA_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -98,18 +97,17 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         int descriptionWidth = font.width(description);
         guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor(), false);
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
         if (Screen.hasShiftDown()) {
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
         } else {
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16);
-            guiGraphics.blit(CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
         }
 
         if (visibilityButton.isHovered()) {

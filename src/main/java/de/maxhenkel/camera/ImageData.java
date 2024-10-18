@@ -6,6 +6,7 @@ import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.corelib.codec.CodecUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -156,7 +157,7 @@ public class ImageData {
 
         if (Main.SERVER_CONFIG.advancedImageData.get()) {
             Biome biome = player.level().getBiome(player.blockPosition()).value();
-            data.biome = player.getServer().registryAccess().registry(Registries.BIOME).map(biomes -> biomes.getKey(biome)).orElse(null);
+            data.biome = player.getServer().registryAccess().get(Registries.BIOME).map(Holder.Reference::value).map(biomes -> biomes.getKey(biome)).orElse(null);
             data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
             data.dimension = player.level().dimension();
             data.position = player.blockPosition();

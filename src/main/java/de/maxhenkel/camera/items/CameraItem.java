@@ -12,12 +12,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -29,23 +28,23 @@ import java.util.UUID;
 
 public class CameraItem extends Item {
 
-    public CameraItem() {
-        super(new Item.Properties().stacksTo(1));
+    public CameraItem(Properties properties) {
+        super(properties.stacksTo(1));
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
 
         if (playerIn.isShiftKeyDown() && !isActive(stack)) {
             if (worldIn.isClientSide) {
                 openClientGui(stack.get(Main.SHADER_DATA_COMPONENT));
             }
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         }
 
         if (!(playerIn instanceof ServerPlayer serverPlayer)) {
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         }
 
         if (!isActive(stack)) {
@@ -62,7 +61,7 @@ public class CameraItem extends Item {
         } else {
             playerIn.displayClientMessage(Component.translatable("message.image_cooldown"), true);
         }
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+        return InteractionResult.SUCCESS;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -76,11 +75,11 @@ public class CameraItem extends Item {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
         if (isActive(stack)) {
-            return UseAnim.BOW;
+            return ItemUseAnimation.BOW;
         } else {
-            return UseAnim.NONE;
+            return ItemUseAnimation.NONE;
         }
     }
 

@@ -41,16 +41,14 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderTransparentBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        renderBlurredBackground();
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         if (images.isEmpty()) {
             return;
         }
         UUID uuid = images.get(index);
-        ImageScreen.drawImage(guiGraphics, minecraft, width, height, 100, uuid);
+        ImageScreen.drawImage(guiGraphics, width, height, 100, uuid);
     }
 
     @Override

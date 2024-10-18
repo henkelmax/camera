@@ -24,11 +24,6 @@ public class ImageCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.of(Ingredient.EMPTY, Ingredient.of(image), paper);
-    }
-
-    @Override
     public boolean matches(CraftingInput inv, Level worldIn) {
         return craft(inv) != null;
     }
@@ -51,16 +46,6 @@ public class ImageCloningRecipe extends CustomRecipe {
         return craft.result;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width > 1 && height > 1;
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return image;
-    }
-
     public ItemStack getImage() {
         return image;
     }
@@ -70,18 +55,13 @@ public class ImageCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
-        return Main.IMAGE_CLONING_SERIALIZER.get();
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return RecipeType.CRAFTING;
-    }
-
-    @Override
     public CraftingBookCategory category() {
         return CraftingBookCategory.MISC;
+    }
+
+    @Override
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
+        return Main.IMAGE_CLONING_SERIALIZER.get();
     }
 
     public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
@@ -91,7 +71,7 @@ public class ImageCloningRecipe extends CustomRecipe {
                         BuiltInRegistries.ITEM.byNameCodec().xmap(ItemStack::new, ItemStack::getItem)
                                 .fieldOf("image")
                                 .forGetter((recipe) -> recipe.image),
-                        Ingredient.CODEC_NONEMPTY
+                        Ingredient.CODEC
                                 .fieldOf("paper")
                                 .forGetter((recipe) -> recipe.paper)
                 ).apply(builder, ImageCloningRecipe::new));

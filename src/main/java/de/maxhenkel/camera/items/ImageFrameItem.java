@@ -5,6 +5,7 @@ import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.Level;
 
 public class ImageFrameItem extends Item {
 
-    public ImageFrameItem() {
-        super(new Properties());
+    public ImageFrameItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class ImageFrameItem extends Item {
         }
 
         Level world = context.getLevel();
-        ImageEntity image = Main.IMAGE_ENTITY_TYPE.get().create(world);
+        ImageEntity image = Main.IMAGE_ENTITY_TYPE.get().create(world, EntitySpawnReason.COMMAND);
         if (image == null) {
             return InteractionResult.FAIL;
         }

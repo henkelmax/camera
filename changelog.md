@@ -1,1 +1,1 @@
-- Fixed JEI error
+- Updated to 1.21.2

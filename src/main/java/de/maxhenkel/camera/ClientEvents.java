@@ -8,7 +8,9 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +21,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
+
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientEvents {
@@ -59,7 +63,7 @@ public class ClientEvents {
     }
 
     private void drawViewFinder(GuiGraphics guiGraphics) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(CoreShaders.POSITION_TEX);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, VIEWFINDER);
         float imageWidth = 192F;
@@ -96,7 +100,7 @@ public class ClientEvents {
     }
 
     private void drawZoom(GuiGraphics guiGraphics, float percent) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(CoreShaders.POSITION_TEX);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         RenderSystem.setShaderTexture(0, ZOOM);
 
@@ -158,11 +162,11 @@ public class ClientEvents {
     private void setShader(ResourceLocation shader) {
         if (shader == null) {
             if (currentShader != null) {
-                mc.gameRenderer.shutdownEffect();
+                mc.gameRenderer.clearPostEffect();
             }
         } else if (!shader.equals(currentShader)) {
             try {
-                mc.gameRenderer.loadEffect(shader);
+                mc.gameRenderer.setPostEffect(shader);
             } catch (Exception e) {
             }
         }
@@ -170,31 +174,27 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
-        if (player == mc.player) {
+    public void renderPlayer(ClientTickEvent.Pre event) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) {
             return;
         }
-        for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem() instanceof CameraItem && Main.CAMERA.get().isActive(stack)) {
-                player.startUsingItem(hand);
+        List<AbstractClientPlayer> players = level.players();
+        for (AbstractClientPlayer player : players) {
+            if (player == mc.player) {
+                continue;
+            }
+            for (InteractionHand hand : InteractionHand.values()) {
+                ItemStack stack = player.getItemInHand(hand);
+                if (stack.getItem() instanceof CameraItem) {
+                    if (Main.CAMERA.get().isActive(stack)) {
+                        player.startUsingItem(hand);
+                    } else {
+                        player.stopUsingItem();
+                    }
+                }
             }
         }
-
-    }
-
-    @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Post event) {
-        Player player = event.getEntity();
-        if (player == mc.player) {
-            return;
-        }
-        if (!inCameraMode) {
-            return;
-        }
-
-        event.getEntity().stopUsingItem();
     }
 
     @SubscribeEvent
@@ -217,7 +217,7 @@ public class ClientEvents {
     @SubscribeEvent
     public void onFOVModifierEvent(ViewportEvent.ComputeFov event) {
         if (!inCameraMode) {
-            fov = (float) event.getFOV();
+            fov = event.getFOV();
             return;
         }
 

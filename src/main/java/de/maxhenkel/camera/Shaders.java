@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Shaders {
 
-    public static ResourceLocation BLACK_AND_WHITE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/black_and_white.json");
-    public static ResourceLocation SEPIA = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/sepia.json");
-    public static ResourceLocation DESATURATED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/desaturated.json");
-    public static ResourceLocation OVEREXPOSED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/overexposed.json");
-    public static ResourceLocation OVERSATURATED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/oversaturated.json");
-    public static ResourceLocation BLURRY = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/blurry.json");
-    public static ResourceLocation INVERTED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "shaders/inverted.json");
+    public static ResourceLocation BLACK_AND_WHITE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "black_and_white");
+    public static ResourceLocation SEPIA = ResourceLocation.fromNamespaceAndPath(Main.MODID, "sepia");
+    public static ResourceLocation DESATURATED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "desaturated");
+    public static ResourceLocation OVEREXPOSED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "overexposed");
+    public static ResourceLocation OVERSATURATED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "oversaturated");
+    public static ResourceLocation BLURRY = ResourceLocation.fromNamespaceAndPath(Main.MODID, "blurry");
+    public static ResourceLocation INVERTED = ResourceLocation.fromNamespaceAndPath(Main.MODID, "inverted");
 
     private static Map<String, ResourceLocation> shaders;
     public static final List<String> SHADER_LIST;
