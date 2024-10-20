@@ -1,7 +1,5 @@
 {
   "type": "camera:image_cloning",
   "image": "camera:image",
-  "paper": {
-    "tag": "camera:image_paper"
-  }
+  "paper": "#camera:image_paper"
 }

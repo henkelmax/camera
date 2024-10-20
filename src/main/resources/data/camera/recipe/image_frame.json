@@ -6,15 +6,9 @@
     "SSS"
   ],
   "key": {
-    "S": {
-      "tag": "c:rods/wooden"
-    },
-    "F": {
-      "tag": "c:strings"
-    },
-    "L": {
-      "tag": "c:leathers"
-    }
+    "S": "#c:rods/wooden",
+    "F": "#c:strings",
+    "L": "#c:leathers"
   },
   "result": {
     "id": "camera:image_frame",
