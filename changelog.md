@@ -1,1 +1,1 @@
-- Fixed JEI error
+- Updated Russian translation
