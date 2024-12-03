@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -232,8 +231,9 @@ public class ImageEntity extends Entity {
         }
     }
 
+    @Nullable
     @Override
-    public ItemStack getPickedResult(HitResult target) {
+    public ItemStack getPickResult() {
         if (hasImage()) {
             return getItem().copy();
         }
@@ -258,7 +258,7 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    protected AABB makeBoundingBox() {
+    protected AABB makeBoundingBox(Vec3 pos) {
         return calculateBoundingBox(blockPosition(), getFacing(), getFrameWidth(), getFrameHeight());
     }
 
