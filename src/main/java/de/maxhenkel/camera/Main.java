@@ -11,10 +11,9 @@ import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.items.ImageFrameItem;
 import de.maxhenkel.camera.items.ImageItem;
-import de.maxhenkel.camera.items.render.ImageItemRenderer;
+import de.maxhenkel.camera.items.render.ImageSpecialRenderer;
 import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.CommonRegistry;
-import de.maxhenkel.corelib.client.CustomRenderItemExtension;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponentType;
@@ -40,7 +39,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -103,7 +102,7 @@ public class Main {
             eventBus.addListener(Main.this::clientSetup);
             eventBus.addListener(Main.this::registerKeyBinds);
             eventBus.addListener(Main.this::onRegisterScreens);
-            eventBus.addListener(Main.this::onRegisterClientExtensions);
+            eventBus.addListener(Main.this::registerItemModels);
         }
         ITEM_REGISTER.register(eventBus);
         MENU_REGISTER.register(eventBus);
@@ -163,8 +162,8 @@ public class Main {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new CustomRenderItemExtension(new ImageItemRenderer()), IMAGE);
+    public void registerItemModels(RegisterSpecialModelRendererEvent event) {
+        event.register(ResourceLocation.fromNamespaceAndPath(MODID, "image"), ImageSpecialRenderer.Unbaked.MAP_CODEC);
     }
 
 }
