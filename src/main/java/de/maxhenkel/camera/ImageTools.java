@@ -38,7 +38,7 @@ public class ImageTools {
                 int red = RenderUtils.getRed(rgba);
                 int green = RenderUtils.getGreen(rgba);
                 int blue = RenderUtils.getBlue(rgba);
-                bufferedImage.setRGB(x, y, RenderUtils.getArgb(alpha, blue, green, red));
+                bufferedImage.setRGB(x, y, RenderUtils.getArgb(alpha, red, green, blue));
             }
         }
 
@@ -54,7 +54,7 @@ public class ImageTools {
                 int red = RenderUtils.getRed(rgba);
                 int green = RenderUtils.getGreen(rgba);
                 int blue = RenderUtils.getBlue(rgba);
-                nativeImage.setPixel(x, y, RenderUtils.getArgb(alpha, blue, green, red));
+                nativeImage.setPixel(x, y, RenderUtils.getArgb(alpha, red, green, blue));
             }
         }
         return nativeImage;
