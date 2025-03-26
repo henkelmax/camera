@@ -4,7 +4,8 @@
   },
   "passes": [
     {
-      "program": "minecraft:post/color_convolve",
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "minecraft:post/color_convolve",
       "inputs": [
         {
           "sampler_name": "In",
@@ -15,36 +16,52 @@
       "uniforms": [
         {
           "name": "RedMatrix",
+          "type": "vec3",
           "values": [
-            2,
-            0,
-            0
+            1.5,
+            0.5,
+            0.5
           ]
         },
         {
           "name": "GreenMatrix",
+          "type": "vec3",
           "values": [
-            0,
-            2,
-            0
+            0.5,
+            1.5,
+            0.5
           ]
         },
         {
           "name": "BlueMatrix",
+          "type": "vec3",
           "values": [
-            0,
-            0,
-            2
+            0.5,
+            0.5,
+            1.5
           ]
         }
       ]
     },
     {
-      "program": "minecraft:post/blit",
+      "vertex_shader": "minecraft:post/blit",
+      "fragment_shader": "minecraft:post/blit",
       "inputs": [
         {
           "sampler_name": "In",
           "target": "swap"
+        }
+      ],
+      "uniforms": [
+        {
+          "name": "ColorModulate",
+          "type": "vec4",
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
         }
       ],
       "output": "minecraft:main"
