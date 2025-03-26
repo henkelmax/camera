@@ -6,7 +6,6 @@ import de.maxhenkel.camera.Main;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,7 +47,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
             return;
         }
         UUID uuid = images.get(index);
-        ImageScreen.drawImage(guiGraphics, width, height, 100, uuid);
+        ImageScreen.drawImage(guiGraphics, width, height, uuid);
     }
 
     @Override
