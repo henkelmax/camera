@@ -1,6 +1,5 @@
 package de.maxhenkel.camera;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.neoforged.api.distmarker.Dist;
@@ -41,12 +40,12 @@ public class ImageTaker {
 
         Minecraft mc = Minecraft.getInstance();
 
-        NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
+        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> {
+            mc.options.hideGui = hide;
+            takeScreenshot = false;
 
-        mc.options.hideGui = hide;
-        takeScreenshot = false;
-
-        ImageProcessor.sendScreenshotThreaded(uuid, image);
+            ImageProcessor.sendScreenshotThreaded(uuid, image);
+        });
     }
 
 }

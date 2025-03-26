@@ -1,7 +1,5 @@
 package de.maxhenkel.camera;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.CameraType;
@@ -10,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.CoreShaders;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +18,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.joml.Matrix4f;
 
 import java.util.List;
 
@@ -63,51 +60,35 @@ public class ClientEvents {
     }
 
     private void drawViewFinder(GuiGraphics guiGraphics) {
-        RenderSystem.setShader(CoreShaders.POSITION_TEX);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        RenderSystem.setShaderTexture(0, VIEWFINDER);
-        float imageWidth = 192F;
-        float imageHeight = 100F;
-
-        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        int imageWidth = 192;
+        int imageHeight = 100;
 
         float ws = (float) mc.getWindow().getGuiScaledWidth();
         float hs = (float) mc.getWindow().getGuiScaledHeight();
 
         float rs = ws / hs;
-        float ri = imageWidth / imageHeight;
+        float ri = (float) imageWidth / (float) imageHeight;
 
         float hnew;
         float wnew;
 
         if (rs > ri) {
-            wnew = imageWidth * hs / imageHeight;
+            wnew = (float) imageWidth * hs / (float) imageHeight;
             hnew = hs;
         } else {
             wnew = ws;
-            hnew = imageHeight * ws / imageWidth;
+            hnew = (float) imageHeight * ws / (float) imageWidth;
         }
 
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        Matrix4f matrix = guiGraphics.pose().last().pose();
-        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 0F);
-        buffer.addVertex(matrix, left, top + hnew, 0F).setUv(0F, 100F / 256F);
-        buffer.addVertex(matrix, left + wnew, top + hnew, 0F).setUv(192F / 256F, 100F / 256F);
-        buffer.addVertex(matrix, left + wnew, top, 0F).setUv(192F / 256F, 0F);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        guiGraphics.blit(RenderType::guiTextured, VIEWFINDER, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, 192, 100, 256, 256);
     }
 
     private void drawZoom(GuiGraphics guiGraphics, float percent) {
-        RenderSystem.setShader(CoreShaders.POSITION_TEX);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        RenderSystem.setShaderTexture(0, ZOOM);
-
         int zoomWidth = 112;
-        int zoomHeight = 20;
-
-        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        int zoomHeight = 10;
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();
@@ -115,19 +96,9 @@ public class ClientEvents {
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        Matrix4f matrix = guiGraphics.pose().last().pose();
-        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 0F);
-        buffer.addVertex(matrix, left, (float) (top + zoomHeight / 2), 0F).setUv(0F, 10F / 128F);
-        buffer.addVertex(matrix, left + zoomWidth, (float) (top + zoomHeight / 2), 0F).setUv(112F / 128F, 10F / 128F);
-        buffer.addVertex(matrix, left + zoomWidth, top, 0F).setUv(112F / 128F, 0F);
-
+        guiGraphics.blit(RenderType::guiTextured, ZOOM, left, top, 0F, 0F, zoomWidth, zoomHeight, zoomWidth, zoomHeight, 128, 128);
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
-
-        buffer.addVertex(matrix, left, top, 0F).setUv(0F, 10F / 128F);
-        buffer.addVertex(matrix, left, (float) (top + zoomHeight / 2), 0F).setUv(0F, 20F / 128F);
-        buffer.addVertex(matrix, left + percWidth, (float) (top + zoomHeight / 2), 0F).setUv((112F / 128F) * percent, 20F / 128F);
-        buffer.addVertex(matrix, left + percWidth, top, 0F).setUv((112F / 128F) * percent, 10F / 128F);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        guiGraphics.blit(RenderType::guiTextured, ZOOM, left, top, 0F, zoomHeight, percWidth, zoomHeight, percWidth, zoomHeight, 128, 128);
     }
 
 

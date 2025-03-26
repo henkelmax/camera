@@ -16,10 +16,12 @@ import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.CommonRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -46,9 +48,12 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.UUID;
 
 @Mod(Main.MODID)
 public class Main {
@@ -79,6 +84,9 @@ public class Main {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ImageData>> IMAGE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("image", () -> DataComponentType.<ImageData>builder().persistent(ImageData.CODEC).networkSynchronized(ImageData.STREAM_CODEC).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> ACTIVE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("active", () -> DataComponentType.<Unit>builder().networkSynchronized(StreamCodec.unit(Unit.INSTANCE)).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> SHADER_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("shader", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
+
+    private static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZER_REGISTER = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Main.MODID);
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<UUID>> UUID_ENTITY_DATA_SERIALIZER = ENTITY_DATA_SERIALIZER_REGISTER.register("uuid", () -> EntityDataSerializer.forValueType(UUIDUtil.STREAM_CODEC));
 
     public static TagKey<Item> IMAGE_PAPER = ItemTags.create(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_paper"));
 

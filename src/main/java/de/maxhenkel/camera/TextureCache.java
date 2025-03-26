@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
 public class TextureCache {
@@ -35,7 +36,7 @@ public class TextureCache {
         }
 
         ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Main.MODID, "texures/camera/" + uuid.toString());
-        CameraTextureObject cameraTextureObject = new CameraTextureObject(ImageTools.toNativeImage(image));
+        CameraTextureObject cameraTextureObject = new CameraTextureObject(resourceLocation::toString, ImageTools.toNativeImage(image));
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
         Minecraft.getInstance().getEntityRenderDispatcher().textureManager.register(resourceLocation, cameraTextureObject);
@@ -74,10 +75,10 @@ public class TextureCache {
         return cameraTextureObject.getPixels();
     }
 
-    public class CameraTextureObject extends DynamicTexture {
+    public static class CameraTextureObject extends DynamicTexture {
 
-        public CameraTextureObject(NativeImage image) {
-            super(image);
+        public CameraTextureObject(Supplier<String> stringSupplier, NativeImage image) {
+            super(stringSupplier, image);
         }
     }
 

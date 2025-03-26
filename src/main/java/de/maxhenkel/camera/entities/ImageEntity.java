@@ -5,11 +5,12 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.gui.ResizeFrameScreen;
 import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,17 +33,16 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ImageEntity extends Entity {
 
-    private static final EntityDataAccessor<Optional<UUID>> ID = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<UUID> ID = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
     private static final EntityDataAccessor<Direction> FACING = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.DIRECTION);
     private static final EntityDataAccessor<Integer> WIDTH = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HEIGHT = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<UUID> OWNER = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
 
     private static final AABB NULL_AABB = new AABB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -132,10 +132,7 @@ public class ImageEntity extends Entity {
         if (player.isCreative() && player.hasPermissions(1)) {
             return true;
         }
-        if (!getOwner().isPresent()) {
-            return true;
-        }
-        return getOwner().get().equals(player.getUUID());
+        return getOwner().equals(player.getUUID());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -329,20 +326,20 @@ public class ImageEntity extends Entity {
         level().playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
-    public Optional<UUID> getOwner() {
+    public UUID getOwner() {
         return entityData.get(OWNER);
     }
 
     public void setOwner(UUID owner) {
-        entityData.set(OWNER, Optional.ofNullable(owner));
+        entityData.set(OWNER, owner);
     }
 
-    public Optional<UUID> getImageUUID() {
+    public UUID getImageUUID() {
         return entityData.get(ID);
     }
 
     public void setImageUUID(UUID uuid) {
-        entityData.set(ID, Optional.ofNullable(uuid));
+        entityData.set(ID, uuid);
     }
 
     public int getFrameWidth() {
@@ -384,7 +381,7 @@ public class ImageEntity extends Entity {
     }
 
     public void setImagePosition(BlockPos position) {
-        moveTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, getYRot(), getXRot());
+        snapTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, getYRot(), getXRot());
         updateBoundingBox();
     }
 
@@ -404,28 +401,25 @@ public class ImageEntity extends Entity {
     private ItemStack removeImage() {
         ItemStack item = getItem();
         setItem(ItemStack.EMPTY);
-        setImageUUID(null);
+        setImageUUID(Util.NIL_UUID);
         return item;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(ID, Optional.empty());
+        builder.define(ID, Util.NIL_UUID);
         builder.define(FACING, Direction.NORTH);
         builder.define(WIDTH, 1);
         builder.define(HEIGHT, 1);
         builder.define(ITEM, ItemStack.EMPTY);
-        builder.define(OWNER, Optional.empty());
+        builder.define(OWNER, Util.NIL_UUID);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
-        if (getImageUUID().isPresent()) {
-            compound.putUUID("image_id", getImageUUID().get());
-        }
-        if (getOwner().isPresent()) {
-            compound.putUUID("owner", getOwner().get());
-        }
+        compound.store("image_id", UUIDUtil.CODEC, getImageUUID());
+        compound.store("owner", UUIDUtil.CODEC, getOwner());
+
         compound.putInt("facing", getFacing().get3DDataValue());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
@@ -434,18 +428,15 @@ public class ImageEntity extends Entity {
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.contains("image_id")) {
-            setImageUUID(compound.getUUID("image_id"));
-        }
-        if (compound.contains("owner")) {
-            setOwner(compound.getUUID("owner"));
-        }
-        setFacing(Direction.from3DDataValue(compound.getInt("facing")));
-        setFrameWidth(compound.getInt("width"));
-        setFrameHeight(compound.getInt("height"));
-        if (compound.contains("item", Tag.TAG_COMPOUND)) {
-            setItem(ItemStack.parse(registryAccess(), compound.getCompound("item")).orElse(ItemStack.EMPTY));
-        }
+        compound.read("image_id", UUIDUtil.CODEC).ifPresent(this::setImageUUID);
+        compound.read("owner", UUIDUtil.CODEC).ifPresent(this::setOwner);
+
+        setFacing(Direction.from3DDataValue(compound.getIntOr("facing", 0)));
+        setFrameWidth(compound.getIntOr("width", 0));
+        setFrameHeight(compound.getIntOr("height", 0));
+        compound.getCompound("item").ifPresent(compoundTag -> {
+            setItem(ItemStack.parse(registryAccess(), compoundTag).orElse(ItemStack.EMPTY));
+        });
 
         updateBoundingBox();
     }

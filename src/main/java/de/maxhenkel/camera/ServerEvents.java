@@ -1,12 +1,12 @@
 package de.maxhenkel.camera;
 
+import net.minecraft.util.TriState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -21,13 +21,10 @@ public class ServerEvents {
             return;
         }
 
-        disableCamera(event.getEntity().getInventory().getSelected());
+        disableCamera(event.getEntity().getInventory().getSelectedItem());
 
-        for (ItemStack stack : event.getEntity().getInventory().items) {
-            disableCamera(stack);
-        }
-
-        for (ItemStack stack : event.getEntity().getInventory().offhand) {
+        for (int i = 0; i < event.getEntity().getInventory().getContainerSize(); i++) {
+            ItemStack stack = event.getEntity().getInventory().getItem(i);
             disableCamera(stack);
         }
     }

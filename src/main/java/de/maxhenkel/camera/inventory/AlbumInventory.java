@@ -9,7 +9,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
@@ -17,6 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemContainerContents;
+
+import java.util.Optional;
 
 public class AlbumInventory implements Container {
 
@@ -109,10 +110,10 @@ public class AlbumInventory implements Container {
             return;
         }
         CompoundTag itemTag = customData.copyTag();
-        if (!(itemTag.contains("Images", Tag.TAG_COMPOUND))) {
+        if (!(itemTag.contains("Images"))) {
             return;
         }
-        CompoundTag images = itemTag.getCompound("Images");
+        CompoundTag images = itemTag.getCompoundOrEmpty("Images");
         itemTag.remove("Images");
         if (itemTag.isEmpty()) {
             album.remove(DataComponents.CUSTOM_DATA);
@@ -121,17 +122,21 @@ public class AlbumInventory implements Container {
         }
         NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
-        ListTag itemsTag = images.getList("Items", 10);
+        ListTag itemsTag = images.getListOrEmpty("Items");
 
         for (int i = 0; i < itemsTag.size(); i++) {
-            CompoundTag compoundtag = itemsTag.getCompound(i);
-            int j = compoundtag.getByte("Slot") & 255;
+            Optional<CompoundTag> tagOptional = itemsTag.getCompound(i);
+            if (tagOptional.isEmpty()) {
+                continue;
+            }
+            CompoundTag compoundtag = tagOptional.get();
+            int j = compoundtag.getByteOr("Slot", (byte) 0) & 255;
             if (j > items.size()) {
                 continue;
             }
             ItemStack itemStack = ItemStack.parse(provider, compoundtag).orElse(ItemStack.EMPTY);
-            CompoundTag tag = compoundtag.getCompound("tag");
-            ImageData imageData = ImageData.fromImageTag(tag.getCompound("image"));
+            CompoundTag tag = compoundtag.getCompoundOrEmpty("tag");
+            ImageData imageData = ImageData.fromImageTag(tag.getCompoundOrEmpty("image"));
             if (imageData == null) {
                 items.set(j, itemStack);
                 continue;

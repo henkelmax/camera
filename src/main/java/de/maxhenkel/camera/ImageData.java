@@ -236,10 +236,10 @@ public class ImageData {
             return;
         }
         CompoundTag itemTag = customData.copyTag();
-        if (!itemTag.contains("image", Tag.TAG_COMPOUND)) {
+        if (!itemTag.contains("image")) {
             return;
         }
-        CompoundTag imageTag = itemTag.getCompound("image");
+        CompoundTag imageTag = itemTag.getCompoundOrEmpty("image");
         itemTag.remove("image");
         if (imageTag.isEmpty()) {
             stack.remove(DataComponents.CUSTOM_DATA);
@@ -257,23 +257,27 @@ public class ImageData {
     @Nullable
     public static ImageData fromImageTag(CompoundTag imageTag) {
         UUID imageID;
-        if (imageTag.contains("image_id_most", Tag.TAG_LONG) && imageTag.contains("image_id_least", Tag.TAG_LONG)) {
-            imageID = new UUID(imageTag.getLong("image_id_most"), imageTag.getLong("image_id_least"));
+        if (imageTag.contains("image_id_most") && imageTag.contains("image_id_least")) {
+            imageID = new UUID(imageTag.getLongOr("image_id_most", 0L), imageTag.getLongOr("image_id_least", 0L));
         } else {
             return null;
         }
-        long time = imageTag.getLong("image_time");
-        String owner = imageTag.getString("owner");
+        long time = imageTag.getLongOr("image_time", 0L);
+        String owner = imageTag.getStringOr("owner", "");
         ResourceLocation biome = null;
-        if (imageTag.contains("biome", Tag.TAG_STRING)) {
-            biome = ResourceLocation.tryParse(imageTag.getString("biome"));
+        if (imageTag.contains("biome")) {
+            biome = ResourceLocation.tryParse(imageTag.getStringOr("biome", ""));
         }
         List<ResourceLocation> entityList = null;
-        if (imageTag.contains("entities", Tag.TAG_LIST)) {
-            ListTag entities = imageTag.getList("entities", Tag.TAG_STRING);
+        if (imageTag.contains("entities")) {
+            ListTag entities = imageTag.getListOrEmpty("entities");
             entityList = new ArrayList<>();
             for (Tag e : entities) {
-                ResourceLocation resourceLocation = ResourceLocation.tryParse(e.getAsString());
+                Optional<String> optionalString = e.asString();
+                if (optionalString.isEmpty()) {
+                    continue;
+                }
+                ResourceLocation resourceLocation = ResourceLocation.tryParse(optionalString.get());
                 if (resourceLocation != null) {
                     entityList.add(resourceLocation);
                 }
