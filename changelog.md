@@ -1,1 +1,1 @@
-- Fixed shaders not working
+- Fixed crash when placing image frames

@@ -33,16 +33,17 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ImageEntity extends Entity {
 
-    private static final EntityDataAccessor<UUID> ID = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
+    private static final EntityDataAccessor<Optional<UUID>> ID = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
     private static final EntityDataAccessor<Direction> FACING = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.DIRECTION);
     private static final EntityDataAccessor<Integer> WIDTH = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HEIGHT = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<UUID> OWNER = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
+    private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
 
     private static final AABB NULL_AABB = new AABB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -132,7 +133,7 @@ public class ImageEntity extends Entity {
         if (player.isCreative() && player.hasPermissions(1)) {
             return true;
         }
-        return getOwner().equals(player.getUUID());
+        return getOwner().orElse(Util.NIL_UUID).equals(player.getUUID());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -326,20 +327,20 @@ public class ImageEntity extends Entity {
         level().playSound(null, getCenterPosition(), SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
-    public UUID getOwner() {
+    public Optional<UUID> getOwner() {
         return entityData.get(OWNER);
     }
 
-    public void setOwner(UUID owner) {
-        entityData.set(OWNER, owner);
+    public void setOwner(@Nullable UUID owner) {
+        entityData.set(OWNER, Optional.ofNullable(owner));
     }
 
-    public UUID getImageUUID() {
+    public Optional<UUID> getImageUUID() {
         return entityData.get(ID);
     }
 
     public void setImageUUID(UUID uuid) {
-        entityData.set(ID, uuid);
+        entityData.set(ID, Optional.ofNullable(uuid));
     }
 
     public int getFrameWidth() {
@@ -401,29 +402,32 @@ public class ImageEntity extends Entity {
     private ItemStack removeImage() {
         ItemStack item = getItem();
         setItem(ItemStack.EMPTY);
-        setImageUUID(Util.NIL_UUID);
+        setImageUUID(null);
         return item;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(ID, Util.NIL_UUID);
+        builder.define(ID, Optional.empty());
         builder.define(FACING, Direction.NORTH);
         builder.define(WIDTH, 1);
         builder.define(HEIGHT, 1);
         builder.define(ITEM, ItemStack.EMPTY);
-        builder.define(OWNER, Util.NIL_UUID);
+        builder.define(OWNER, Optional.empty());
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
-        compound.store("image_id", UUIDUtil.CODEC, getImageUUID());
-        compound.store("owner", UUIDUtil.CODEC, getOwner());
+        getImageUUID().ifPresent(id -> compound.store("image_id", UUIDUtil.CODEC, id));
+        getOwner().ifPresent(owner -> compound.store("owner", UUIDUtil.CODEC, owner));
 
         compound.putInt("facing", getFacing().get3DDataValue());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
-        compound.put("item", getItem().save(registryAccess()));
+        ItemStack item = getItem();
+        if (!item.isEmpty()) {
+            compound.put("item", item.save(registryAccess()));
+        }
     }
 
     @Override

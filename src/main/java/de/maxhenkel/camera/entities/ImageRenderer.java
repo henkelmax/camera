@@ -155,7 +155,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.frameWidth = image.getFrameWidth();
         state.frameHeight = image.getFrameHeight();
         state.facing = image.getFacing();
-        state.imageUUID = image.getImageUUID();
+        state.imageUUID = image.getImageUUID().orElse(null);
         state.light = LevelRenderer.getLightColor(image.level(), image.getCenterPosition());
         state.imageBoundingBox = image.getBoundingBox().move(-image.getX(), -image.getY(), -image.getZ());
     }

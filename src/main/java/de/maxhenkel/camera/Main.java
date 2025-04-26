@@ -14,6 +14,7 @@ import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.items.render.ImageSpecialRenderer;
 import de.maxhenkel.camera.net.*;
 import de.maxhenkel.corelib.CommonRegistry;
+import de.maxhenkel.corelib.codec.CodecUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.UUIDUtil;
@@ -53,6 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mod(Main.MODID)
@@ -86,7 +88,7 @@ public class Main {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> SHADER_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("shader", () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
 
     private static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZER_REGISTER = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Main.MODID);
-    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<UUID>> UUID_ENTITY_DATA_SERIALIZER = ENTITY_DATA_SERIALIZER_REGISTER.register("uuid", () -> EntityDataSerializer.forValueType(UUIDUtil.STREAM_CODEC));
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Optional<UUID>>> UUID_ENTITY_DATA_SERIALIZER = ENTITY_DATA_SERIALIZER_REGISTER.register("uuid", () -> EntityDataSerializer.forValueType(CodecUtils.optionalStreamCodecByteBuf(UUIDUtil.STREAM_CODEC)));
 
     public static TagKey<Item> IMAGE_PAPER = ItemTags.create(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_paper"));
 
@@ -117,6 +119,7 @@ public class Main {
         ENTITY_REGISTER.register(eventBus);
         RECIPE_SERIALIZER_REGISTER.register(eventBus);
         DATA_COMPONENT_TYPE_REGISTER.register(eventBus);
+        ENTITY_DATA_SERIALIZER_REGISTER.register(eventBus);
         ModSounds.SOUND_REGISTER.register(eventBus);
     }
 
