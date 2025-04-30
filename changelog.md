@@ -1,1 +1,1 @@
-- Fixed images having red and blue channels swapped
+- Fixed crash when removing an item frame
