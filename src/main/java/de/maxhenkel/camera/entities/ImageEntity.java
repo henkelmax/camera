@@ -172,16 +172,15 @@ public class ImageEntity extends Entity {
         }
     }
 
-    public void onBroken(Entity entity) {
-        if (!(entity.level() instanceof ServerLevel serverLevel)) {
+    public void onBroken(@Nullable Entity entity) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
             return;
         }
         if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             if (player.getAbilities().instabuild) {
                 return;
             }
@@ -294,7 +293,7 @@ public class ImageEntity extends Entity {
         return entityitem;
     }
 
-    public void removeFrame(Entity source) {
+    public void removeFrame(@Nullable Entity source) {
         if (!isRemoved() && level() instanceof ServerLevel serverLevel) {
             onBroken(source);
             kill(serverLevel);

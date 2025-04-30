@@ -1,1 +1,1 @@
-- Fixed crash when placing image frames
+- Fixed crash when removing an item frame
