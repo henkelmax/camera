@@ -15,6 +15,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -181,13 +182,15 @@ public class ImageEntity extends Entity {
         }
     }
 
-    public void onBroken(Entity entity) {
-        if (!level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+    public void onBroken(@Nullable Entity entity) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             if (player.getAbilities().instabuild) {
                 return;
             }
@@ -299,7 +302,7 @@ public class ImageEntity extends Entity {
         return entityitem;
     }
 
-    public void removeFrame(Entity source) {
+    public void removeFrame(@Nullable Entity source) {
         if (!isRemoved() && !level().isClientSide) {
             onBroken(source);
             kill();
