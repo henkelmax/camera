@@ -1,1 +1,1 @@
-- Updated Russian translation
+- Fixed crash when removing an item frame
