@@ -24,8 +24,8 @@ public class AlbumInventoryScreen extends ScreenBase<AlbumInventoryContainer> {
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         super.renderLabels(guiGraphics, x, y);
-        guiGraphics.drawString(font, getTitle().getVisualOrderText(), 8F, 6F, FONT_COLOR, false);
-        guiGraphics.drawString(font, playerInventory.getDisplayName().getVisualOrderText(), 8F, (float) (imageHeight - 96 + 2), FONT_COLOR, false);
+        guiGraphics.drawString(font, getTitle().getVisualOrderText(), 8, 6, FONT_COLOR, false);
+        guiGraphics.drawString(font, playerInventory.getDisplayName().getVisualOrderText(), 8, imageHeight - 96 + 2, FONT_COLOR, false);
     }
 
 }

@@ -6,8 +6,8 @@ import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
+import de.maxhenkel.corelib.FontColorUtils;
 import de.maxhenkel.corelib.inventory.ScreenBase;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -25,7 +25,6 @@ import java.util.UUID;
 public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
     private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/camera.png");
-    private static final int FONT_COLOR = 4210752;
     private static final int PADDING = 10;
     private static final int BUTTON_WIDTH = 70;
     private static final int BUTTON_HEIGHT = 20;
@@ -115,7 +114,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
         MutableComponent shaderName = Component.translatable("shader." + Shaders.SHADER_LIST.get(index));
         int shaderWidth = font.width(shaderName);
-        guiGraphics.drawString(font, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, ChatFormatting.WHITE.getColor(), false);
+        guiGraphics.drawString(font, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, FontColorUtils.WHITE, false);
 
         MutableComponent uploadImage = Component.translatable("gui.camera.upload_image");
         int uploadImageWidth = font.width(uploadImage);

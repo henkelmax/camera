@@ -1,1 +1,1 @@
-- Fixed crash when removing an item frame
+- Updated to 1.21.6

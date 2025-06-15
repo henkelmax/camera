@@ -83,10 +83,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void updateContents() {
-        if (minecraft.level == null) {
-            return;
-        }
-        images = Main.ALBUM.get().getImages(minecraft.level.registryAccess(), albumContainer.getAlbum());
+        images = Main.ALBUM.get().getImages(albumContainer.getAlbum());
     }
 
     private void updatePage() {

@@ -1,19 +1,20 @@
 package de.maxhenkel.camera.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
+import de.maxhenkel.corelib.FontColorUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -80,41 +81,38 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         if (visibility >= 1F) {
             renderTransparentBackground(guiGraphics);
         }
-        RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
-        guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, leftPos, topPos, 0F, 0F, imageWidth, imageHeight, imageWidth, imageHeight, 256, 256, ARGB.colorFromFloat(visibility, 1F, 1F, 1F));
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(leftPos, topPos, 0F);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(leftPos, topPos);
 
         MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
-        guiGraphics.drawString(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, ChatFormatting.DARK_GRAY.getColor(), false);
+        guiGraphics.drawString(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, FontColorUtils.getFontColor(ChatFormatting.DARK_GRAY), false);
 
         MutableComponent description = Component.translatable("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
-        guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, ChatFormatting.GRAY.getColor(), false);
+        guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(ChatFormatting.GRAY), false);
 
-        RenderSystem.setShaderColor(1F, 1F, 1F, visibility);
         if (Screen.hasShiftDown()) {
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
         } else {
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
-            guiGraphics.blit(RenderType::guiTextured, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 0, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 16, 109, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 16, 125, 16, 16, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth - PADDING - BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);
         }
 
         if (visibilityButton.isHovered()) {
-            guiGraphics.renderTooltip(font, List.of(Component.translatable("tooltip.visibility").getVisualOrderText()), mouseX - leftPos, mouseY - topPos);
+            guiGraphics.setTooltipForNextFrame(font, List.of(Component.translatable("tooltip.visibility").getVisualOrderText()), mouseX, mouseY);
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     @Override

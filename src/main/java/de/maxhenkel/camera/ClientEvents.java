@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -83,7 +83,7 @@ public class ClientEvents {
         float top = (hs - hnew) / 2F;
         float left = (ws - wnew) / 2F;
 
-        guiGraphics.blit(RenderType::guiTextured, VIEWFINDER, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, 192, 100, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, VIEWFINDER, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, 192, 100, 256, 256);
     }
 
     private void drawZoom(GuiGraphics guiGraphics, float percent) {
@@ -96,9 +96,9 @@ public class ClientEvents {
         int left = (width - zoomWidth) / 2;
         int top = height / 40;
 
-        guiGraphics.blit(RenderType::guiTextured, ZOOM, left, top, 0F, 0F, zoomWidth, zoomHeight, zoomWidth, zoomHeight, 128, 128);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ZOOM, left, top, 0F, 0F, zoomWidth, zoomHeight, zoomWidth, zoomHeight, 128, 128);
         int percWidth = (int) (Math.max(Math.min(percent, 1D), 0F) * (float) zoomWidth);
-        guiGraphics.blit(RenderType::guiTextured, ZOOM, left, top, 0F, zoomHeight, percWidth, zoomHeight, percWidth, zoomHeight, 128, 128);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ZOOM, left, top, 0F, zoomHeight, percWidth, zoomHeight, percWidth, zoomHeight, 128, 128);
     }
 
 

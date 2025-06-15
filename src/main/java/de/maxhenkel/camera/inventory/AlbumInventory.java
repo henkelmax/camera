@@ -4,7 +4,7 @@ import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.items.AlbumItem;
 import de.maxhenkel.camera.items.ImageItem;
-import net.minecraft.core.HolderLookup;
+import de.maxhenkel.corelib.codec.CodecUtils;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -26,12 +26,12 @@ public class AlbumInventory implements Container {
     private NonNullList<ItemStack> items;
     private ItemStack album;
 
-    public AlbumInventory(HolderLookup.Provider provider, ItemStack album) {
+    public AlbumInventory(ItemStack album) {
         assert !album.isEmpty();
         this.album = album;
         this.items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
-        convert(provider, album);
+        convert(album);
 
         ItemContainerContents contents = album.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         contents.copyInto(items);
@@ -101,7 +101,7 @@ public class AlbumInventory implements Container {
         return false;
     }
 
-    public static void convert(HolderLookup.Provider provider, ItemStack album) {
+    public static void convert(ItemStack album) {
         if (!(album.getItem() instanceof AlbumItem)) {
             return;
         }
@@ -134,7 +134,7 @@ public class AlbumInventory implements Container {
             if (j > items.size()) {
                 continue;
             }
-            ItemStack itemStack = ItemStack.parse(provider, compoundtag).orElse(ItemStack.EMPTY);
+            ItemStack itemStack = CodecUtils.fromNBT(ItemStack.CODEC, compoundtag).orElse(ItemStack.EMPTY);
             CompoundTag tag = compoundtag.getCompoundOrEmpty("tag");
             ImageData imageData = ImageData.fromImageTag(tag.getCompoundOrEmpty("image"));
             if (imageData == null) {

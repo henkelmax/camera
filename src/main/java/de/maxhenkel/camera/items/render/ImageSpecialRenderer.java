@@ -14,7 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
+import java.util.Set;
 import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
@@ -28,6 +30,11 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<UUID> {
     public void render(@Nullable UUID id, ItemDisplayContext itemDisplayContext, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay, boolean b) {
         stack.translate(0.5D, 0D, 0.5D);
         ImageRenderer.renderImage(id, Direction.SOUTH, 1, 1, stack, bufferSource, light);
+    }
+
+    @Override
+    public void getExtents(Set<Vector3f> vecs) {
+
     }
 
     @Nullable

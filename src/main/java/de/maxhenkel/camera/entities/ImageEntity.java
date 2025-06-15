@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -27,6 +26,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -416,30 +417,28 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        getImageUUID().ifPresent(id -> compound.store("image_id", UUIDUtil.CODEC, id));
-        getOwner().ifPresent(owner -> compound.store("owner", UUIDUtil.CODEC, owner));
+    public void addAdditionalSaveData(ValueOutput valueOutput) {
+        getImageUUID().ifPresent(id -> valueOutput.store("image_id", UUIDUtil.CODEC, id));
+        getOwner().ifPresent(owner -> valueOutput.store("owner", UUIDUtil.CODEC, owner));
 
-        compound.putInt("facing", getFacing().get3DDataValue());
-        compound.putInt("width", getFrameWidth());
-        compound.putInt("height", getFrameHeight());
+        valueOutput.putInt("facing", getFacing().get3DDataValue());
+        valueOutput.putInt("width", getFrameWidth());
+        valueOutput.putInt("height", getFrameHeight());
         ItemStack item = getItem();
         if (!item.isEmpty()) {
-            compound.put("item", item.save(registryAccess()));
+            valueOutput.store("item", ItemStack.CODEC, item);
         }
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        compound.read("image_id", UUIDUtil.CODEC).ifPresent(this::setImageUUID);
-        compound.read("owner", UUIDUtil.CODEC).ifPresent(this::setOwner);
+    public void readAdditionalSaveData(ValueInput valueInput) {
+        valueInput.read("image_id", UUIDUtil.CODEC).ifPresent(this::setImageUUID);
+        valueInput.read("owner", UUIDUtil.CODEC).ifPresent(this::setOwner);
 
-        setFacing(Direction.from3DDataValue(compound.getIntOr("facing", 0)));
-        setFrameWidth(compound.getIntOr("width", 0));
-        setFrameHeight(compound.getIntOr("height", 0));
-        compound.getCompound("item").ifPresent(compoundTag -> {
-            setItem(ItemStack.parse(registryAccess(), compoundTag).orElse(ItemStack.EMPTY));
-        });
+        setFacing(Direction.from3DDataValue(valueInput.getIntOr("facing", 0)));
+        setFrameWidth(valueInput.getIntOr("width", 0));
+        setFrameHeight(valueInput.getIntOr("height", 0));
+        setItem(valueInput.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
 
         updateBoundingBox();
     }

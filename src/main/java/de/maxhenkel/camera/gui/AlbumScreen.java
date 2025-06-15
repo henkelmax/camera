@@ -1,7 +1,6 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.Main;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,8 +39,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBlurredBackground();
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        renderBlurredBackground(guiGraphics);
 
         if (images.isEmpty()) {
             return;

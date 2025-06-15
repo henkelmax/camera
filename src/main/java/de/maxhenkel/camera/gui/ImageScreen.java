@@ -1,14 +1,13 @@
 package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -36,8 +35,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBlurredBackground();
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+        renderBlurredBackground(guiGraphics);
 
         if (imageID == null) {
             return;
@@ -87,7 +85,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
         left += ((1F - scale) * ws) / 2F;
         top += ((1F - scale) * hs) / 2F;
 
-        guiGraphics.blit(RenderType::guiTextured, location, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, imageWidth, imageHeight, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, location, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, imageWidth, imageHeight, imageWidth, imageHeight);
     }
 
     @Override

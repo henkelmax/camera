@@ -7,7 +7,6 @@ import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
@@ -44,7 +43,7 @@ public class AlbumItem extends Item {
 
                     @Override
                     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-                        return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(serverPlayer.registryAccess(), stack));
+                        return new AlbumInventoryContainer(id, playerInventory, new AlbumInventory(stack));
                     }
 
                     @Override
@@ -61,7 +60,7 @@ public class AlbumItem extends Item {
 
     public static void openAlbum(Player player, ItemStack album) {
         if (player.level().isClientSide) {
-            List<UUID> images = Main.ALBUM.get().getImages(player.level().registryAccess(), album);
+            List<UUID> images = Main.ALBUM.get().getImages(album);
             if (!images.isEmpty()) {
                 openClientGui(images);
             }
@@ -85,12 +84,12 @@ public class AlbumItem extends Item {
         }
     }
 
-    public List<UUID> getImages(HolderLookup.Provider provider, ItemStack stack) {
+    public List<UUID> getImages(ItemStack stack) {
         if (stack.isEmpty()) {
             return Collections.emptyList();
         }
         List<UUID> images = new ArrayList<>();
-        Container inventory = new AlbumInventory(provider, stack);
+        Container inventory = new AlbumInventory(stack);
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack s = inventory.getItem(i);
             ImageData imageData = ImageData.fromStack(s);
