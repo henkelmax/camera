@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.EntityHitResult;
 import org.joml.Matrix4f;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRenderState> {
@@ -45,34 +46,17 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
 
     @Override
     public void render(ImageEntityRenderState state, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
-        renderImage(state.imageUUID, state.facing, state.frameWidth, state.frameHeight, stack, bufferSource, state.light);
+        renderImage(state.imageState, state.facing, state.frameWidth, state.frameHeight, stack, bufferSource, state.light);
         renderBoundingBox(state, stack, bufferSource);
         super.render(state, stack, bufferSource, packedLight);
     }
 
-    public static void renderImage(UUID imageUUID, Direction facing, float width, float height, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
+    public static void renderImage(ImageEntityRenderState.ImageState imageState, Direction facing, float width, float height, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
         matrixStack.pushPose();
 
-        float imageRatio = 1F;
-        boolean stretch = true;
-        ResourceLocation resourceLocation = EMPTY_IMAGE;
-        if (DEFAULT_IMAGE_UUID.equals(imageUUID)) {
-            resourceLocation = DEFAULT_IMAGE;
-            imageRatio = 1.5F;
-            stretch = false;
-        } else if (imageUUID != null) {
-            ResourceLocation rl = TextureCache.instance().getImage(imageUUID);
-            if (rl != null) {
-                resourceLocation = rl;
-                NativeImage image = TextureCache.instance().getNativeImage(imageUUID);
-                imageRatio = (float) image.getWidth() / (float) image.getHeight();
-                stretch = false;
-            } else {
-                resourceLocation = DEFAULT_IMAGE;
-                imageRatio = 1.5F;
-                stretch = false;
-            }
-        }
+        ResourceLocation resourceLocation = imageState.resourceLocation();
+        float imageRatio = imageState.imageRatio();
+        boolean stretch = DEFAULT_IMAGE.equals(resourceLocation);
 
         matrixStack.translate(-0.5D, 0D, -0.5D);
 
@@ -155,9 +139,29 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.frameWidth = image.getFrameWidth();
         state.frameHeight = image.getFrameHeight();
         state.facing = image.getFacing();
-        state.imageUUID = image.getImageUUID().orElse(null);
+        state.imageState = extractImageState(image.getImageUUID().orElse(DEFAULT_IMAGE_UUID));
         state.light = LevelRenderer.getLightColor(image.level(), image.getCenterPosition());
         state.imageBoundingBox = image.getBoundingBox().move(-image.getX(), -image.getY(), -image.getZ());
+    }
+
+    public static ImageEntityRenderState.ImageState extractImageState(@Nonnull UUID imageId) {
+        ResourceLocation resourceLocation;
+        float imageRatio;
+        if (DEFAULT_IMAGE_UUID.equals(imageId)) {
+            resourceLocation = DEFAULT_IMAGE;
+            imageRatio = 1.5F;
+        } else {
+            ResourceLocation rl = TextureCache.instance().getImage(imageId);
+            if (rl != null) {
+                resourceLocation = rl;
+                NativeImage nativeImage = TextureCache.instance().getNativeImage(imageId);
+                imageRatio = (float) nativeImage.getWidth() / (float) nativeImage.getHeight();
+            } else {
+                resourceLocation = DEFAULT_IMAGE;
+                imageRatio = 1.5F;
+            }
+        }
+        return new ImageEntityRenderState.ImageState(imageId, imageRatio, resourceLocation);
     }
 
     private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {

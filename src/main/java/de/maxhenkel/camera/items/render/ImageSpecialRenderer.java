@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.entities.ImageEntityRenderState;
 import de.maxhenkel.camera.entities.ImageRenderer;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,19 +18,18 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Set;
-import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
-public class ImageSpecialRenderer implements SpecialModelRenderer<UUID> {
+public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRenderState.ImageState> {
 
     public ImageSpecialRenderer() {
 
     }
 
     @Override
-    public void render(@Nullable UUID id, ItemDisplayContext itemDisplayContext, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay, boolean b) {
+    public void render(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext itemDisplayContext, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay, boolean b) {
         stack.translate(0.5D, 0D, 0.5D);
-        ImageRenderer.renderImage(id, Direction.SOUTH, 1, 1, stack, bufferSource, light);
+        ImageRenderer.renderImage(imageState, Direction.SOUTH, 1, 1, stack, bufferSource, light);
     }
 
     @Override
@@ -39,14 +39,14 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<UUID> {
 
     @Nullable
     @Override
-    public UUID extractArgument(ItemStack stack) {
+    public ImageEntityRenderState.ImageState extractArgument(ItemStack stack) {
         if (Main.CLIENT_CONFIG.renderImageItem.get()) {
             ImageData imageData = ImageData.fromStack(stack);
             if (imageData != null) {
-                return imageData.getId();
+                return ImageRenderer.extractImageState(imageData.getId());
             }
         }
-        return ImageRenderer.DEFAULT_IMAGE_UUID;
+        return ImageRenderer.extractImageState(ImageRenderer.DEFAULT_IMAGE_UUID);
     }
 
     @OnlyIn(Dist.CLIENT)
