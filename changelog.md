@@ -1,1 +1,1 @@
-- Removed legacy album conversion
+- Fixed Jade integration

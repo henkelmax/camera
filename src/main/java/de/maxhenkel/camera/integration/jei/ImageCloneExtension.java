@@ -11,11 +11,26 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategor
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraftingCategoryExtension<T> {
+
+    @Override
+    public List<SlotDisplay> getIngredients(RecipeHolder<T> recipeHolder) {
+        List<SlotDisplay> result = new ArrayList<>();
+        ItemStack image = new ItemStack(Main.IMAGE.get());
+        ImageData.dummy().addToImage(image);
+        result.add(new SlotDisplay.ItemStackSlotDisplay(image));
+
+        //TODO Add paper
+        //result.add(new SlotDisplay.TagSlotDisplay(recipeHolder.value().getPaper()));
+
+        return result;
+    }
 
     @Override
     public void setRecipe(RecipeHolder<T> recipeHolder, IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
