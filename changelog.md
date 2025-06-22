@@ -1,1 +1,1 @@
-- Fixed image items not rendering properly in inventory
+- Removed legacy album conversion
