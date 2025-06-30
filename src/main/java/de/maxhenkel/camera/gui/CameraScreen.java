@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
@@ -80,7 +80,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         UUID uuid = UUID.randomUUID();
                         BufferedImage image = ImageTools.loadImage(file);
                         ClientImageUploadManager.addImage(uuid, image);
-                        PacketDistributor.sendToServer(new MessageRequestUploadCustomImage(uuid));
+                        ClientPacketDistributor.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
                         minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
                         //TODO Properly log an error
@@ -101,7 +101,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     private void sendShader() {
-        PacketDistributor.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
+        ClientPacketDistributor.sendToServer(new MessageSetShader(Shaders.SHADER_LIST.get(index)));
     }
 
     @Override

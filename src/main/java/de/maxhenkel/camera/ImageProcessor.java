@@ -2,7 +2,7 @@ package de.maxhenkel.camera;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.net.MessagePartialImage;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,14 +22,14 @@ public class ImageProcessor {
 
         int size = data.length;
         if (size < 30_000) {
-            PacketDistributor.sendToServer(new MessagePartialImage(uuid, 0, size, data));
+            ClientPacketDistributor.sendToServer(new MessagePartialImage(uuid, 0, size, data));
         } else {
 
             int bufferProgress = 0;
             byte[] currentBuffer = new byte[30_000];
             for (int i = 0; i < size; i++) {
                 if (bufferProgress >= currentBuffer.length) {
-                    PacketDistributor.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
+                    ClientPacketDistributor.sendToServer(new MessagePartialImage(uuid, i - currentBuffer.length, data.length, currentBuffer));
                     bufferProgress = 0;
                     currentBuffer = new byte[currentBuffer.length];
                 }
@@ -40,7 +40,7 @@ public class ImageProcessor {
             if (bufferProgress > 0) {
                 byte[] rest = new byte[bufferProgress];
                 System.arraycopy(currentBuffer, 0, rest, 0, bufferProgress);
-                PacketDistributor.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
+                ClientPacketDistributor.sendToServer(new MessagePartialImage(uuid, size - rest.length, data.length, rest));
             }
         }
     }

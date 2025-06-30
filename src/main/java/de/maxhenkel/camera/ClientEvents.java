@@ -17,7 +17,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
 
@@ -113,7 +113,7 @@ public class ClientEvents {
     public void onGuiOpen(ScreenEvent.Opening event) {
         if (inCameraMode) {
             if (event.getScreen() instanceof PauseScreen) {
-                PacketDistributor.sendToServer(new MessageDisableCameraMode());
+                ClientPacketDistributor.sendToServer(new MessageDisableCameraMode());
                 event.setCanceled(true);
             }
         }

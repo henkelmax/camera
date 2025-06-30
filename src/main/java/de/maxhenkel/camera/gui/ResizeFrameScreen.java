@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
 import java.util.UUID;
@@ -73,7 +73,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        PacketDistributor.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
+        ClientPacketDistributor.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
     }
 
     @Override

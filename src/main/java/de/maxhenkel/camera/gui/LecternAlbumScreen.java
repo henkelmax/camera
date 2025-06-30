@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class LecternAlbumScreen extends AlbumScreen {
 
@@ -45,7 +45,7 @@ public class LecternAlbumScreen extends AlbumScreen {
 
         if (minecraft.player.mayBuild()) {
             addRenderableWidget(Button.builder(Component.translatable("lectern.take_book"), (button) -> {
-                PacketDistributor.sendToServer(new MessageTakeBook());
+                ClientPacketDistributor.sendToServer(new MessageTakeBook());
             }).bounds(width / 2 - 50, height - 25, 100, 20).build());
         }
     }
@@ -69,7 +69,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void sendPageUpdate(int page) {
-        PacketDistributor.sendToServer(new MessageAlbumPage(page));
+        ClientPacketDistributor.sendToServer(new MessageAlbumPage(page));
     }
 
     @Override

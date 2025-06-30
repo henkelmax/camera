@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class TextureCache {
                 }
             }
             awaitingImages.put(uuid, System.currentTimeMillis());
-            PacketDistributor.sendToServer(new MessageRequestImage(uuid));
+            ClientPacketDistributor.sendToServer(new MessageRequestImage(uuid));
 
             return true;
         }
