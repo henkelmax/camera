@@ -439,7 +439,10 @@ public class ImageEntity extends Entity {
         compound.putInt("facing", getFacing().get3DDataValue());
         compound.putInt("width", getFrameWidth());
         compound.putInt("height", getFrameHeight());
-        compound.put("item", getItem().save(registryAccess()));
+        ItemStack item = getItem();
+        if (!item.isEmpty()) {
+            compound.put("item", item.save(registryAccess()));
+        }
     }
 
     @Override
