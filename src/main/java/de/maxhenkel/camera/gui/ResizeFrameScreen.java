@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import de.maxhenkel.corelib.FontColorUtils;
@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/resize_frame.png");
+    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/resize_frame.png");
     private static final int PADDING = 10;
     private static final int BUTTON_HEIGHT = 20;
     private static final int BUTTON_WIDTH = 50;
@@ -36,7 +36,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     public ResizeFrameScreen(UUID uuid) {
         super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.frame.resize"));
         this.uuid = uuid;
-        visibility = Main.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
+        visibility = CameraMod.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
         imageWidth = 248;
         imageHeight = 109;
     }
@@ -67,8 +67,8 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
             if (visibility < 0F) {
                 visibility = 1F;
             }
-            Main.CLIENT_CONFIG.resizeGuiOpacity.set((double) visibility);
-            Main.CLIENT_CONFIG.resizeGuiOpacity.save();
+            CameraMod.CLIENT_CONFIG.resizeGuiOpacity.set((double) visibility);
+            CameraMod.CLIENT_CONFIG.resizeGuiOpacity.save();
         }).bounds(left + imageWidth - 20 - PADDING, topPos + PADDING, 20, 20).build());
     }
 

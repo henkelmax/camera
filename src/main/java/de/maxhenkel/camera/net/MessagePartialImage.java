@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MessagePartialImage implements Message<MessagePartialImage> {
 
-    public static final CustomPacketPayload.Type<MessagePartialImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "partial_image"));
+    public static final CustomPacketPayload.Type<MessagePartialImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "partial_image"));
 
     private UUID imgUUID;
     private int offset;
@@ -41,7 +41,7 @@ public class MessagePartialImage implements Message<MessagePartialImage> {
         if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
-        Main.PACKET_MANAGER.addBytes(sender, imgUUID, offset, length, bytes);
+        CameraMod.PACKET_MANAGER.addBytes(sender, imgUUID, offset, length, bytes);
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -24,10 +24,10 @@ import java.util.UUID;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRenderState> {
 
-    private static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/default_image.png");
-    private static final ResourceLocation EMPTY_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/empty_image.png");
-    private static final ResourceLocation FRAME_SIDE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/frame_side.png");
-    private static final ResourceLocation FRAME_BACK = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/frame_back.png");
+    private static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
+    private static final ResourceLocation EMPTY_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/empty_image.png");
+    private static final ResourceLocation FRAME_SIDE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_side.png");
+    private static final ResourceLocation FRAME_BACK = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_back.png");
 
     private static final float THICKNESS = 1F / 16F;
     public static final UUID DEFAULT_IMAGE_UUID = new UUID(0L, 0L);

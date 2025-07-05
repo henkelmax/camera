@@ -2,7 +2,7 @@ package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.Shaders;
 import de.maxhenkel.camera.net.MessageRequestUploadCustomImage;
 import de.maxhenkel.camera.net.MessageSetShader;
@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/camera.png");
+    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/camera.png");
     private static final int PADDING = 10;
     private static final int BUTTON_WIDTH = 70;
     private static final int BUTTON_HEIGHT = 20;
@@ -73,7 +73,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
             sendShader();
         }).bounds(leftPos + imageWidth - BUTTON_WIDTH - PADDING, topPos + PADDING + font.lineHeight + PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        if (Main.SERVER_CONFIG.allowImageUpload.get()) {
+        if (CameraMod.SERVER_CONFIG.allowImageUpload.get()) {
             upload = addRenderableWidget(Button.builder(Component.translatable("button.camera.upload"), button -> {
                 ImageTools.chooseImage(file -> {
                     try {

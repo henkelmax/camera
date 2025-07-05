@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class MessageRequestUploadCustomImage implements Message<MessageRequestUploadCustomImage> {
 
-    public static final CustomPacketPayload.Type<MessageRequestUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "request_upload"));
+    public static final CustomPacketPayload.Type<MessageRequestUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "request_upload"));
 
     private UUID uuid;
 
@@ -37,7 +37,7 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
         if (!(context.player() instanceof ServerPlayer sender)) {
             return;
         }
-        if (Main.PACKET_MANAGER.canTakeImage(sender.getUUID())) {
+        if (CameraMod.PACKET_MANAGER.canTakeImage(sender.getUUID())) {
             if (CameraItem.consumePaper(sender)) {
                 context.reply(new MessageUploadCustomImage(uuid));
             } else {

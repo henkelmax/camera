@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ public class AlbumContainer extends AbstractContainerMenu {
     }
 
     public AlbumContainer(int id, Container inventory, ContainerData intArray) {
-        super(Main.ALBUM_CONTAINER.get(), id);
+        super(CameraMod.ALBUM_CONTAINER.get(), id);
         checkContainerSize(inventory, 1);
         checkContainerDataCount(intArray, 1);
         this.inventory = inventory;

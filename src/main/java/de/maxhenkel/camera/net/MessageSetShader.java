@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageSetShader implements Message<MessageSetShader> {
 
-    public static final CustomPacketPayload.Type<MessageSetShader> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "set_shader"));
+    public static final CustomPacketPayload.Type<MessageSetShader> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "set_shader"));
 
     private String shader;
 
@@ -37,8 +37,8 @@ public class MessageSetShader implements Message<MessageSetShader> {
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = sender.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA.get())) {
-                stack.set(Main.SHADER_DATA_COMPONENT, shader);
+            if (stack.getItem().equals(CameraMod.CAMERA.get())) {
+                stack.set(CameraMod.SHADER_DATA_COMPONENT, shader);
             }
         }
     }

@@ -12,12 +12,12 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = Main.MODID)
+@EventBusSubscriber(modid = CameraMod.MODID)
 public class ServerEvents {
 
     @SubscribeEvent
     public static void onTick(PlayerTickEvent.Pre event) {
-        if (event.getEntity().getMainHandItem().getItem().equals(Main.CAMERA.get()) || event.getEntity().getOffhandItem().getItem().equals(Main.CAMERA.get())) {
+        if (event.getEntity().getMainHandItem().getItem().equals(CameraMod.CAMERA.get()) || event.getEntity().getOffhandItem().getItem().equals(CameraMod.CAMERA.get())) {
             return;
         }
 
@@ -34,7 +34,7 @@ public class ServerEvents {
         Player player = event.getEntity();
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack item = player.getItemInHand(hand);
-            if (item.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(item)) {
+            if (item.getItem().equals(CameraMod.CAMERA.get()) && CameraMod.CAMERA.get().isActive(item)) {
                 event.setUseBlock(TriState.FALSE);
                 event.setCanceled(true);
                 break;
@@ -51,7 +51,7 @@ public class ServerEvents {
         Player player = (Player) source;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
+            if (stack.getItem().equals(CameraMod.CAMERA.get()) && CameraMod.CAMERA.get().isActive(stack)) {
                 event.setCanceled(true);
                 break;
             }
@@ -64,8 +64,8 @@ public class ServerEvents {
     }
 
     private static void disableCamera(ItemStack stack) {
-        if (stack.getItem().equals(Main.CAMERA.get())) {
-            Main.CAMERA.get().setActive(stack, false);
+        if (stack.getItem().equals(CameraMod.CAMERA.get())) {
+            CameraMod.CAMERA.get().setActive(stack, false);
         }
     }
 

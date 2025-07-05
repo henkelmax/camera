@@ -2,7 +2,7 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ClientImageUploadManager;
 import de.maxhenkel.camera.ImageProcessor;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class MessageUploadCustomImage implements Message<MessageUploadCustomImage> {
 
-    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "upload"));
+    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "upload"));
 
     private UUID uuid;
 

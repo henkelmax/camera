@@ -1,11 +1,10 @@
 package de.maxhenkel.camera.items;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraClientMod;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.ModSounds;
-import de.maxhenkel.camera.gui.CameraScreen;
 import de.maxhenkel.camera.net.MessageTakeImage;
 import de.maxhenkel.corelib.item.ItemUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -18,8 +17,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class CameraItem extends Item {
 
         if (playerIn.isShiftKeyDown() && !isActive(stack)) {
             if (worldIn.isClientSide) {
-                openClientGui(stack.get(Main.SHADER_DATA_COMPONENT));
+                CameraClientMod.openCameraScreen(stack.get(CameraMod.SHADER_DATA_COMPONENT));
             }
             return InteractionResult.SUCCESS;
         }
@@ -48,13 +45,13 @@ public class CameraItem extends Item {
         }
 
         if (!isActive(stack)) {
-            Main.CAMERA.get().setActive(stack, true);
-        } else if (Main.PACKET_MANAGER.canTakeImage(playerIn.getUUID())) {
+            CameraMod.CAMERA.get().setActive(stack, true);
+        } else if (CameraMod.PACKET_MANAGER.canTakeImage(playerIn.getUUID())) {
             if (consumePaper(playerIn)) {
                 worldIn.playSound(null, playerIn.blockPosition(), ModSounds.TAKE_IMAGE.get(), SoundSource.AMBIENT, 1F, 1F);
                 UUID uuid = UUID.randomUUID();
                 PacketDistributor.sendToPlayer(serverPlayer, new MessageTakeImage(uuid));
-                Main.CAMERA.get().setActive(stack, false);
+                CameraMod.CAMERA.get().setActive(stack, false);
             } else {
                 playerIn.displayClientMessage(Component.translatable("message.no_consumable"), true);
             }
@@ -62,11 +59,6 @@ public class CameraItem extends Item {
             playerIn.displayClientMessage(Component.translatable("message.image_cooldown"), true);
         }
         return InteractionResult.SUCCESS;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void openClientGui(String currentShader) {
-        Minecraft.getInstance().setScreen(new CameraScreen(currentShader));
     }
 
     @Override
@@ -88,7 +80,7 @@ public class CameraItem extends Item {
             return true;
         }
 
-        int amountNeeded = Main.SERVER_CONFIG.cameraConsumeItemAmount.get();
+        int amountNeeded = CameraMod.SERVER_CONFIG.cameraConsumeItemAmount.get();
         List<ItemStack> consumeStacks = findPaper(player);
 
         int count = 0;
@@ -124,18 +116,18 @@ public class CameraItem extends Item {
     }
 
     protected static boolean isPaper(ItemStack stack) {
-        return stack.is(Main.IMAGE_PAPER);
+        return stack.is(CameraMod.IMAGE_PAPER);
     }
 
     public boolean isActive(ItemStack stack) {
-        return stack.has(Main.ACTIVE_DATA_COMPONENT);
+        return stack.has(CameraMod.ACTIVE_DATA_COMPONENT);
     }
 
     public void setActive(ItemStack stack, boolean active) {
         if (active) {
-            stack.set(Main.ACTIVE_DATA_COMPONENT, Unit.INSTANCE);
+            stack.set(CameraMod.ACTIVE_DATA_COMPONENT, Unit.INSTANCE);
         } else {
-            stack.remove(Main.ACTIVE_DATA_COMPONENT);
+            stack.remove(CameraMod.ACTIVE_DATA_COMPONENT);
         }
     }
 

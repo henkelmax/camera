@@ -1,11 +1,10 @@
 package de.maxhenkel.camera.items;
 
+import de.maxhenkel.camera.CameraClientMod;
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.gui.AlbumInventoryContainer;
-import de.maxhenkel.camera.gui.AlbumScreen;
 import de.maxhenkel.camera.inventory.AlbumInventory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,8 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,16 +57,11 @@ public class AlbumItem extends Item {
 
     public static void openAlbum(Player player, ItemStack album) {
         if (player.level().isClientSide) {
-            List<UUID> images = Main.ALBUM.get().getImages(album);
+            List<UUID> images = CameraMod.ALBUM.get().getImages(album);
             if (!images.isEmpty()) {
-                openClientGui(images);
+                CameraClientMod.openAlbumScreen(images);
             }
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private static void openClientGui(List<UUID> images) {
-        Minecraft.getInstance().setScreen(new AlbumScreen(images));
     }
 
     @Override

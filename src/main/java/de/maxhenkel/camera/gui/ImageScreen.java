@@ -2,7 +2,7 @@ package de.maxhenkel.camera.gui;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    public static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/images/default_image.png");
+    public static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
 
     @Nullable
     private UUID imageID;

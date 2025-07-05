@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class MessageRequestImage implements Message<MessageRequestImage> {
 
-    public static final CustomPacketPayload.Type<MessageRequestImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "request_image"));
+    public static final CustomPacketPayload.Type<MessageRequestImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "request_image"));
 
     private UUID imgUUID;
 
@@ -38,7 +38,7 @@ public class MessageRequestImage implements Message<MessageRequestImage> {
             return;
         }
         try {
-            byte[] data = ImageTools.toBytes(Main.PACKET_MANAGER.getExistingImage(sender, imgUUID));
+            byte[] data = ImageTools.toBytes(CameraMod.PACKET_MANAGER.getExistingImage(sender, imgUUID));
             context.reply(new MessageImage(imgUUID, data));
         } catch (IOException e) {
             //TODO Properly log an error

@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.items;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +29,7 @@ public class ImageFrameItem extends Item {
         }
 
         Level world = context.getLevel();
-        ImageEntity image = Main.IMAGE_ENTITY_TYPE.get().create(world, EntitySpawnReason.COMMAND);
+        ImageEntity image = CameraMod.IMAGE_ENTITY_TYPE.get().create(world, EntitySpawnReason.COMMAND);
         if (image == null) {
             return InteractionResult.FAIL;
         }

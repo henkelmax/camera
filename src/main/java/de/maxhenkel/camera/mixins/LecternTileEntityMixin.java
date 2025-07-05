@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.mixins;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.camera.items.AlbumItem;
 import net.minecraft.core.BlockPos;
@@ -71,7 +71,7 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         book = resolveBook(stack, player);
         page = 0;
         if (level != null) {
-            pageCount = Main.ALBUM.get().getImages(book).size();
+            pageCount = CameraMod.ALBUM.get().getImages(book).size();
         } else {
             pageCount = 0;
         }
@@ -91,7 +91,7 @@ public abstract class LecternTileEntityMixin extends BlockEntity {
         if (!(book.getItem() instanceof AlbumItem)) {
             return;
         }
-        pageCount = Main.ALBUM.get().getImages(book).size();
+        pageCount = CameraMod.ALBUM.get().getImages(book).size();
     }
 
     @Shadow

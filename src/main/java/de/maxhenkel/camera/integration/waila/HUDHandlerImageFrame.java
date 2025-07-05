@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.integration.waila;
 
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
 
     public static final HUDHandlerImageFrame INSTANCE = new HUDHandlerImageFrame();
 
-    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_frame");
+    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image_frame");
 
     @Override
     public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {
@@ -33,7 +33,7 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
                 iTooltip.add(Component.translatable("tooltip.image_owner", ChatFormatting.DARK_GRAY + imageData.getOwner()).withStyle(ChatFormatting.GRAY));
             }
             if (imageData.getTime() > 0L) {
-                iTooltip.add(Component.translatable("tooltip.image_time", ChatFormatting.DARK_GRAY + Main.CLIENT_CONFIG.imageDateFormat.format(new Date(imageData.getTime()))).withStyle(ChatFormatting.GRAY));
+                iTooltip.add(Component.translatable("tooltip.image_time", ChatFormatting.DARK_GRAY + CameraMod.CLIENT_CONFIG.imageDateFormat.format(new Date(imageData.getTime()))).withStyle(ChatFormatting.GRAY));
             }
         }
     }

@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.gui.AlbumContainer;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
-    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "album_page"));
+    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "album_page"));
 
     private int page;
 

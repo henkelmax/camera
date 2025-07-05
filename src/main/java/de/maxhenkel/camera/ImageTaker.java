@@ -3,15 +3,13 @@ package de.maxhenkel.camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 
 import java.util.UUID;
 
-@OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Main.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CameraMod.MODID, value = Dist.CLIENT)
 public class ImageTaker {
 
     private static boolean takeScreenshot;

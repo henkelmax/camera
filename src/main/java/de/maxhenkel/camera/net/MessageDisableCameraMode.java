@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageDisableCameraMode implements Message<MessageDisableCameraMode> {
 
-    public static final CustomPacketPayload.Type<MessageDisableCameraMode> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "disable_camera_mode"));
+    public static final CustomPacketPayload.Type<MessageDisableCameraMode> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "disable_camera_mode"));
 
     public MessageDisableCameraMode() {
 
@@ -31,8 +31,8 @@ public class MessageDisableCameraMode implements Message<MessageDisableCameraMod
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = sender.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA.get())) {
-                Main.CAMERA.get().setActive(stack, false);
+            if (stack.getItem().equals(CameraMod.CAMERA.get())) {
+                CameraMod.CAMERA.get().setActive(stack, false);
             }
         }
     }

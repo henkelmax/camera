@@ -146,7 +146,7 @@ public class ImageData {
     @Nullable
     public static ImageData fromStack(ItemStack stack) {
         convert(stack);
-        return stack.get(Main.IMAGE_DATA_COMPONENT);
+        return stack.get(CameraMod.IMAGE_DATA_COMPONENT);
     }
 
     public static ImageData create(ServerPlayer player, UUID imageID) {
@@ -155,10 +155,10 @@ public class ImageData {
         data.time = System.currentTimeMillis();
         data.owner = player.getName().getString();
 
-        if (Main.SERVER_CONFIG.advancedImageData.get()) {
+        if (CameraMod.SERVER_CONFIG.advancedImageData.get()) {
             Biome biome = player.level().getBiome(player.blockPosition()).value();
             data.biome = player.getServer().registryAccess().get(Registries.BIOME).map(Holder.Reference::value).map(biomes -> biomes.getKey(biome)).orElse(null);
-            data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(Main.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
+            data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(CameraMod.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
             data.dimension = player.level().dimension();
             data.position = player.blockPosition();
         }
@@ -203,7 +203,7 @@ public class ImageData {
         if (!(stack.getItem() instanceof ImageItem)) {
             return;
         }
-        stack.set(Main.IMAGE_DATA_COMPONENT, this);
+        stack.set(CameraMod.IMAGE_DATA_COMPONENT, this);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class ImageData {
         if (!(stack.getItem() instanceof ImageItem)) {
             return;
         }
-        if (stack.has(Main.IMAGE_DATA_COMPONENT)) {
+        if (stack.has(CameraMod.IMAGE_DATA_COMPONENT)) {
             return;
         }
         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
@@ -251,7 +251,7 @@ public class ImageData {
         if (imageData == null) {
             return;
         }
-        stack.set(Main.IMAGE_DATA_COMPONENT, imageData);
+        stack.set(CameraMod.IMAGE_DATA_COMPONENT, imageData);
     }
 
     @Nullable

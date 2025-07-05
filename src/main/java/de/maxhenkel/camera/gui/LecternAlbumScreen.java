@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.net.MessageAlbumPage;
 import de.maxhenkel.camera.net.MessageTakeBook;
 import net.minecraft.client.gui.components.Button;
@@ -83,7 +83,7 @@ public class LecternAlbumScreen extends AlbumScreen {
     }
 
     private void updateContents() {
-        images = Main.ALBUM.get().getImages(albumContainer.getAlbum());
+        images = CameraMod.ALBUM.get().getImages(albumContainer.getAlbum());
     }
 
     private void updatePage() {

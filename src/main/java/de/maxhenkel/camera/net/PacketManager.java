@@ -2,7 +2,7 @@ package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +52,7 @@ public class PacketManager {
                         ImageTools.saveImage(playerMP, imagegID, image);
 
                         playerMP.getServer().submitAsync(() -> {
-                            ItemStack stack = new ItemStack(Main.IMAGE.get());
+                            ItemStack stack = new ItemStack(CameraMod.IMAGE.get());
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);
                             if (!playerMP.addItem(stack)) {
@@ -97,7 +97,7 @@ public class PacketManager {
 
     public boolean canTakeImage(UUID player) {
         if (cooldowns.containsKey(player)) {
-            if (System.currentTimeMillis() - cooldowns.get(player) < Main.SERVER_CONFIG.imageCooldown.get()) {
+            if (System.currentTimeMillis() - cooldowns.get(player) < CameraMod.SERVER_CONFIG.imageCooldown.get()) {
                 return false;
             } else {
                 cooldowns.put(player, System.currentTimeMillis());

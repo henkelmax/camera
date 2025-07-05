@@ -13,19 +13,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
 public class ClientEvents {
 
-    private static final ResourceLocation VIEWFINDER = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/viewfinder_overlay.png");
-    private static final ResourceLocation ZOOM = ResourceLocation.fromNamespaceAndPath(Main.MODID, "textures/gui/zoom.png");
+    private static final ResourceLocation VIEWFINDER = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/viewfinder_overlay.png");
+    private static final ResourceLocation ZOOM = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/zoom.png");
 
     public static final float MAX_FOV = 90F;
     public static final float MIN_FOV = 5F;
@@ -122,10 +119,10 @@ public class ClientEvents {
     private ResourceLocation getShader(Player player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
-            if (!stack.getItem().equals(Main.CAMERA.get())) {
+            if (!stack.getItem().equals(CameraMod.CAMERA.get())) {
                 continue;
             }
-            return Shaders.getShader(stack.get(Main.SHADER_DATA_COMPONENT));
+            return Shaders.getShader(stack.get(CameraMod.SHADER_DATA_COMPONENT));
         }
         return null;
     }
@@ -158,7 +155,7 @@ public class ClientEvents {
             for (InteractionHand hand : InteractionHand.values()) {
                 ItemStack stack = player.getItemInHand(hand);
                 if (stack.getItem() instanceof CameraItem) {
-                    if (Main.CAMERA.get().isActive(stack)) {
+                    if (CameraMod.CAMERA.get().isActive(stack)) {
                         player.startUsingItem(hand);
                     } else {
                         player.stopUsingItem();
@@ -210,7 +207,7 @@ public class ClientEvents {
         }
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = mc.player.getItemInHand(hand);
-            if (stack.getItem().equals(Main.CAMERA.get()) && Main.CAMERA.get().isActive(stack)) {
+            if (stack.getItem().equals(CameraMod.CAMERA.get()) && CameraMod.CAMERA.get().isActive(stack)) {
                 return stack;
             }
         }

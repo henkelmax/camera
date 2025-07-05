@@ -5,8 +5,6 @@ import de.maxhenkel.camera.net.MessageRequestImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.awt.image.BufferedImage;
@@ -15,7 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-@OnlyIn(Dist.CLIENT)
 public class TextureCache {
 
     private Map<UUID, CameraTextureObject> clientImageCache;
@@ -35,7 +32,7 @@ public class TextureCache {
             awaitingImages.remove(uuid);
         }
 
-        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Main.MODID, "texures/camera/" + uuid.toString());
+        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "texures/camera/" + uuid.toString());
         CameraTextureObject cameraTextureObject = new CameraTextureObject(resourceLocation::toString, ImageTools.toNativeImage(image));
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);

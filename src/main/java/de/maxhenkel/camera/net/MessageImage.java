@@ -1,7 +1,7 @@
 package de.maxhenkel.camera.net;
 
 import de.maxhenkel.camera.ImageTools;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.client.Minecraft;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class MessageImage implements Message<MessageImage> {
 
-    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image"));
+    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image"));
 
     private UUID uuid;
     private byte[] image;

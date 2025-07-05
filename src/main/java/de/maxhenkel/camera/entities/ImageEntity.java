@@ -1,12 +1,11 @@
 package de.maxhenkel.camera.entities;
 
+import de.maxhenkel.camera.CameraClientMod;
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
-import de.maxhenkel.camera.gui.ResizeFrameScreen;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
@@ -30,8 +29,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -39,12 +36,12 @@ import java.util.UUID;
 
 public class ImageEntity extends Entity {
 
-    private static final EntityDataAccessor<Optional<UUID>> ID = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
+    private static final EntityDataAccessor<Optional<UUID>> ID = SynchedEntityData.defineId(ImageEntity.class, CameraMod.UUID_ENTITY_DATA_SERIALIZER.get());
     private static final EntityDataAccessor<Direction> FACING = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.DIRECTION);
     private static final EntityDataAccessor<Integer> WIDTH = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HEIGHT = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> ITEM = SynchedEntityData.defineId(ImageEntity.class, EntityDataSerializers.ITEM_STACK);
-    private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(ImageEntity.class, Main.UUID_ENTITY_DATA_SERIALIZER.get());
+    private static final EntityDataAccessor<Optional<UUID>> OWNER = SynchedEntityData.defineId(ImageEntity.class, CameraMod.UUID_ENTITY_DATA_SERIALIZER.get());
 
     private static final AABB NULL_AABB = new AABB(0D, 0D, 0D, 0D, 0D, 0D);
 
@@ -59,11 +56,11 @@ public class ImageEntity extends Entity {
     }
 
     public ImageEntity(Level world) {
-        this(Main.IMAGE_ENTITY_TYPE.get(), world);
+        this(CameraMod.IMAGE_ENTITY_TYPE.get(), world);
     }
 
     public ImageEntity(Level world, double x, double y, double z) {
-        this(Main.IMAGE_ENTITY_TYPE.get(), world);
+        this(CameraMod.IMAGE_ENTITY_TYPE.get(), world);
         this.setPos(x, y, z);
         this.setDeltaMovement(Vec3.ZERO);
         this.xo = x;
@@ -86,7 +83,7 @@ public class ImageEntity extends Entity {
 
         if (player.isShiftKeyDown() && canModify(player)) {
             if (level().isClientSide) {
-                openClientGui();
+                CameraClientMod.openResizeFrameScreen(getUUID());
             }
             return InteractionResult.SUCCESS;
         }
@@ -128,7 +125,7 @@ public class ImageEntity extends Entity {
         if (!player.getAbilities().mayBuild) {
             return false;
         }
-        if (!Main.SERVER_CONFIG.frameOnlyOwnerModify.get()) {
+        if (!CameraMod.SERVER_CONFIG.frameOnlyOwnerModify.get()) {
             return true;
         }
         if (player.isCreative() && player.hasPermissions(1)) {
@@ -137,10 +134,6 @@ public class ImageEntity extends Entity {
         return getOwner().orElse(Util.NIL_UUID).equals(player.getUUID());
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private void openClientGui() {
-        Minecraft.getInstance().setScreen(new ResizeFrameScreen(getUUID()));
-    }
 
     @Override
     public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
@@ -187,7 +180,7 @@ public class ImageEntity extends Entity {
             }
         }
 
-        dropItem(new ItemStack(Main.FRAME_ITEM.get()));
+        dropItem(new ItemStack(CameraMod.FRAME_ITEM.get()));
         if (hasImage()) {
             dropItem(removeImage());
         }
@@ -235,7 +228,7 @@ public class ImageEntity extends Entity {
         if (hasImage()) {
             return getItem().copy();
         }
-        return new ItemStack(Main.FRAME_ITEM.get());
+        return new ItemStack(CameraMod.FRAME_ITEM.get());
     }
 
     private void updateBoundingBox() {

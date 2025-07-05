@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.net;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class MessageImageUnavailable implements Message<MessageImageUnavailable> {
 
-    public static final CustomPacketPayload.Type<MessageImageUnavailable> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Main.MODID, "image_unavailable"));
+    public static final CustomPacketPayload.Type<MessageImageUnavailable> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image_unavailable"));
 
     private UUID imgUUID;
 

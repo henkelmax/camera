@@ -2,7 +2,7 @@ package de.maxhenkel.camera.integration.jei;
 
 import de.maxhenkel.camera.ImageCloningRecipe;
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -22,7 +22,7 @@ public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraft
     @Override
     public List<SlotDisplay> getIngredients(RecipeHolder<T> recipeHolder) {
         List<SlotDisplay> result = new ArrayList<>();
-        ItemStack image = new ItemStack(Main.IMAGE.get());
+        ItemStack image = new ItemStack(CameraMod.IMAGE.get());
         ImageData.dummy().addToImage(image);
         result.add(new SlotDisplay.ItemStackSlotDisplay(image));
 
@@ -34,7 +34,7 @@ public class ImageCloneExtension<T extends ImageCloningRecipe> implements ICraft
 
     @Override
     public void setRecipe(RecipeHolder<T> recipeHolder, IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
-        ItemStack image = new ItemStack(Main.IMAGE.get());
+        ItemStack image = new ItemStack(CameraMod.IMAGE.get());
         ImageData.dummy().addToImage(image);
 
         List<ItemStack> paper = recipeHolder.value().getPaper().getValues().stream().map(Holder::value).map(ItemStack::new).toList();

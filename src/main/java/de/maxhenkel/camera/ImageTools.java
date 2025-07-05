@@ -95,18 +95,18 @@ public class ImageTools {
 
         image = ImageTools.resize(image, newWidth, newHeight);
 
-        float factor = Main.SERVER_CONFIG.imageCompression.get().floatValue();
+        float factor = CameraMod.SERVER_CONFIG.imageCompression.get().floatValue();
         byte[] data;
 
-        while ((data = ImageTools.compressToBytes(image, factor)).length > Main.SERVER_CONFIG.maxImageSize.get()) {
-            Main.LOGGER.debug("Trying to compress image: {}% {} bytes (max {})", Math.round(factor * 100F), data.length, Main.SERVER_CONFIG.maxImageSize.get());
+        while ((data = ImageTools.compressToBytes(image, factor)).length > CameraMod.SERVER_CONFIG.maxImageSize.get()) {
+            CameraMod.LOGGER.debug("Trying to compress image: {}% {} bytes (max {})", Math.round(factor * 100F), data.length, CameraMod.SERVER_CONFIG.maxImageSize.get());
             factor -= 0.025F;
             if (factor <= 0F) {
                 throw new IOException("Image could not be compressed (too large)");
             }
         }
 
-        Main.LOGGER.debug("Image compressed to {}% ({} bytes)", Math.round(factor * 100F), data.length);
+        CameraMod.LOGGER.debug("Image compressed to {}% ({} bytes)", Math.round(factor * 100F), data.length);
 
         return data;
     }
@@ -190,7 +190,7 @@ public class ImageTools {
             chooserOpen = true;
             File dir = new File(System.getProperty("user.home"));
 
-            String lastPath = Main.CLIENT_CONFIG.lastImagePath.get();
+            String lastPath = CameraMod.CLIENT_CONFIG.lastImagePath.get();
             if (!lastPath.isEmpty()) {
                 File last = new File(lastPath);
                 if (last.exists()) {
@@ -224,8 +224,8 @@ public class ImageTools {
 
             File image = new File(path);
             if (image.exists() && !image.isDirectory()) {
-                Main.CLIENT_CONFIG.lastImagePath.set(image.getParent());
-                Main.CLIENT_CONFIG.lastImagePath.save();
+                CameraMod.CLIENT_CONFIG.lastImagePath.set(image.getParent());
+                CameraMod.CLIENT_CONFIG.lastImagePath.save();
                 onResult.accept(image);
             }
             chooserOpen = false;

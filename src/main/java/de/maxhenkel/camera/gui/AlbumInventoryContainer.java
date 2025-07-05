@@ -1,6 +1,6 @@
 package de.maxhenkel.camera.gui;
 
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.corelib.inventory.ContainerBase;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -8,7 +8,7 @@ import net.minecraft.world.SimpleContainer;
 public class AlbumInventoryContainer extends ContainerBase {
 
     public AlbumInventoryContainer(int id, Container playerInventory, Container albumInventory) {
-        super(Main.ALBUM_INVENTORY_CONTAINER.get(), id, playerInventory, albumInventory);
+        super(CameraMod.ALBUM_INVENTORY_CONTAINER.get(), id, playerInventory, albumInventory);
 
         for (int x = 0; x < 6; x++) {
             for (int y = 0; y < 9; y++) {

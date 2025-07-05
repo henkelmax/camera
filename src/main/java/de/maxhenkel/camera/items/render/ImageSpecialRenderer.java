@@ -3,7 +3,7 @@ package de.maxhenkel.camera.items.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import de.maxhenkel.camera.ImageData;
-import de.maxhenkel.camera.Main;
+import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntityRenderState;
 import de.maxhenkel.camera.entities.ImageRenderer;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -12,14 +12,11 @@ import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.util.Set;
 
-@OnlyIn(Dist.CLIENT)
 public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRenderState.ImageState> {
 
     public ImageSpecialRenderer() {
@@ -40,7 +37,7 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
     @Nullable
     @Override
     public ImageEntityRenderState.ImageState extractArgument(ItemStack stack) {
-        if (Main.CLIENT_CONFIG.renderImageItem.get()) {
+        if (CameraMod.CLIENT_CONFIG.renderImageItem.get()) {
             ImageData imageData = ImageData.fromStack(stack);
             if (imageData != null) {
                 return ImageRenderer.extractImageState(imageData.getId());
@@ -49,7 +46,6 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
         return ImageRenderer.extractImageState(ImageRenderer.DEFAULT_IMAGE_UUID);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Unbaked implements SpecialModelRenderer.Unbaked {
 
         public static final MapCodec<ImageSpecialRenderer.Unbaked> MAP_CODEC = MapCodec.unit(ImageSpecialRenderer.Unbaked::new);

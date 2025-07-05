@@ -61,7 +61,7 @@ public class ImageCloningRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<? extends CustomRecipe> getSerializer() {
-        return Main.IMAGE_CLONING_SERIALIZER.get();
+        return CameraMod.IMAGE_CLONING_SERIALIZER.get();
     }
 
     public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
@@ -117,7 +117,7 @@ public class ImageCloningRecipe extends CustomRecipe {
                 }
                 image = stack;
                 remaining.set(i, image.copy());
-            } else if (stack.is(Main.IMAGE_PAPER)) {
+            } else if (stack.is(CameraMod.IMAGE_PAPER)) {
                 if (paperSlotIndex >= 0) {
                     return null;
                 }
