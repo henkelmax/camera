@@ -6,15 +6,14 @@ import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntityRenderState;
 import de.maxhenkel.camera.entities.ImageRenderer;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRenderState.ImageState> {
@@ -24,9 +23,11 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
     }
 
     @Override
-    public void render(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext itemDisplayContext, PoseStack stack, MultiBufferSource bufferSource, int light, int overlay, boolean b) {
-        stack.translate(0.5D, 0D, 0.5D);
-        ImageRenderer.renderImage(imageState, Direction.SOUTH, 1, 1, stack, bufferSource, light);
+    public void submit(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext context, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, boolean b) {
+        if (imageState == null) {
+            return;
+        }
+        ImageRenderer.submitImage(imageState, Direction.SOUTH, 1, 1, light, stack, collector);
     }
 
     @Override
@@ -55,14 +56,16 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
         }
 
         @Override
+        @Nullable
+        public SpecialModelRenderer<?> bake(BakingContext p_433472_) {
+            return new ImageSpecialRenderer();
+        }
+
+        @Override
         public MapCodec<ImageSpecialRenderer.Unbaked> type() {
             return MAP_CODEC;
         }
 
-        @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet modelSet) {
-            return new ImageSpecialRenderer();
-        }
     }
 }
 

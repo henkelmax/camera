@@ -157,7 +157,7 @@ public class ImageData {
 
         if (CameraMod.SERVER_CONFIG.advancedImageData.get()) {
             Biome biome = player.level().getBiome(player.blockPosition()).value();
-            data.biome = player.getServer().registryAccess().get(Registries.BIOME).map(Holder.Reference::value).map(biomes -> biomes.getKey(biome)).orElse(null);
+            data.biome = player.level().getServer().registryAccess().get(Registries.BIOME).map(Holder.Reference::value).map(biomes -> biomes.getKey(biome)).orElse(null);
             data.entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(128), e -> canEntityBeSeen(player, e)).stream().sorted(Comparator.comparingDouble(player::distanceTo)).map(ImageData::getEntityID).distinct().limit(CameraMod.SERVER_CONFIG.advancedDataMaxEntities.get()).collect(Collectors.toList());
             data.dimension = player.level().dimension();
             data.position = player.blockPosition();

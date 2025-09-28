@@ -35,7 +35,7 @@ public class AlbumItem extends Item {
     public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
         if (playerIn.isShiftKeyDown()) {
-            if (!playerIn.level().isClientSide && playerIn instanceof ServerPlayer serverPlayer) {
+            if (!playerIn.level().isClientSide() && playerIn instanceof ServerPlayer serverPlayer) {
                 serverPlayer.openMenu(new MenuProvider() {
 
                     @Override
@@ -56,7 +56,7 @@ public class AlbumItem extends Item {
     }
 
     public static void openAlbum(Player player, ItemStack album) {
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             List<UUID> images = CameraMod.ALBUM.get().getImages(album);
             if (!images.isEmpty()) {
                 CameraClientMod.openAlbumScreen(images);

@@ -89,8 +89,8 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     @Override
     public void containerTick() {
         super.containerTick();
-        boolean isNextDown = InputConstants.isKeyDown(minecraft.getWindow().getWindow(), CameraClientMod.KEY_NEXT.getKey().getValue());
-        boolean isPreviousDown = InputConstants.isKeyDown(minecraft.getWindow().getWindow(), CameraClientMod.KEY_PREVIOUS.getKey().getValue());
+        boolean isNextDown = InputConstants.isKeyDown(minecraft.getWindow(), CameraClientMod.KEY_NEXT.getKey().getValue());
+        boolean isPreviousDown = InputConstants.isKeyDown(minecraft.getWindow(), CameraClientMod.KEY_PREVIOUS.getKey().getValue());
         if (wasNextDown != (wasNextDown = isNextDown) && !isNextDown) {
             next();
         } else if (wasPreviousDown != (wasPreviousDown = isPreviousDown) && !isPreviousDown) {

@@ -26,7 +26,7 @@ public class ImageItem extends Item {
     @Override
     public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack stack = playerIn.getItemInHand(handIn);
-        if (playerIn.level().isClientSide) {
+        if (playerIn.level().isClientSide()) {
             CameraClientMod.openImageScreen(stack);
         }
 

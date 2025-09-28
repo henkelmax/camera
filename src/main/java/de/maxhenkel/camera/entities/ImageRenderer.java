@@ -7,17 +7,14 @@ import com.mojang.math.Axis;
 import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.EntityHitResult;
-import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -44,23 +41,25 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         return new ImageEntityRenderState();
     }
 
+
     @Override
-    public void render(ImageEntityRenderState state, PoseStack stack, MultiBufferSource bufferSource, int packedLight) {
-        renderImage(state.imageState, state.facing, state.frameWidth, state.frameHeight, stack, bufferSource, state.light);
-        renderBoundingBox(state, stack, bufferSource);
-        super.render(state, stack, bufferSource, packedLight);
+    public void submit(ImageEntityRenderState state, PoseStack stack, SubmitNodeCollector collector, CameraRenderState cameraRenderState) {
+        super.submit(state, stack, collector, cameraRenderState);
+        stack.pushPose();
+        stack.translate(-0.5D, 0D, -0.5D);
+        submitImage(state.imageState, state.facing, state.frameWidth, state.frameHeight, state.light, stack, collector);
+        stack.popPose();
+        submitBoundingBox(state, stack, collector);
     }
 
-    public static void renderImage(ImageEntityRenderState.ImageState imageState, Direction facing, float width, float height, PoseStack matrixStack, MultiBufferSource buffer1, int light) {
-        matrixStack.pushPose();
+    public static void submitImage(ImageEntityRenderState.ImageState imageState, Direction facing, float width, float height, int light, PoseStack stack, SubmitNodeCollector collector) {
+        stack.pushPose();
 
         ResourceLocation resourceLocation = imageState.resourceLocation();
         float imageRatio = imageState.imageRatio();
         boolean stretch = DEFAULT_IMAGE.equals(resourceLocation);
 
-        matrixStack.translate(-0.5D, 0D, -0.5D);
-
-        rotate(facing, matrixStack);
+        rotate(facing, stack);
 
         float frameRatio = width / height;
 
@@ -74,60 +73,57 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
             ratioY = 0F;
         } else {
             if (ratio >= 1F) {
-                ratioY = (1F - 1F / ratio) / 2F;
+                ratioY = ((1F - 1F / ratio) / 2F) * height;
                 ratioX = 0F;
             } else {
-                ratioX = (1F - ratio) / 2F;
+                ratioX = ((1F - ratio) / 2F) * width;
                 ratioY = 0F;
             }
-
-            ratioX *= width;
-            ratioY *= height;
         }
 
-        VertexConsumer builderFront = buffer1.getBuffer(RenderType.entityCutout(resourceLocation));
+        collector.submitCustomGeometry(stack, RenderType.entityCutout(resourceLocation), (pose, vertexConsumer) -> {
+            // Front
+            vertex(vertexConsumer, pose, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
+            vertex(vertexConsumer, pose, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
+            vertex(vertexConsumer, pose, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
+        });
 
-        // Front
-        vertex(builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
-        vertex(builderFront, matrixStack, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
-        vertex(builderFront, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
-        vertex(builderFront, matrixStack, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
+        collector.submitCustomGeometry(stack, RenderType.entityCutout(FRAME_SIDE), (pose, vertexConsumer) -> {
+            //Left
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY, light);
 
-        VertexConsumer builderSide = buffer1.getBuffer(RenderType.entityCutout(FRAME_SIDE));
+            //Right
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY, light);
 
-        //Left
-        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
-        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light);
-        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY, light);
-        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY, light);
+            //Top
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F, light);
 
-        //Right
-        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY, light);
-        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY, light);
-        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY, light);
-        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY, light);
+            //Bottom
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F, light);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F, light);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
+        });
 
-        //Top
-        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F, light);
-        vertex(builderSide, matrixStack, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS, light);
-        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS, light);
-        vertex(builderSide, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F, light);
+        collector.submitCustomGeometry(stack, RenderType.entityCutout(FRAME_BACK), (pose, vertexConsumer) -> {
+            //Back
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light);
+        });
 
-        //Bottom
-        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F, light);
-        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F, light);
-        vertex(builderSide, matrixStack, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
-        vertex(builderSide, matrixStack, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
-
-        VertexConsumer builderBack = buffer1.getBuffer(RenderType.entityCutout(FRAME_BACK));
-
-        //Back
-        vertex(builderBack, matrixStack, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
-        vertex(builderBack, matrixStack, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light);
-        vertex(builderBack, matrixStack, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light);
-        vertex(builderBack, matrixStack, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light);
-
-        matrixStack.popPose();
+        stack.popPose();
     }
 
     @Override
@@ -164,27 +160,25 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         return new ImageEntityRenderState.ImageState(imageId, imageRatio, resourceLocation);
     }
 
-    private static void vertex(VertexConsumer builder, PoseStack matrixStack, float x, float y, float z, float u, float v, int light) {
-        PoseStack.Pose entry = matrixStack.last();
-        Matrix4f matrix4f = entry.pose();
-        builder.addVertex(matrix4f, x, y, z)
-                .setColor(255, 255, 255, 255)
+    private static void vertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light) {
+        builder.addVertex(pose.pose(), x, y, z)
+                .setColor(1F, 1F, 1F, 1F)
                 .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
-                .setNormal(entry, 0F, 0F, -1F);
+                .setNormal(pose, 0F, 0F, -1F);
     }
 
-    private static void renderBoundingBox(ImageEntityRenderState state, PoseStack matrixStack, MultiBufferSource buffer) {
+    private static void submitBoundingBox(ImageEntityRenderState state, PoseStack stack, SubmitNodeCollector collector) {
         if (!(mc.hitResult instanceof EntityHitResult entityHitResult) || !entityHitResult.getEntity().getUUID().equals(state.imageEntityUUID)) {
             return;
         }
         if (mc.options.hideGui) {
             return;
         }
-        matrixStack.pushPose();
-        ShapeRenderer.renderLineBox(matrixStack, buffer.getBuffer(RenderType.lines()), state.imageBoundingBox, 0F, 0F, 0F, 0.4F);
-        matrixStack.popPose();
+        collector.submitCustomGeometry(stack, RenderType.lines(), (pose, vertexConsumer) -> {
+            ShapeRenderer.renderLineBox(pose, vertexConsumer, state.imageBoundingBox, 0F, 0F, 0F, 0.4F);
+        });
     }
 
     public static void rotate(Direction facing, PoseStack matrixStack) {

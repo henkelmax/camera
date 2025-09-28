@@ -48,8 +48,8 @@ public class CameraClientMod {
 
     @SubscribeEvent
     static void registerKeyBinds(RegisterKeyMappingsEvent event) {
-        KEY_NEXT = new KeyMapping("key.next_image", GLFW.GLFW_KEY_DOWN, "key.categories.misc");
-        KEY_PREVIOUS = new KeyMapping("key.previous_image", GLFW.GLFW_KEY_UP, "key.categories.misc");
+        KEY_NEXT = new KeyMapping("key.next_image", GLFW.GLFW_KEY_DOWN, KeyMapping.Category.MISC);
+        KEY_PREVIOUS = new KeyMapping("key.previous_image", GLFW.GLFW_KEY_UP, KeyMapping.Category.MISC);
         event.register(KEY_NEXT);
         event.register(KEY_PREVIOUS);
     }

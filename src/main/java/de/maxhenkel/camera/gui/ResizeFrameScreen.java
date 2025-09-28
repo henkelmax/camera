@@ -73,7 +73,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     private void sendMoveImage(MessageResizeFrame.Direction direction) {
-        ClientPacketDistributor.sendToServer(new MessageResizeFrame(uuid, direction, !Screen.hasShiftDown()));
+        ClientPacketDistributor.sendToServer(new MessageResizeFrame(uuid, direction, !minecraft.hasShiftDown()));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
         int descriptionWidth = font.width(description);
         guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(ChatFormatting.GRAY), false);
 
-        if (Screen.hasShiftDown()) {
+        if (minecraft.hasShiftDown()) {
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, imageHeight - PADDING - BUTTON_HEIGHT + 2, 0, 109, 16, 16, 256, 256);
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, PADDING + BUTTON_WIDTH / 2 - 8, imageHeight / 2 - BUTTON_HEIGHT / 2 + 3, 0, 125, 16, 16, 256, 256);

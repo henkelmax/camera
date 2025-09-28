@@ -82,7 +82,7 @@ public class ImageEntity extends Entity {
         }
 
         if (player.isShiftKeyDown() && canModify(player)) {
-            if (level().isClientSide) {
+            if (level().isClientSide()) {
                 CameraClientMod.openResizeFrameScreen(getUUID());
             }
             return InteractionResult.SUCCESS;
@@ -145,7 +145,7 @@ public class ImageEntity extends Entity {
         }
         if (hasImage()) {
             ItemStack image = removeImage();
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 playRemoveSound();
                 dropItem(image);
             }

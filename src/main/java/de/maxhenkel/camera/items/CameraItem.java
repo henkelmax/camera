@@ -34,7 +34,7 @@ public class CameraItem extends Item {
         ItemStack stack = playerIn.getItemInHand(handIn);
 
         if (playerIn.isShiftKeyDown() && !isActive(stack)) {
-            if (worldIn.isClientSide) {
+            if (worldIn.isClientSide()) {
                 CameraClientMod.openCameraScreen(stack.get(CameraMod.SHADER_DATA_COMPONENT));
             }
             return InteractionResult.SUCCESS;

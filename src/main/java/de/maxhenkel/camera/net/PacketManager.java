@@ -51,7 +51,7 @@ public class PacketManager {
                     try {
                         ImageTools.saveImage(playerMP, imagegID, image);
 
-                        playerMP.getServer().submitAsync(() -> {
+                        playerMP.level().getServer().submitAsync(() -> {
                             ItemStack stack = new ItemStack(CameraMod.IMAGE.get());
                             ImageData imageData = ImageData.create(playerMP, imagegID);
                             imageData.addToImage(stack);

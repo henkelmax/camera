@@ -37,7 +37,7 @@ public class ImageFrameItem extends Item {
         image.setImagePosition(offset);
         image.setOwner(context.getPlayer().getUUID());
         if (image.isValid()) {
-            if (!world.isClientSide) {
+            if (!world.isClientSide()) {
                 image.playPlaceSound();
                 world.addFreshEntity(image);
             }
