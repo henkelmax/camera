@@ -57,7 +57,7 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
 
         @Override
         @Nullable
-        public SpecialModelRenderer<?> bake(BakingContext p_433472_) {
+        public SpecialModelRenderer<?> bake(BakingContext context) {
             return new ImageSpecialRenderer();
         }
 
