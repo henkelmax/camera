@@ -12,7 +12,7 @@ logoFile = "icon.png"
 authors = "Max Henkel"
 description = '''This mod adds a working camera'''
 [[mixins]]
-config="camera.mixins.json"
+config = "camera.mixins.json"
 [[dependencies.camera]]
 modId = "neoforge"
 type = "required"
