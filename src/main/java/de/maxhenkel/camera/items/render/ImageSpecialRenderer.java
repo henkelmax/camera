@@ -23,7 +23,7 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
     }
 
     @Override
-    public void submit(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext context, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, boolean b) {
+    public void submit(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext context, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, boolean b, int i) {
         if (imageState == null) {
             return;
         }
