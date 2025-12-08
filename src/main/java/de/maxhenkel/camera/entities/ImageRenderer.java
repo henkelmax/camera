@@ -10,10 +10,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.EntityHitResult;
 
 import javax.annotation.Nonnull;
@@ -21,10 +25,10 @@ import java.util.UUID;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRenderState> {
 
-    private static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
-    private static final ResourceLocation EMPTY_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/empty_image.png");
-    private static final ResourceLocation FRAME_SIDE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_side.png");
-    private static final ResourceLocation FRAME_BACK = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_back.png");
+    private static final Identifier DEFAULT_IMAGE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
+    private static final Identifier EMPTY_IMAGE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/images/empty_image.png");
+    private static final Identifier FRAME_SIDE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_side.png");
+    private static final Identifier FRAME_BACK = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/images/frame_back.png");
 
     private static final float THICKNESS = 1F / 16F;
     public static final UUID DEFAULT_IMAGE_UUID = new UUID(0L, 0L);
@@ -55,7 +59,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
     public static void submitImage(ImageEntityRenderState.ImageState imageState, Direction facing, float width, float height, int light, PoseStack stack, SubmitNodeCollector collector) {
         stack.pushPose();
 
-        ResourceLocation resourceLocation = imageState.resourceLocation();
+        Identifier resourceLocation = imageState.resourceLocation();
         float imageRatio = imageState.imageRatio();
         boolean stretch = DEFAULT_IMAGE.equals(resourceLocation);
 
@@ -81,7 +85,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
             }
         }
 
-        collector.submitCustomGeometry(stack, RenderType.entityCutout(resourceLocation), (pose, vertexConsumer) -> {
+        collector.submitCustomGeometry(stack, RenderTypes.entityCutout(resourceLocation), (pose, vertexConsumer) -> {
             // Front
             vertex(vertexConsumer, pose, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
             vertex(vertexConsumer, pose, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
@@ -89,7 +93,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
             vertex(vertexConsumer, pose, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
         });
 
-        collector.submitCustomGeometry(stack, RenderType.entityCutout(FRAME_SIDE), (pose, vertexConsumer) -> {
+        collector.submitCustomGeometry(stack, RenderTypes.entityCutout(FRAME_SIDE), (pose, vertexConsumer) -> {
             //Left
             vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
             vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light);
@@ -115,7 +119,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
             vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
         });
 
-        collector.submitCustomGeometry(stack, RenderType.entityCutout(FRAME_BACK), (pose, vertexConsumer) -> {
+        collector.submitCustomGeometry(stack, RenderTypes.entityCutout(FRAME_BACK), (pose, vertexConsumer) -> {
             //Back
             vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
             vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light);
@@ -137,17 +141,17 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.facing = image.getFacing();
         state.imageState = extractImageState(image.getImageUUID().orElse(DEFAULT_IMAGE_UUID));
         state.light = LevelRenderer.getLightColor(image.level(), image.getCenterPosition());
-        state.imageBoundingBox = image.getBoundingBox().move(-image.getX(), -image.getY(), -image.getZ());
+        state.imageBoundingBox = image.getBoundingBox();
     }
 
     public static ImageEntityRenderState.ImageState extractImageState(@Nonnull UUID imageId) {
-        ResourceLocation resourceLocation;
+        Identifier resourceLocation;
         float imageRatio;
         if (DEFAULT_IMAGE_UUID.equals(imageId)) {
             resourceLocation = DEFAULT_IMAGE;
             imageRatio = 1.5F;
         } else {
-            ResourceLocation rl = TextureCache.instance().getImage(imageId);
+            Identifier rl = TextureCache.instance().getImage(imageId);
             if (rl != null) {
                 resourceLocation = rl;
                 NativeImage nativeImage = TextureCache.instance().getNativeImage(imageId);
@@ -176,9 +180,11 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         if (mc.options.hideGui) {
             return;
         }
-        collector.submitCustomGeometry(stack, RenderType.lines(), (pose, vertexConsumer) -> {
-            ShapeRenderer.renderLineBox(pose, vertexConsumer, state.imageBoundingBox, 0F, 0F, 0F, 0.4F);
-        });
+        Gizmos.cuboid(
+                state.imageBoundingBox,
+                GizmoStyle.stroke(ARGB.colorFromFloat(0.4F, 0F, 0F, 0F)),
+                false
+        );
     }
 
     public static void rotate(Direction facing, PoseStack matrixStack) {

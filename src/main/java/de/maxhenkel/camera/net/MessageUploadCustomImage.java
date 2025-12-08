@@ -7,7 +7,7 @@ import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.awt.image.BufferedImage;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class MessageUploadCustomImage implements Message<MessageUploadCustomImage> {
 
-    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "upload"));
+    public static final CustomPacketPayload.Type<MessageUploadCustomImage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CameraMod.MODID, "upload"));
 
     private UUID uuid;
 

@@ -80,7 +80,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     protected void playPageTurnSound() {
-        minecraft.player.playNotifySound(SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F);
+        minecraft.level.playLocalSound(minecraft.player.getX(), minecraft.player.getY(), minecraft.player.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F, false);
     }
 
     private boolean wasNextDown;

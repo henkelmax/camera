@@ -1,20 +1,20 @@
 package de.maxhenkel.camera;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
 public class Shaders {
 
-    public static ResourceLocation BLACK_AND_WHITE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "black_and_white");
-    public static ResourceLocation SEPIA = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "sepia");
-    public static ResourceLocation DESATURATED = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "desaturated");
-    public static ResourceLocation OVEREXPOSED = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "overexposed");
-    public static ResourceLocation OVERSATURATED = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "oversaturated");
-    public static ResourceLocation BLURRY = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "blurry");
-    public static ResourceLocation INVERTED = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "inverted");
+    public static Identifier BLACK_AND_WHITE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "black_and_white");
+    public static Identifier SEPIA = Identifier.fromNamespaceAndPath(CameraMod.MODID, "sepia");
+    public static Identifier DESATURATED = Identifier.fromNamespaceAndPath(CameraMod.MODID, "desaturated");
+    public static Identifier OVEREXPOSED = Identifier.fromNamespaceAndPath(CameraMod.MODID, "overexposed");
+    public static Identifier OVERSATURATED = Identifier.fromNamespaceAndPath(CameraMod.MODID, "oversaturated");
+    public static Identifier BLURRY = Identifier.fromNamespaceAndPath(CameraMod.MODID, "blurry");
+    public static Identifier INVERTED = Identifier.fromNamespaceAndPath(CameraMod.MODID, "inverted");
 
-    private static Map<String, ResourceLocation> shaders;
+    private static Map<String, Identifier> shaders;
     public static final List<String> SHADER_LIST;
 
     static {
@@ -30,7 +30,7 @@ public class Shaders {
         SHADER_LIST = Collections.unmodifiableList(new ArrayList<>(shaders.keySet()));
     }
 
-    public static ResourceLocation getShader(String name) {
+    public static Identifier getShader(String name) {
         return shaders.get(name);
     }
 

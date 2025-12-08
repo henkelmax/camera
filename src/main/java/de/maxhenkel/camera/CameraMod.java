@@ -17,7 +17,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Unit;
@@ -78,7 +78,7 @@ public class CameraMod {
     private static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZER_REGISTER = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, CameraMod.MODID);
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Optional<UUID>>> UUID_ENTITY_DATA_SERIALIZER = ENTITY_DATA_SERIALIZER_REGISTER.register("uuid", () -> EntityDataSerializer.forValueType(CodecUtils.optionalStreamCodecByteBuf(UUIDUtil.STREAM_CODEC)));
 
-    public static TagKey<Item> IMAGE_PAPER = ItemTags.create(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image_paper"));
+    public static TagKey<Item> IMAGE_PAPER = ItemTags.create(Identifier.fromNamespaceAndPath(CameraMod.MODID, "image_paper"));
 
     public static ServerConfig SERVER_CONFIG;
     public static ClientConfig CLIENT_CONFIG;

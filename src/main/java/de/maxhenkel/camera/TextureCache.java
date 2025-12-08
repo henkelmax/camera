@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.camera.net.MessageRequestImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.awt.image.BufferedImage;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class TextureCache {
 
     private Map<UUID, CameraTextureObject> clientImageCache;
-    private Map<UUID, ResourceLocation> clientResourceCache;
+    private Map<UUID, Identifier> clientResourceCache;
     private Map<UUID, Long> awaitingImages;
 
     public static TextureCache instance;
@@ -32,14 +32,14 @@ public class TextureCache {
             awaitingImages.remove(uuid);
         }
 
-        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "texures/camera/" + uuid.toString());
+        Identifier resourceLocation = Identifier.fromNamespaceAndPath(CameraMod.MODID, "texures/camera/" + uuid.toString());
         CameraTextureObject cameraTextureObject = new CameraTextureObject(resourceLocation::toString, ImageTools.toNativeImage(image));
         clientImageCache.put(uuid, cameraTextureObject);
         clientResourceCache.put(uuid, resourceLocation);
         Minecraft.getInstance().getEntityRenderDispatcher().textureManager.register(resourceLocation, cameraTextureObject);
     }
 
-    public ResourceLocation getImage(UUID uuid) {
+    public Identifier getImage(UUID uuid) {
         CameraTextureObject cameraTextureObject = clientImageCache.get(uuid);
 
         if (checkImage(uuid, cameraTextureObject)) {

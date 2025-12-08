@@ -6,7 +6,7 @@ import de.maxhenkel.camera.items.render.ImageSpecialRenderer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -56,7 +56,7 @@ public class CameraClientMod {
 
     @SubscribeEvent
     static void registerItemModels(RegisterSpecialModelRendererEvent event) {
-        event.register(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image"), ImageSpecialRenderer.Unbaked.MAP_CODEC);
+        event.register(Identifier.fromNamespaceAndPath(CameraMod.MODID, "image"), ImageSpecialRenderer.Unbaked.MAP_CODEC);
     }
 
     public static void openImageScreen(ItemStack stack) {

@@ -6,13 +6,13 @@ import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class MessageAlbumPage implements Message<MessageAlbumPage> {
 
-    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "album_page"));
+    public static final CustomPacketPayload.Type<MessageAlbumPage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CameraMod.MODID, "album_page"));
 
     private int page;
 

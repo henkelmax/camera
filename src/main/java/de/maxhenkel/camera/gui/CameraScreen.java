@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
 
 public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/camera.png");
+    private static final Identifier CAMERA_TEXTURE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/camera.png");
     private static final int PADDING = 10;
     private static final int BUTTON_WIDTH = 70;
     private static final int BUTTON_HEIGHT = 20;

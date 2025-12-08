@@ -8,12 +8,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.phys.AABB;
@@ -24,7 +23,7 @@ import java.util.UUID;
 
 public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    private static final ResourceLocation CAMERA_TEXTURE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/resize_frame.png");
+    private static final Identifier CAMERA_TEXTURE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/resize_frame.png");
     private static final int PADDING = 10;
     private static final int BUTTON_HEIGHT = 20;
     private static final int BUTTON_WIDTH = 50;

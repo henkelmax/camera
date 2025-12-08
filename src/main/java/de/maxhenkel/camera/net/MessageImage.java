@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.awt.image.BufferedImage;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class MessageImage implements Message<MessageImage> {
 
-    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image"));
+    public static final CustomPacketPayload.Type<MessageImage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CameraMod.MODID, "image"));
 
     private UUID uuid;
     private byte[] image;

@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +21,8 @@ import java.util.List;
 
 public class ClientEvents {
 
-    private static final ResourceLocation VIEWFINDER = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/viewfinder_overlay.png");
-    private static final ResourceLocation ZOOM = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/zoom.png");
+    private static final Identifier VIEWFINDER = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/viewfinder_overlay.png");
+    private static final Identifier ZOOM = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/gui/zoom.png");
 
     public static final float MAX_FOV = 90F;
     public static final float MIN_FOV = 5F;
@@ -30,7 +30,7 @@ public class ClientEvents {
     private Minecraft mc;
     private boolean inCameraMode;
     private float fov;
-    private ResourceLocation currentShader;
+    private Identifier currentShader;
 
     public ClientEvents() {
         mc = Minecraft.getInstance();
@@ -116,7 +116,7 @@ public class ClientEvents {
         }
     }
 
-    private ResourceLocation getShader(Player player) {
+    private Identifier getShader(Player player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
             if (!stack.getItem().equals(CameraMod.CAMERA.get())) {
@@ -127,7 +127,7 @@ public class ClientEvents {
         return null;
     }
 
-    private void setShader(ResourceLocation shader) {
+    private void setShader(Identifier shader) {
         if (shader == null) {
             if (currentShader != null) {
                 mc.gameRenderer.clearPostEffect();

@@ -29,3 +29,11 @@ processResources {
 shadowJar {
     relocate 'de.maxhenkel.corelib', 'de.maxhenkel.camera.corelib'
 }
+
+sourceSets {
+    main {
+        java {
+            exclude 'de/maxhenkel/camera/integration/*/**'
+        }
+    }
+}

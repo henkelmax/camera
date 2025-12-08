@@ -5,7 +5,6 @@ import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.items.ImageItem;
 import de.maxhenkel.camera.net.MessageResizeFrame;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
@@ -13,8 +12,10 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,8 +24,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
@@ -128,7 +129,7 @@ public class ImageEntity extends Entity {
         if (!CameraMod.SERVER_CONFIG.frameOnlyOwnerModify.get()) {
             return true;
         }
-        if (player.isCreative() && player.hasPermissions(1)) {
+        if (player.isCreative() && player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR)) {
             return true;
         }
         return getOwner().orElse(Util.NIL_UUID).equals(player.getUUID());
@@ -170,7 +171,7 @@ public class ImageEntity extends Entity {
         if (!(level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        if (!serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (!serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
             return;
         }
         playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);

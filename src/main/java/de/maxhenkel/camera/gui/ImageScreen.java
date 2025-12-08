@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> {
 
-    public static final ResourceLocation DEFAULT_IMAGE = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
+    public static final Identifier DEFAULT_IMAGE = Identifier.fromNamespaceAndPath(CameraMod.MODID, "textures/images/default_image.png");
 
     @Nullable
     private UUID imageID;
@@ -45,7 +45,7 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
     }
 
     public static void drawImage(GuiGraphics guiGraphics, int width, int height, UUID uuid) {
-        ResourceLocation location = TextureCache.instance().getImage(uuid);
+        Identifier location = TextureCache.instance().getImage(uuid);
         int imageWidth;
         int imageHeight;
 

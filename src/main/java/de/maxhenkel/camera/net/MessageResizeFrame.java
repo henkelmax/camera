@@ -6,7 +6,7 @@ import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class MessageResizeFrame implements Message<MessageResizeFrame> {
 
-    public static final CustomPacketPayload.Type<MessageResizeFrame> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "resize_frame"));
+    public static final CustomPacketPayload.Type<MessageResizeFrame> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CameraMod.MODID, "resize_frame"));
 
     private UUID uuid;
     private Direction direction;

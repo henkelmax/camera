@@ -5,7 +5,7 @@ import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.jade.api.*;
 import snownee.jade.api.config.IPluginConfig;
 
@@ -13,11 +13,11 @@ import java.util.Date;
 
 public class HUDHandlerImageFrame implements IEntityComponentProvider {
 
-    private static final ResourceLocation OBJECT_NAME_TAG = ResourceLocation.fromNamespaceAndPath("jade", "object_name");
+    private static final Identifier OBJECT_NAME_TAG = Identifier.fromNamespaceAndPath("jade", "object_name");
 
     public static final HUDHandlerImageFrame INSTANCE = new HUDHandlerImageFrame();
 
-    private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(CameraMod.MODID, "image_frame");
+    private static final Identifier UID = Identifier.fromNamespaceAndPath(CameraMod.MODID, "image_frame");
 
     @Override
     public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {
@@ -39,7 +39,7 @@ public class HUDHandlerImageFrame implements IEntityComponentProvider {
     }
 
     @Override
-    public ResourceLocation getUid() {
+    public Identifier getUid() {
         return UID;
     }
 }

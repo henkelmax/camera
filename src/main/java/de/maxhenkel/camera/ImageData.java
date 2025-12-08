@@ -18,7 +18,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,15 +41,15 @@ public class ImageData {
                 UUIDUtil.CODEC.fieldOf("id").forGetter(ImageData::getId),
                 Codec.LONG.fieldOf("time").forGetter(ImageData::getTime),
                 Codec.STRING.fieldOf("owner").forGetter(ImageData::getOwner),
-                ResourceLocation.CODEC.optionalFieldOf("biome").forGetter(o -> Optional.ofNullable(o.getBiome())),
-                Codec.list(ResourceLocation.CODEC).optionalFieldOf("entities").forGetter(imageData -> Optional.ofNullable(imageData.getEntities())),
+                Identifier.CODEC.optionalFieldOf("biome").forGetter(o -> Optional.ofNullable(o.getBiome())),
+                Codec.list(Identifier.CODEC).optionalFieldOf("entities").forGetter(imageData -> Optional.ofNullable(imageData.getEntities())),
                 ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("dimension").forGetter(imageData -> Optional.ofNullable(imageData.getDimension())),
                 BlockPos.CODEC.optionalFieldOf("position").forGetter(imageData -> Optional.ofNullable(imageData.getPosition()))
         ).apply(i, ImageData::new);
     });
 
-    public static final StreamCodec<ByteBuf, Optional<ResourceLocation>> OPTIONAL_RESOURCE_LOCATION_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(ResourceLocation.STREAM_CODEC);
-    public static final StreamCodec<ByteBuf, Optional<List<ResourceLocation>>> OPTIONAL_RESOURCE_LOCATION_LIST_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(CodecUtils.listStreamCodecByteBuf(ResourceLocation.STREAM_CODEC));
+    public static final StreamCodec<ByteBuf, Optional<Identifier>> OPTIONAL_RESOURCE_LOCATION_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(Identifier.STREAM_CODEC);
+    public static final StreamCodec<ByteBuf, Optional<List<Identifier>>> OPTIONAL_RESOURCE_LOCATION_LIST_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(CodecUtils.listStreamCodecByteBuf(Identifier.STREAM_CODEC));
     public static final StreamCodec<ByteBuf, Optional<ResourceKey<Level>>> OPTIONAL_DIMENSION_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(ResourceKey.streamCodec(Registries.DIMENSION));
     public static final StreamCodec<ByteBuf, Optional<BlockPos>> OPTIONAL_BLOCK_POS_STREAM_CODEC = CodecUtils.optionalStreamCodecByteBuf(BlockPos.STREAM_CODEC);
 
@@ -83,9 +83,9 @@ public class ImageData {
     private long time;
     private String owner;
     @Nullable
-    private ResourceLocation biome;
+    private Identifier biome;
     @Nullable
-    private List<ResourceLocation> entities;
+    private List<Identifier> entities;
     @Nullable
     private ResourceKey<Level> dimension;
     @Nullable
@@ -101,7 +101,7 @@ public class ImageData {
         this.owner = owner;
     }
 
-    private ImageData(UUID id, long time, String owner, Optional<ResourceLocation> biome, Optional<List<ResourceLocation>> entities, Optional<ResourceKey<Level>> dimension, Optional<BlockPos> position) {
+    private ImageData(UUID id, long time, String owner, Optional<Identifier> biome, Optional<List<Identifier>> entities, Optional<ResourceKey<Level>> dimension, Optional<BlockPos> position) {
         this.id = id;
         this.time = time;
         this.owner = owner;
@@ -124,12 +124,12 @@ public class ImageData {
     }
 
     @Nullable
-    public ResourceLocation getBiome() {
+    public Identifier getBiome() {
         return biome;
     }
 
     @Nullable
-    public List<ResourceLocation> getEntities() {
+    public List<Identifier> getEntities() {
         return entities;
     }
 
@@ -166,7 +166,7 @@ public class ImageData {
         return data;
     }
 
-    private static ResourceLocation getEntityID(Entity entity) {
+    private static Identifier getEntityID(Entity entity) {
         return BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
     }
 
@@ -264,11 +264,11 @@ public class ImageData {
         }
         long time = imageTag.getLongOr("image_time", 0L);
         String owner = imageTag.getStringOr("owner", "");
-        ResourceLocation biome = null;
+        Identifier biome = null;
         if (imageTag.contains("biome")) {
-            biome = ResourceLocation.tryParse(imageTag.getStringOr("biome", ""));
+            biome = Identifier.tryParse(imageTag.getStringOr("biome", ""));
         }
-        List<ResourceLocation> entityList = null;
+        List<Identifier> entityList = null;
         if (imageTag.contains("entities")) {
             ListTag entities = imageTag.getListOrEmpty("entities");
             entityList = new ArrayList<>();
@@ -277,7 +277,7 @@ public class ImageData {
                 if (optionalString.isEmpty()) {
                     continue;
                 }
-                ResourceLocation resourceLocation = ResourceLocation.tryParse(optionalString.get());
+                Identifier resourceLocation = Identifier.tryParse(optionalString.get());
                 if (resourceLocation != null) {
                     entityList.add(resourceLocation);
                 }
