@@ -20,7 +20,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.EntityHitResult;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRenderState> {
@@ -139,15 +139,18 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.frameWidth = image.getFrameWidth();
         state.frameHeight = image.getFrameHeight();
         state.facing = image.getFacing();
-        state.imageState = extractImageState(image.getImageUUID().orElse(DEFAULT_IMAGE_UUID));
+        state.imageState = extractImageState(image.getImageUUID().orElse(null));
         state.light = LevelRenderer.getLightCoords(image.level(), image.getCenterPosition());
         state.imageBoundingBox = image.getBoundingBox();
     }
 
-    public static ImageEntityRenderState.ImageState extractImageState(@Nonnull UUID imageId) {
+    public static ImageEntityRenderState.ImageState extractImageState(@Nullable UUID imageId) {
         Identifier resourceLocation;
         float imageRatio;
-        if (DEFAULT_IMAGE_UUID.equals(imageId)) {
+        if (imageId == null) {
+            resourceLocation = EMPTY_IMAGE;
+            imageRatio = 1.5F;
+        } else if (DEFAULT_IMAGE_UUID.equals(imageId)) {
             resourceLocation = DEFAULT_IMAGE;
             imageRatio = 1.5F;
         } else {
