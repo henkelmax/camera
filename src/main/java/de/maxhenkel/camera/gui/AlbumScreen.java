@@ -3,7 +3,7 @@ package de.maxhenkel.camera.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import de.maxhenkel.camera.CameraClientMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -33,13 +33,13 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBlurredBackground(guiGraphics);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        extractBlurredBackground(guiGraphics);
 
         if (images.isEmpty()) {
             return;
@@ -80,7 +80,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     protected void playPageTurnSound() {
-        minecraft.level.playLocalSound(minecraft.player.getX(), minecraft.player.getY(), minecraft.player.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER, 1F, minecraft.level.random.nextFloat() * 0.1F + 0.9F, false);
+        minecraft.level.playLocalSound(minecraft.player.getX(), minecraft.player.getY(), minecraft.player.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.MASTER, 1F, minecraft.level.getRandom().nextFloat() * 0.1F + 0.9F, false);
     }
 
     private boolean wasNextDown;
@@ -99,8 +99,7 @@ public class AlbumScreen extends AbstractContainerScreen<AlbumContainer> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
 
     }
-
 }

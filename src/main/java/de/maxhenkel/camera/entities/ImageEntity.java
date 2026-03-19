@@ -77,7 +77,7 @@ public class ImageEntity extends Entity {
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 pos) {
         if (!canModify(player)) {
             return InteractionResult.FAIL;
         }

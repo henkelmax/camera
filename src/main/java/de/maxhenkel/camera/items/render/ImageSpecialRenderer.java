@@ -9,7 +9,6 @@ import de.maxhenkel.camera.entities.ImageRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3fc;
 
@@ -23,7 +22,7 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
     }
 
     @Override
-    public void submit(@Nullable ImageEntityRenderState.ImageState imageState, ItemDisplayContext context, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, boolean b, int i) {
+    public void submit(@Nullable ImageEntityRenderState.ImageState imageState, PoseStack stack, SubmitNodeCollector collector, int light, int overlay, boolean b, int i) {
         if (imageState == null) {
             return;
         }
@@ -47,9 +46,9 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
         return ImageRenderer.extractImageState(ImageRenderer.DEFAULT_IMAGE_UUID);
     }
 
-    public static class Unbaked implements SpecialModelRenderer.Unbaked {
+    public static class Unbaked implements SpecialModelRenderer.Unbaked<ImageEntityRenderState.ImageState> {
 
-        public static final MapCodec<ImageSpecialRenderer.Unbaked> MAP_CODEC = MapCodec.unit(ImageSpecialRenderer.Unbaked::new);
+        public static final MapCodec<Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
 
         public Unbaked() {
 
@@ -57,7 +56,7 @@ public class ImageSpecialRenderer implements SpecialModelRenderer<ImageEntityRen
 
         @Override
         @Nullable
-        public SpecialModelRenderer<?> bake(BakingContext context) {
+        public SpecialModelRenderer<ImageEntityRenderState.ImageState> bake(BakingContext context) {
             return new ImageSpecialRenderer();
         }
 

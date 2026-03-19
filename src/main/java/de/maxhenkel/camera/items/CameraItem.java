@@ -53,10 +53,10 @@ public class CameraItem extends Item {
                 PacketDistributor.sendToPlayer(serverPlayer, new MessageTakeImage(uuid));
                 CameraMod.CAMERA.get().setActive(stack, false);
             } else {
-                playerIn.displayClientMessage(Component.translatable("message.no_consumable"), true);
+                playerIn.sendOverlayMessage(Component.translatable("message.no_consumable"));
             }
         } else {
-            playerIn.displayClientMessage(Component.translatable("message.image_cooldown"), true);
+            playerIn.sendOverlayMessage(Component.translatable("message.image_cooldown"));
         }
         return InteractionResult.SUCCESS;
     }

@@ -68,7 +68,7 @@ public class CameraMod {
     public static final DeferredHolder<EntityType<?>, EntityType<ImageEntity>> IMAGE_ENTITY_TYPE = ENTITY_REGISTER.register("image_frame", CameraMod::createImageEntityType);
 
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZER_REGISTER = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ImageCloningRecipe>> IMAGE_CLONING_SERIALIZER = RECIPE_SERIALIZER_REGISTER.register("image_cloning", ImageCloningRecipe.ImageCloningSerializer::new);
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ImageCloningRecipe>> IMAGE_CLONING_SERIALIZER = RECIPE_SERIALIZER_REGISTER.register("image_cloning", () -> ImageCloningRecipe.RECIPE_SERIALIZER);
 
     private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPE_REGISTER = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, CameraMod.MODID);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ImageData>> IMAGE_DATA_COMPONENT = DATA_COMPONENT_TYPE_REGISTER.register("image", () -> DataComponentType.<ImageData>builder().persistent(ImageData.CODEC).networkSynchronized(ImageData.STREAM_CODEC).build());

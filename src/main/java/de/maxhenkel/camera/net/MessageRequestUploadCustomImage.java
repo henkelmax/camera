@@ -41,10 +41,10 @@ public class MessageRequestUploadCustomImage implements Message<MessageRequestUp
             if (CameraItem.consumePaper(sender)) {
                 context.reply(new MessageUploadCustomImage(uuid));
             } else {
-                sender.displayClientMessage(Component.translatable("message.no_consumable"), true);
+                sender.sendOverlayMessage(Component.translatable("message.no_consumable"));
             }
         } else {
-            sender.displayClientMessage(Component.translatable("message.image_cooldown"), true);
+            sender.sendOverlayMessage(Component.translatable("message.image_cooldown"));
         }
     }
 

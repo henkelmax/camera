@@ -5,7 +5,7 @@ import de.maxhenkel.camera.ImageData;
 import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.TextureCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -34,17 +34,17 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
 
     //https://stackoverflow.com/questions/6565703/math-algorithm-fit-image-to-screen-retain-aspect-ratio
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBlurredBackground(guiGraphics);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        extractBlurredBackground(graphics);
 
         if (imageID == null) {
             return;
         }
 
-        drawImage(guiGraphics, width, height, imageID);
+        drawImage(graphics, width, height, imageID);
     }
 
-    public static void drawImage(GuiGraphics guiGraphics, int width, int height, UUID uuid) {
+    public static void drawImage(GuiGraphicsExtractor guiGraphics, int width, int height, UUID uuid) {
         Identifier location = TextureCache.instance().getImage(uuid);
         int imageWidth;
         int imageHeight;
@@ -89,12 +89,12 @@ public class ImageScreen extends AbstractContainerScreen<AbstractContainerMenu> 
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
 
     }
 
     @Override
-    protected void renderBg(GuiGraphics p_283065_, float p_97788_, int p_97789_, int p_97790_) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 
     }
 }

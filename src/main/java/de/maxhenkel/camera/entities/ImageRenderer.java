@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.gizmos.GizmoStyle;
@@ -140,7 +140,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.frameHeight = image.getFrameHeight();
         state.facing = image.getFacing();
         state.imageState = extractImageState(image.getImageUUID().orElse(DEFAULT_IMAGE_UUID));
-        state.light = LevelRenderer.getLightColor(image.level(), image.getCenterPosition());
+        state.light = LevelRenderer.getLightCoords(image.level(), image.getCenterPosition());
         state.imageBoundingBox = image.getBoundingBox();
     }
 

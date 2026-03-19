@@ -3,22 +3,40 @@ package de.maxhenkel.camera;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.maxhenkel.camera.items.ImageItem;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 public class ImageCloningRecipe extends CustomRecipe {
 
-    private final ItemStack image;
+    private static final MapCodec<ImageCloningRecipe> CODEC = RecordCodecBuilder.mapCodec((builder) -> builder
+            .group(
+                    ItemStackTemplate.CODEC
+                            .fieldOf("image")
+                            .forGetter((recipe) -> recipe.image),
+                    Ingredient.CODEC
+                            .fieldOf("paper")
+                            .forGetter((recipe) -> recipe.paper)
+            ).apply(builder, ImageCloningRecipe::new));
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, ImageCloningRecipe> STREAM_CODEC = StreamCodec.composite(
+            ItemStackTemplate.STREAM_CODEC,
+            ImageCloningRecipe::getImage,
+            Ingredient.CONTENTS_STREAM_CODEC,
+            ImageCloningRecipe::getPaper,
+            ImageCloningRecipe::new
+    );
+
+    public static final RecipeSerializer<ImageCloningRecipe> RECIPE_SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
+
+    private final ItemStackTemplate image;
     private final Ingredient paper;
 
-    public ImageCloningRecipe(ItemStack image, Ingredient paper) {
-        super(CraftingBookCategory.MISC);
+    public ImageCloningRecipe(ItemStackTemplate image, Ingredient paper) {
         this.image = image;
         this.paper = paper;
     }
@@ -38,15 +56,15 @@ public class ImageCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
-        CraftingResult craft = craft(container);
+    public ItemStack assemble(CraftingInput input) {
+        CraftingResult craft = craft(input);
         if (craft == null) {
             return null;
         }
         return craft.result;
     }
 
-    public ItemStack getImage() {
+    public ItemStackTemplate getImage() {
         return image;
     }
 
@@ -62,41 +80,6 @@ public class ImageCloningRecipe extends CustomRecipe {
     @Override
     public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return CameraMod.IMAGE_CLONING_SERIALIZER.get();
-    }
-
-    public static class ImageCloningSerializer implements RecipeSerializer<ImageCloningRecipe> {
-
-        private static final MapCodec<ImageCloningRecipe> CODEC = RecordCodecBuilder.mapCodec((builder) -> builder
-                .group(
-                        BuiltInRegistries.ITEM.byNameCodec().xmap(ItemStack::new, ItemStack::getItem)
-                                .fieldOf("image")
-                                .forGetter((recipe) -> recipe.image),
-                        Ingredient.CODEC
-                                .fieldOf("paper")
-                                .forGetter((recipe) -> recipe.paper)
-                ).apply(builder, ImageCloningRecipe::new));
-
-        private static final StreamCodec<RegistryFriendlyByteBuf, ImageCloningRecipe> STREAM_CODEC = StreamCodec.composite(
-                ItemStack.STREAM_CODEC,
-                ImageCloningRecipe::getImage,
-                Ingredient.CONTENTS_STREAM_CODEC,
-                ImageCloningRecipe::getPaper,
-                ImageCloningRecipe::new
-        );
-
-        public ImageCloningSerializer() {
-
-        }
-
-        @Override
-        public MapCodec<ImageCloningRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, ImageCloningRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
     }
 
     protected CraftingResult craft(RecipeInput inv) {

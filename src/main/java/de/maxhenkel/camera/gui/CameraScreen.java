@@ -9,7 +9,7 @@ import de.maxhenkel.camera.net.MessageSetShader;
 import de.maxhenkel.corelib.FontColorUtils;
 import de.maxhenkel.corelib.inventory.ScreenBase;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -35,9 +35,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     private Button upload;
 
     public CameraScreen(String currentShader) {
-        super(CAMERA_TEXTURE, new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.camera.title"));
-        imageWidth = 248;
-        imageHeight = 109;
+        super(CAMERA_TEXTURE, new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.camera.title"), 248, 109);
 
         for (int i = 0; i < Shaders.SHADER_LIST.size(); i++) {
             String s = Shaders.SHADER_LIST.get(i);
@@ -82,7 +80,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         ClientImageUploadManager.addImage(uuid, image);
                         ClientPacketDistributor.sendToServer(new MessageRequestUploadCustomImage(uuid));
                     } catch (IOException e) {
-                        minecraft.player.displayClientMessage(Component.translatable("message.upload_error", e.getMessage()), true);
+                        minecraft.player.sendOverlayMessage(Component.translatable("message.upload_error", e.getMessage()));
                         //TODO Properly log an error
                         e.printStackTrace();
                     }
@@ -105,20 +103,20 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderLabels(guiGraphics, mouseX, mouseY);
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
+        super.extractLabels(guiGraphics, mouseX, mouseY);
 
         MutableComponent chooseFilter = Component.translatable("gui.camera.choose_filter");
         int chooseFilterWidth = font.width(chooseFilter);
-        guiGraphics.drawString(font, chooseFilter.getVisualOrderText(), imageWidth / 2 - chooseFilterWidth / 2, 10, FONT_COLOR, false);
+        guiGraphics.text(font, chooseFilter.getVisualOrderText(), imageWidth / 2 - chooseFilterWidth / 2, 10, FONT_COLOR, false);
 
         MutableComponent shaderName = Component.translatable("shader." + Shaders.SHADER_LIST.get(index));
         int shaderWidth = font.width(shaderName);
-        guiGraphics.drawString(font, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, FontColorUtils.WHITE, false);
+        guiGraphics.text(font, shaderName.getVisualOrderText(), imageWidth / 2 - shaderWidth / 2, PADDING + font.lineHeight + PADDING + BUTTON_HEIGHT / 2 - font.lineHeight / 2, FontColorUtils.WHITE, false);
 
         MutableComponent uploadImage = Component.translatable("gui.camera.upload_image");
         int uploadImageWidth = font.width(uploadImage);
-        guiGraphics.drawString(font, uploadImage.getVisualOrderText(), imageWidth / 2 - uploadImageWidth / 2, imageHeight - PADDING - BUTTON_HEIGHT - PADDING - font.lineHeight, FONT_COLOR, false);
+        guiGraphics.text(font, uploadImage.getVisualOrderText(), imageWidth / 2 - uploadImageWidth / 2, imageHeight - PADDING - BUTTON_HEIGHT - PADDING - font.lineHeight, FONT_COLOR, false);
     }
 
 }

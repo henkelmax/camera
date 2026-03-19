@@ -6,7 +6,7 @@ import de.maxhenkel.camera.net.MessageResizeFrame;
 import de.maxhenkel.corelib.FontColorUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -33,11 +33,9 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     private Button visibilityButton;
 
     public ResizeFrameScreen(UUID uuid) {
-        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.frame.resize"));
+        super(new DummyContainer(), Minecraft.getInstance().player.getInventory(), Component.translatable("gui.frame.resize"), 248, 109);
         this.uuid = uuid;
         visibility = CameraMod.CLIENT_CONFIG.resizeGuiOpacity.get().floatValue();
-        imageWidth = 248;
-        imageHeight = 109;
     }
 
     @Override
@@ -76,24 +74,24 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if (visibility >= 1F) {
-            renderTransparentBackground(guiGraphics);
+            extractTransparentBackground(guiGraphics);
         }
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, leftPos, topPos, 0F, 0F, imageWidth, imageHeight, imageWidth, imageHeight, 256, 256, ARGB.colorFromFloat(visibility, 1F, 1F, 1F));
 
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(leftPos, topPos);
 
         MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
-        guiGraphics.drawString(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, FontColorUtils.getFontColor(ChatFormatting.DARK_GRAY), false);
+        guiGraphics.text(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, FontColorUtils.getFontColor(ChatFormatting.DARK_GRAY), false);
 
         MutableComponent description = Component.translatable("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
-        guiGraphics.drawString(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(ChatFormatting.GRAY), false);
+        guiGraphics.text(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(ChatFormatting.GRAY), false);
 
         if (minecraft.hasShiftDown()) {
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);
@@ -115,17 +113,12 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
-
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
 
     }
 

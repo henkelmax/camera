@@ -4,7 +4,7 @@ import de.maxhenkel.camera.items.CameraItem;
 import de.maxhenkel.camera.net.MessageDisableCameraMode;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -56,7 +56,7 @@ public class ClientEvents {
         drawZoom(event.getGuiGraphics(), getFOVPercentage());
     }
 
-    private void drawViewFinder(GuiGraphics guiGraphics) {
+    private void drawViewFinder(GuiGraphicsExtractor guiGraphics) {
         int imageWidth = 192;
         int imageHeight = 100;
 
@@ -83,7 +83,7 @@ public class ClientEvents {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, VIEWFINDER, (int) left, (int) top, 0F, 0F, (int) wnew, (int) hnew, 192, 100, 256, 256);
     }
 
-    private void drawZoom(GuiGraphics guiGraphics, float percent) {
+    private void drawZoom(GuiGraphicsExtractor guiGraphics, float percent) {
         int zoomWidth = 112;
         int zoomHeight = 10;
 
