@@ -21,18 +21,11 @@ processResources {
     filesMatching('**/*.toml') {
         expand 'mod_version': mod_version,
                 'neoforge_dependency': neoforge_dependency,
-                'minecraft_version': minecraft_version
+                'minecraft_version': minecraft_version,
+                'minecraft_dependency': minecraft_dependency
     }
 }
 
 shadowJar {
     relocate 'de.maxhenkel.corelib', 'de.maxhenkel.camera.corelib'
-}
-
-sourceSets {
-    main {
-        java {
-            exclude 'de/maxhenkel/camera/integration/*/**'
-        }
-    }
 }

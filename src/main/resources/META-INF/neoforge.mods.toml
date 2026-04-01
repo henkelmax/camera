@@ -22,7 +22,7 @@ side = "BOTH"
 [[dependencies.camera]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version}]"
+versionRange = "${minecraft_dependency}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.camera]]
