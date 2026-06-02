@@ -4,7 +4,6 @@ import de.maxhenkel.camera.CameraMod;
 import de.maxhenkel.camera.entities.ImageEntity;
 import de.maxhenkel.camera.net.MessageResizeFrame;
 import de.maxhenkel.corelib.FontColorUtils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -12,6 +11,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -87,11 +87,11 @@ public class ResizeFrameScreen extends AbstractContainerScreen<AbstractContainer
 
         MutableComponent title = Component.translatable("gui.frame.resize");
         int titleWidth = font.width(title);
-        guiGraphics.text(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, FontColorUtils.getFontColor(ChatFormatting.DARK_GRAY), false);
+        guiGraphics.text(font, title.getVisualOrderText(), imageWidth / 2 - titleWidth / 2, imageHeight / 2 - font.lineHeight - 1, FontColorUtils.getFontColor(TextColor.DARK_GRAY), false);
 
         MutableComponent description = Component.translatable("gui.frame.resize_description");
         int descriptionWidth = font.width(description);
-        guiGraphics.text(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(ChatFormatting.GRAY), false);
+        guiGraphics.text(font, description.getVisualOrderText(), imageWidth / 2 - descriptionWidth / 2, imageHeight / 2 + 1, FontColorUtils.getFontColor(TextColor.GRAY), false);
 
         if (minecraft.hasShiftDown()) {
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CAMERA_TEXTURE, imageWidth / 2 - 8, PADDING + 2, 16, 109, 16, 16, 256, 256);

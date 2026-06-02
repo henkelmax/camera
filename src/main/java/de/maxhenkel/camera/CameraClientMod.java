@@ -60,19 +60,19 @@ public class CameraClientMod {
     }
 
     public static void openImageScreen(ItemStack stack) {
-        Minecraft.getInstance().setScreen(new ImageScreen(stack));
+        Minecraft.getInstance().setScreenAndShow(new ImageScreen(stack));
     }
 
     public static void openAlbumScreen(List<UUID> images) {
-        Minecraft.getInstance().setScreen(new AlbumScreen(images));
+        Minecraft.getInstance().setScreenAndShow(new AlbumScreen(images));
     }
 
     public static void openResizeFrameScreen(UUID id) {
-        Minecraft.getInstance().setScreen(new ResizeFrameScreen(id));
+        Minecraft.getInstance().setScreenAndShow(new ResizeFrameScreen(id));
     }
 
     public static void openCameraScreen(String currentShader) {
-        Minecraft.getInstance().setScreen(new CameraScreen(currentShader));
+        Minecraft.getInstance().setScreenAndShow(new CameraScreen(currentShader));
     }
 
 }

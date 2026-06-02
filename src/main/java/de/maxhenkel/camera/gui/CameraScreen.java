@@ -84,7 +84,7 @@ public class CameraScreen extends ScreenBase<AbstractContainerMenu> {
                         //TODO Properly log an error
                         e.printStackTrace();
                     }
-                    minecraft.screen = null;
+                    minecraft.setScreenAndShow(null);
                 });
             }).bounds(leftPos + imageWidth / 2 - BUTTON_WIDTH / 2, topPos + imageHeight - BUTTON_HEIGHT - PADDING, BUTTON_WIDTH, BUTTON_HEIGHT).build());
         }

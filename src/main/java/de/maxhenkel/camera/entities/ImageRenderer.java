@@ -18,6 +18,7 @@ import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.EntityHitResult;
 
 import javax.annotation.Nullable;
@@ -140,7 +141,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         state.frameHeight = image.getFrameHeight();
         state.facing = image.getFacing();
         state.imageState = extractImageState(image.getImageUUID().orElse(null));
-        state.light = LevelRenderer.getLightCoords(image.level(), image.getCenterPosition());
+        state.light = LightCoordsUtil.getLightCoords(image.level(), image.getCenterPosition());
         state.imageBoundingBox = image.getBoundingBox();
     }
 
@@ -180,7 +181,7 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         if (!(mc.hitResult instanceof EntityHitResult entityHitResult) || !entityHitResult.getEntity().getUUID().equals(state.imageEntityUUID)) {
             return;
         }
-        if (mc.options.hideGui) {
+        if (mc.gui.hud.isHidden()) {
             return;
         }
         Gizmos.cuboid(

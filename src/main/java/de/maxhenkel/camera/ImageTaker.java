@@ -12,35 +12,42 @@ import java.util.UUID;
 @EventBusSubscriber(modid = CameraMod.MODID, value = Dist.CLIENT)
 public class ImageTaker {
 
-    private static boolean takeScreenshot;
+    private static int screenshotTime;
     private static UUID uuid;
     private static boolean hide;
 
     public static void takeScreenshot(UUID id) {
-        if (takeScreenshot && id.equals(uuid)) {
+        if (screenshotTime >= 0 && id.equals(uuid)) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
 
-        hide = mc.options.hideGui;
-        mc.options.hideGui = true;
+        hide = mc.gui.hud.isHidden();
+        if (!hide) {
+            mc.gui.hud.toggle();
+        }
 
-        takeScreenshot = true;
+        screenshotTime = 2;
         uuid = id;
-        mc.setScreen(null);
+        mc.setScreenAndShow(null);
     }
 
     @SubscribeEvent
-    public static void onRenderTickEnd(RenderFrameEvent.Post event) {
-        if (!takeScreenshot) {
+    public static void onRenderTickEnd(RenderFrameEvent.Pre event) {
+        if (screenshotTime != 0) {
+            if (screenshotTime > 0) {
+                screenshotTime--;
+            }
             return;
         }
 
         Minecraft mc = Minecraft.getInstance();
 
-        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> {
-            mc.options.hideGui = hide;
-            takeScreenshot = false;
+        Screenshot.takeScreenshot(mc.gameRenderer.mainRenderTarget(), image -> {
+            if (mc.gui.hud.isHidden() != hide) {
+                mc.gui.hud.toggle();
+            }
+            screenshotTime = Integer.MIN_VALUE;
 
             ImageProcessor.sendScreenshotThreaded(uuid, image);
         });
