@@ -29,7 +29,7 @@ public class ImageTaker {
 
         screenshotTime = 2;
         uuid = id;
-        mc.setScreenAndShow(null);
+        mc.gui.setScreen(null);
     }
 
     @SubscribeEvent
