@@ -1,1 +1,2 @@
 - Fixed images rendered darker
+- Fixed image shading
