@@ -52,6 +52,11 @@ public class ClientEvents {
         mc.options.setCameraType(CameraType.FIRST_PERSON);
 
         setShader(getShader(mc.player));
+
+        if (mc.gui.hud.isHidden()) {
+            return;
+        }
+
         drawViewFinder(event.getGuiGraphics());
         drawZoom(event.getGuiGraphics(), getFOVPercentage());
     }
@@ -215,7 +220,7 @@ public class ClientEvents {
     }
 
     private boolean isInCameraMode() {
-        return getActiveCamera() != null;
+        return getActiveCamera() != null || ImageTaker.isTakingImage();
     }
 
 }

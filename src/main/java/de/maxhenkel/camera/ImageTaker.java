@@ -16,6 +16,10 @@ public class ImageTaker {
     private static int delay;
     private static boolean hide;
 
+    public static boolean isTakingImage() {
+        return pendingImage != null;
+    }
+
     public static void takeScreenshot(UUID id) {
         if (id.equals(pendingImage)) {
             return;

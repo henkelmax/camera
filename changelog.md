@@ -1,1 +1,2 @@
 - Fixed error when launching the game
+- Fixed zoomed images not being zoomed in
