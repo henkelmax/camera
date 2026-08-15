@@ -1,1 +1,1 @@
-- Updated to 1.21.11
+- Fixed images rendered darker
