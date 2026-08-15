@@ -1,1 +1,1 @@
-- Fixed crash when removing an item frame
+- Fixed images rendered darker

@@ -98,7 +98,8 @@ public class ImageRenderer extends EntityRenderer<ImageEntity> {
             ratioY *= height;
         }
 
-        VertexConsumer builderFront = buffer1.getBuffer(RenderType.entityCutout(resourceLocation));
+        // The actual image uses the same render type as maps to not have any diffuse lighting applied to it
+        VertexConsumer builderFront = buffer1.getBuffer(RenderType.text(resourceLocation));
 
         // Front
         vertex(builderFront, matrixStack, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
