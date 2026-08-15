@@ -89,44 +89,44 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         // The actual image uses the same render type as maps to not have any diffuse lighting applied to it
         collector.submitCustomGeometry(stack, RenderTypes.text(resourceLocation), (pose, vertexConsumer) -> {
             // Front
-            vertex(vertexConsumer, pose, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
-            vertex(vertexConsumer, pose, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light);
-            vertex(vertexConsumer, pose, ratioX, height - ratioY, THICKNESS, 0F, 0F, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light, Direction.SOUTH);
+            vertex(vertexConsumer, pose, width - ratioX, ratioY, THICKNESS, 1F, 1F, light, Direction.SOUTH);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F, 0F, light, Direction.SOUTH);
+            vertex(vertexConsumer, pose, ratioX, height - ratioY, THICKNESS, 0F, 0F, light, Direction.SOUTH);
         });
 
         collector.submitCustomGeometry(stack, RenderTypes.entityCutout(FRAME_SIDE), (pose, vertexConsumer) -> {
             //Left
-            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 1F, 0F + ratioY, light, Direction.WEST);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 1F - THICKNESS, 0F + ratioY, light, Direction.WEST);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 1F - THICKNESS, 1F - ratioY, light, Direction.WEST);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 1F, 1F - ratioY, light, Direction.WEST);
 
             //Right
-            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY, light);
-            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 0F, 0F + ratioY, light, Direction.EAST);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 0F, 1F - ratioY, light, Direction.EAST);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, THICKNESS, 1F - ratioY, light, Direction.EAST);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, THICKNESS, 0F + ratioY, light, Direction.EAST);
 
             //Top
-            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F, light, Direction.UP);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, THICKNESS, 0F + ratioX, 1F - THICKNESS, light, Direction.UP);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, THICKNESS, 1F - ratioX, 1F - THICKNESS, light, Direction.UP);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F, light, Direction.UP);
 
             //Bottom
-            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F, light);
-            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F, light);
-            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F, light, Direction.DOWN);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F, light, Direction.DOWN);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, THICKNESS, 1F - ratioX, THICKNESS, light, Direction.DOWN);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, THICKNESS, 0F + ratioX, THICKNESS, light, Direction.DOWN);
         });
 
         collector.submitCustomGeometry(stack, RenderTypes.entityCutout(FRAME_BACK), (pose, vertexConsumer) -> {
             //Back
-            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light);
-            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light);
-            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light);
+            vertex(vertexConsumer, pose, width - ratioX, 0F + ratioY, 0F, 1F - ratioX, 0F + ratioY, light, Direction.NORTH);
+            vertex(vertexConsumer, pose, 0F + ratioX, 0F + ratioY, 0F, 0F + ratioX, 0F + ratioY, light, Direction.NORTH);
+            vertex(vertexConsumer, pose, 0F + ratioX, height - ratioY, 0F, 0F + ratioX, 1F - ratioY, light, Direction.NORTH);
+            vertex(vertexConsumer, pose, width - ratioX, height - ratioY, 0F, 1F - ratioX, 1F - ratioY, light, Direction.NORTH);
         });
 
         stack.popPose();
@@ -169,13 +169,13 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         return new ImageEntityRenderState.ImageState(imageId, imageRatio, resourceLocation);
     }
 
-    private static void vertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light) {
+    private static void vertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light, Direction normal) {
         builder.addVertex(pose.pose(), x, y, z)
                 .setColor(1F, 1F, 1F, 1F)
                 .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
-                .setNormal(pose, 0F, 0F, -1F);
+                .setNormal(pose, normal.getStepX(), normal.getStepY(), normal.getStepZ());
     }
 
     private static void submitBoundingBox(ImageEntityRenderState state, PoseStack stack, SubmitNodeCollector collector) {
