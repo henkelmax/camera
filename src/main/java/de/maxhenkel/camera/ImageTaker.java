@@ -12,12 +12,12 @@ import java.util.UUID;
 @EventBusSubscriber(modid = CameraMod.MODID, value = Dist.CLIENT)
 public class ImageTaker {
 
-    private static int screenshotTime;
-    private static UUID uuid;
+    private static UUID pendingImage;
+    private static int delay;
     private static boolean hide;
 
     public static void takeScreenshot(UUID id) {
-        if (screenshotTime >= 0 && id.equals(uuid)) {
+        if (id.equals(pendingImage)) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -27,29 +27,30 @@ public class ImageTaker {
             mc.gui.hud.toggle();
         }
 
-        screenshotTime = 2;
-        uuid = id;
+        pendingImage = id;
+        delay = 2;
         mc.gui.setScreen(null);
     }
 
     @SubscribeEvent
     public static void onRenderTickEnd(RenderFrameEvent.Pre event) {
-        if (screenshotTime != 0) {
-            if (screenshotTime > 0) {
-                screenshotTime--;
-            }
+        if (pendingImage == null) {
+            return;
+        }
+        if (delay > 0) {
+            delay--;
             return;
         }
 
-        Minecraft mc = Minecraft.getInstance();
+        UUID id = pendingImage;
+        pendingImage = null;
 
+        Minecraft mc = Minecraft.getInstance();
         Screenshot.takeScreenshot(mc.gameRenderer.mainRenderTarget(), image -> {
             if (mc.gui.hud.isHidden() != hide) {
                 mc.gui.hud.toggle();
             }
-            screenshotTime = Integer.MIN_VALUE;
-
-            ImageProcessor.sendScreenshotThreaded(uuid, image);
+            ImageProcessor.sendScreenshotThreaded(id, image);
         });
     }
 

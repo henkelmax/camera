@@ -1,1 +1,1 @@
-- Updated to 26.2
+- Fixed error when launching the game
