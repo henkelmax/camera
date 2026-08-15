@@ -86,7 +86,8 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
             }
         }
 
-        collector.submitCustomGeometry(stack, RenderTypes.entityCutout(resourceLocation), (pose, vertexConsumer) -> {
+        // The actual image uses the same render type as maps to not have any diffuse lighting applied to it
+        collector.submitCustomGeometry(stack, RenderTypes.text(resourceLocation), (pose, vertexConsumer) -> {
             // Front
             vertex(vertexConsumer, pose, 0F + ratioX, ratioY, THICKNESS, 0F, 1F, light);
             vertex(vertexConsumer, pose, width - ratioX, ratioY, THICKNESS, 1F, 1F, light);
