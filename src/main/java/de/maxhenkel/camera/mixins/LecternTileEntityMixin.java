@@ -30,10 +30,10 @@ import javax.annotation.Nullable;
 public abstract class LecternTileEntityMixin extends BlockEntity {
 
     @Shadow
-    ItemStack book;
+    private ItemStack book;
 
     @Shadow
-    int page;
+    private int page;
 
     @Shadow
     private int pageCount;
