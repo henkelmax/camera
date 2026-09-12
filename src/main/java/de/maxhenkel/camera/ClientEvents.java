@@ -30,7 +30,6 @@ public class ClientEvents {
     private Minecraft mc;
     private boolean inCameraMode;
     private float fov;
-    private Identifier currentShader;
 
     public ClientEvents() {
         mc = Minecraft.getInstance();
@@ -133,17 +132,9 @@ public class ClientEvents {
     }
 
     private void setShader(Identifier shader) {
-        if (shader == null) {
-            if (currentShader != null) {
-                mc.gameRenderer.clearPostEffect();
-            }
-        } else if (!shader.equals(currentShader)) {
-            try {
-                mc.gameRenderer.setPostEffect(shader);
-            } catch (Exception e) {
-            }
+        if (shader != null && !mc.gameRenderer.getRequestedPostEffects().contains(shader)) {
+            mc.gameRenderer.getRequestedPostEffects().add(shader);
         }
-        currentShader = shader;
     }
 
     @SubscribeEvent
