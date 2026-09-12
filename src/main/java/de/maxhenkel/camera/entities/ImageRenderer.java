@@ -196,17 +196,17 @@ public class ImageRenderer extends EntityRenderer<ImageEntity, ImageEntityRender
         switch (facing) {
             case NORTH:
                 matrixStack.translate(1D, 0D, 1D);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(180F));
+                matrixStack.rotate(Axis.YP.rotationDegrees(180F));
                 break;
             case SOUTH:
                 break;
             case EAST:
                 matrixStack.translate(0D, 0D, 1D);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(90F));
+                matrixStack.rotate(Axis.YP.rotationDegrees(90F));
                 break;
             case WEST:
                 matrixStack.translate(1D, 0D, 0D);
-                matrixStack.mulPose(Axis.YP.rotationDegrees(270F));
+                matrixStack.rotate(Axis.YP.rotationDegrees(270F));
                 break;
         }
     }

@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLScancode;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,8 +48,8 @@ public class CameraClientMod {
 
     @SubscribeEvent
     static void registerKeyBinds(RegisterKeyMappingsEvent event) {
-        KEY_NEXT = new KeyMapping("key.next_image", GLFW.GLFW_KEY_DOWN, KeyMapping.Category.MISC);
-        KEY_PREVIOUS = new KeyMapping("key.previous_image", GLFW.GLFW_KEY_UP, KeyMapping.Category.MISC);
+        KEY_NEXT = new KeyMapping("key.next_image", SDLScancode.SDL_SCANCODE_DOWN, KeyMapping.Category.MISC);
+        KEY_PREVIOUS = new KeyMapping("key.previous_image", SDLScancode.SDL_SCANCODE_UP, KeyMapping.Category.MISC);
         event.register(KEY_NEXT);
         event.register(KEY_PREVIOUS);
     }

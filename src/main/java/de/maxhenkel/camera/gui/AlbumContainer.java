@@ -1,6 +1,7 @@
 package de.maxhenkel.camera.gui;
 
 import de.maxhenkel.camera.CameraMod;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -70,7 +71,7 @@ public class AlbumContainer extends AbstractContainerMenu {
         ItemStack itemstack = inventory.removeItemNoUpdate(0);
         inventory.setChanged();
         if (!player.getInventory().add(itemstack)) {
-            player.drop(itemstack, false);
+            player.drop(itemstack, false, Prediction.SERVER_ONLY);
         }
     }
 }
