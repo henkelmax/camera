@@ -3,13 +3,8 @@ package de.maxhenkel.camera;
 import com.mojang.blaze3d.platform.NativeImage;
 import de.maxhenkel.corelib.CommonUtils;
 import de.maxhenkel.corelib.client.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -180,106 +175,28 @@ public class ImageTools {
         return bufferedImage;
     }
 
-    private static boolean chooserOpen;
-
     public static void chooseImage(Consumer<File> onResult) {
-        if (chooserOpen) {
-            return;
-        }
-        new Thread(() -> {
-            chooserOpen = true;
-            File dir = new File(System.getProperty("user.home"));
-
-            String lastPath = CameraMod.CLIENT_CONFIG.lastImagePath.get();
-            if (!lastPath.isEmpty()) {
-                File last = new File(lastPath);
-                if (last.exists()) {
-                    dir = last;
-                }
+        File dir = new File(System.getProperty("user.home"));
+        String lastPath = CameraMod.CLIENT_CONFIG.lastImagePath.get();
+        if (!lastPath.isEmpty()) {
+            File last = new File(lastPath);
+            if (last.exists()) {
+                dir = last;
             }
+        }
 
-            MemoryStack stack = MemoryStack.stackPush();
-
-            PointerBuffer filters = stack.mallocPointer(6);
-            filters.put(stack.UTF8("*.png"));
-            filters.put(stack.UTF8("*.jpg"));
-            filters.put(stack.UTF8("*.jpeg"));
-
-            filters.flip();
-
-            String path = TinyFileDialogs.tinyfd_openFileDialog(
-                    // Component.translatable("title.choose_image").getString(),
-                    getChooseImageTranslation(),
-                    dir.getAbsolutePath() + File.separator,
-                    filters,
-                    // Component.translatable("filetype.images").getString(),
-                    getImageFileTypeTranslation(),
-                    false
-            );
-
-            if (path == null) {
-                chooserOpen = false;
+        ImageFileChooser.open(dir, image -> {
+            if (!image.exists() || image.isDirectory()) {
                 return;
             }
-
-            File image = new File(path);
-            if (image.exists() && !image.isDirectory()) {
-                CameraMod.CLIENT_CONFIG.lastImagePath.set(image.getParent());
-                CameraMod.CLIENT_CONFIG.lastImagePath.save();
-                onResult.accept(image);
-            }
-            chooserOpen = false;
-        }).start();
-    }
-
-    /**
-     * This method exists instead of a normal translation due to a vulnerability in the TinyFileDialogs library allowing for command injection.
-     * This method is only called when the user opens the file chooser.
-     */
-    private static String getChooseImageTranslation() {
-        LanguageManager manager = Minecraft.getInstance().getLanguageManager();
-        String lang = manager.getSelected();
-        return switch (lang) {
-            case "cs_cz" -> "Vybrat obrázek";
-            case "de_de" -> "Bild auswählen";
-            case "es_ar" -> "Elegir imagen";
-            case "es_es" -> "Elegir imagen";
-            case "fr_fr" -> "Choisir une photo";
-            case "ko_kr" -> "이미지 선택";
-            case "no_no" -> "Velg bilde";
-            case "pt_br" -> "Escolha a Imagem";
-            case "ru_ru" -> "Выберите фото";
-            case "uk_ua" -> "Виберіть фотографію";
-            case "zn_cn" -> "选择相片";
-            default -> "Choose Image";
-        };
-    }
-
-    /**
-     * This method exists instead of a normal translation due to a vulnerability in the TinyFileDialogs library allowing for command injection.
-     * This method is only called when the user opens the file chooser.
-     */
-    private static String getImageFileTypeTranslation() {
-        LanguageManager manager = Minecraft.getInstance().getLanguageManager();
-        String lang = manager.getSelected();
-        return switch (lang) {
-            case "cs_cz" -> "Obrázky";
-            case "de_de" -> "Bilder";
-            case "es_ar" -> "Imagenes";
-            case "es_es" -> "Imágenes";
-            case "fr_fr" -> "Photo";
-            case "ko_kr" -> "이미지";
-            case "no_no" -> "Bilder";
-            case "pt_br" -> "Imagens";
-            case "ru_ru" -> "Фото";
-            case "uk_ua" -> "Фотографії";
-            case "zn_cn" -> "相片";
-            default -> "Images";
-        };
+            CameraMod.CLIENT_CONFIG.lastImagePath.set(image.getParent());
+            CameraMod.CLIENT_CONFIG.lastImagePath.save();
+            onResult.accept(image);
+        });
     }
 
     public static boolean isFileChooserOpen() {
-        return chooserOpen;
+        return ImageFileChooser.isOpen();
     }
 
 }
