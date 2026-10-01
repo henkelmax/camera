@@ -13,8 +13,8 @@ dependencies {
     runtimeOnly "de.maxhenkel.corelib:corelib:${corelib_version}+${minecraft_version}"
     compileOnly "de.maxhenkel.corelib:corelib:${corelib_version}+${minecraft_version}:javadoc"
 
-    compileOnly "maven.modrinth:jei:${jei_version}"
-    compileOnly "maven.modrinth:jade:${jade_version}"
+    implementation "maven.modrinth:jei:${jei_version}"
+    implementation "maven.modrinth:jade:${jade_version}"
 }
 
 processResources {
